@@ -1,0 +1,56 @@
+=============== Welcome to ===============
+
+  Analysis Anisotropic Elastic Properties 
+  -        -           -       -          
+    ▄▄▄      ▄▄▄      ▓█████  ██▓███      
+   ▒████▄   ▒████▄    ▓█   ▀ ▓██░  ██▒    
+   ▒██  ▀█▄ ▒██  ▀█▄  ▒███   ▓██░ ██▓▒    
+   ░██▄▄▄▄██░██▄▄▄▄██ ▒▓█  ▄ ▒██▄█▓▒ ▒    
+    ▓█   ▓██▒▓█   ▓██▒░▒████▒▒██▒ ░  ░    
+    ▒▒   ▓▒█░▒▒   ▓▒█░░░ ▒░ ░▒▓▒░ ░  ░    
+     ▒   ▒▒ ░ ▒   ▒▒ ░ ░ ░  ░░▒ ░         
+     ░   ▒    ░   ▒      ░   ░░           
+         ░  ░     ░  ░   ░  ░             
+               41 41 45 50                
+  ======= Shahram Yalameha (c) 2018 ========   
+                     v1.5.2                    
+                   From                    
+            ElasticTools Project           
+                                               
+Cij:
+  152.800000   -6.900000    0.000000
+   -6.900000  120.200000    0.000000
+    0.000000    0.000000   33.400000
+Sij:
+    0.006562    0.000377    0.000000
+    0.000377    0.008341    0.000000
+    0.000000    0.000000    0.029940
+ ================================================
+              Elastic properties                
+ ================================================
+ = Young modulus [Ex]  (N/m)   152.404          =
+ = Young modulus [Ey]  (N/m)   119.888          =
+ = Shaer modulus [Gxy] (N/m)    33.400          =
+ = Shaer modulus [Gv]  (N/m)    52.550          =
+ = Shaer modulus [Gr]  (N/m)    45.363          =
+ = Area modulus  [Kv]  (N/m)    64.800          =
+ = Area modulus  [Kr]  (N/m)    63.869          =
+ = Poisson ratio [vxy]          -0.057          =
+ = Poisson ratio [vyx]          -0.045          =
+ ================================================================== 
+ = Elastic anisotropy index (A_SU):                0.2241          =
+ = Ranganathan Elastic anisotropy index (A_SU):    0.3315          =
+ = Kube Elastic anisotropy index (A_SU):           0.0905          =
+ ================================================================== 
+ ==================================================> Youngs Modulus
+  Maximum value of Youngs Modulus =   152.3926       Phi=    0.0000 degree
+  MINimum value of Youngs Modulus =    87.3460       Phi=   48.6000 degree
+ ==================================================<
+ ==================================================> Shear Modulus
+  Maximum value of Shear Modulus =    33.4001       Phi=    0.0000 degree
+  Minimum value of Shear Modulus =    68.8421       Phi=   45.0000 degree
+ ==================================================<
+ ==================================================> Poissons Ratio
+  Maximum value of Poissons Ratio =     0.3138       Phi=   43.2000 degree
+  Minimum value of Poissons Ratio =    -0.0575       Phi=    0.0000 degree
+ ==================================================<

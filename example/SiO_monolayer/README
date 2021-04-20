@@ -1,0 +1,13 @@
+MATERIAL: SiO-Pmna SG (https://doi.org/10.1016/j.jallcom.2014.04.172)
+
+Cij:
+
+  152.8   -6.9    0.00
+   -6.9  120.2    0.00
+    0.00    0.00   33.4
+    
+ run: EaTools_lapw
+ select:  > 2 > 2 
+ 
+ 
+

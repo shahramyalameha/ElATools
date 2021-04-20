@@ -1,0 +1,6 @@
+MATERIAL: Cu2WS4 Materials Project id :   mp-557373
+ run: EaTools_lapw
+  select:  > 3 > 6 > N> mp-557373
+ 
+ 
+
