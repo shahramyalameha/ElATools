@@ -6,4 +6,4 @@ chanical properties including the bulk modulus, Young’s modulus, shear modulus
 with more than 13,000 elastic stiffness constants for 3D materials available to the user. The program supports output files of the well-known computational codes
 IRelat, ElaStic, and AELAS. Three types of plotting and visualization tools are integrated to conveniently interface with G NUPLOT , X MGRACE , and view3dscene, of-
 fering immediate post-processing of the results. ElATools provides reliable means to investigate the mechanical stability based on the calculation of six (three) eigenvalues of the elastic tensor in 3D (2D) materials. It can efficiently identify anomalous mechanical properties, such as negative linear compressibility, negative Poisson’s ratio, and highly-anisotropic elastic modulus in 2D and 3D materials, which are central properties to design and develop high-performance nanoscale electromechanical devices.
------------------------------------------------------------------------------------------------------
+ 
