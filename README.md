@@ -1,6 +1,5 @@
-[![License](https://img.shields.io/badge/License-GPL3-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-![GitHub last commit](https://img.shields.io/github/last-commit/hungpham2017/pyWannier90.svg?color=green)
-![GitHub issues](https://img.shields.io/github/issues-raw/hungpham2017/pyWannier90.svg?color=crimson)
+[![License](https://img.shields.io/github/license/dftd4/dftd4)](https://github.com/dftd4/dftd4/blob/master/COPYING.LESSER)
+[![Latest Version](https://img.shields.io/github/v/release/ElATools/ElATools)](https://github.com/shahramyalameha/ElATools/releases/)
 
 **ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
 -----------------------------------------------------------------------------------------------------
