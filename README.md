@@ -1,3 +1,7 @@
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+![GitHub last commit](https://img.shields.io/github/last-commit/hungpham2017/pyWannier90.svg?color=green)
+![GitHub issues](https://img.shields.io/github/issues-raw/hungpham2017/pyWannier90.svg?color=crimson)
+
 **ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
 -----------------------------------------------------------------------------------------------------
 We introduce a computational method and a user-friendly code, named ElATools,developed for the analysis of anisotropic elastic properties. ElATools enables facile
