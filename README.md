@@ -7,7 +7,7 @@ ElATools
 [![GitHub stars](https://img.shields.io/github/stars/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/stargazers)
 [![Latest Version](https://img.shields.io/github/v/release/ElATools/ElATools)](https://github.com/shahramyalameha/ElATools/releases/latest)
 
-**ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
+**A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
 -----------------------------------------------------------------------------------------------------
 We introduce a computational method and a user-friendly code, named ElATools,developed for the analysis of anisotropic elastic properties. ElATools enables facile
 analysis of the second-order elastic stiffness tensor of two-dimensional (2D) and three-dimensional (3D) crystal systems. It computes and displays the main me-
