@@ -2,7 +2,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/issues)
 [![GitHub forks](https://img.shields.io/github/forks/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/network)
 [![GitHub stars](https://img.shields.io/github/stars/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/stargazers)
-[![GitHub linux](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)]
+![GitHub linux](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)]
 
 **ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
 -----------------------------------------------------------------------------------------------------
