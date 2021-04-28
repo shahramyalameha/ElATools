@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/github/license/dftd4/dftd4)](https://github.com/dftd4/dftd4/blob/master/COPYING.LESSER)
+[![License](https://img.shields.io/github/license/ElaTools/ElATools)](https://github.com/dftd4/dftd4/blob/master/COPYING.LESSER)
 [![Latest Version](https://img.shields.io/github/v/release/ElATools/ElATools)](https://github.com/shahramyalameha/ElATools/releases/tag/v.1.5.3)
 
 **ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
