@@ -1,5 +1,5 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/shahramyalameha/ElATools/blob/main/LICENSE.md)
-![GitHub language count](https://img.shields.io/github/languages/count/shahramyalameha/ElATools?label=Language%20&style=plastic)
+![GitHub language count](https://img.shields.io/github/languages/count/shahramyalameha/ElATools?label=Language%4&style=plastic)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shahramyalameha/ElATools)
 **ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
 -----------------------------------------------------------------------------------------------------
