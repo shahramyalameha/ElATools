@@ -1,5 +1,5 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/shahramyalameha/ElATools/blob/main/LICENSE.md)
-
+https://img.shields.io/github/languages/count/shahramyalameha/ElATools?label=2&style=plastic
 **ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials**
 -----------------------------------------------------------------------------------------------------
 We introduce a computational method and a user-friendly code, named ElATools,developed for the analysis of anisotropic elastic properties. ElATools enables facile
