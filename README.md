@@ -67,7 +67,7 @@ The following features of ElATools are highlighted:
    - AELAS code for VASP (For 2D and 3D systems)
    - ElaStic code for QE, WEIN2k and Exciting (For 3D systems) **New**
 
-- **Has a database with more than 13000 elastic constants (Cij) for 3D materials.**
+- **A database with more than 13000 elastic constants (Cij) for 3D materials.**
 - **Supports different symmetries**
    - Cubic
    - Hexagonal
