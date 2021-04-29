@@ -7,11 +7,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/issues)
 [![GitHub forks](https://img.shields.io/github/forks/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/network)
 [![GitHub stars](https://img.shields.io/github/stars/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/stargazers)
-> We introduce a computational method and a user-friendly code, named ElATools,developed for the analysis of anisotropic elastic properties. ElATools enables   facile analysis of the second-order elastic stiffness tensor of two-dimensional (2D) and three-dimensional (3D) crystal systems. It computes and displays the  main mechanical properties including the bulk modulus, Young’s modulus, shear modulus, p-wave modulus, universal anisotropy index, Chung-Buessem anisotropy index, log-Euclidean anisotropy parameter, Cauchy pressure, Poisson’s ratio, and Pugh’s ratio, using three averaging schemes of Voigt, Reuss, and Hill. ElATools has a database with more than 13,000 elastic stiffness constants for 3D materials available to the user. The program supports output files of the well-known computational codes IRelat, ElaStic, and AELAS. Three types of plotting and visualization tools are integrated to conveniently interface with GNUPLOT, XMGRACE  ,and view3dscene, offering immediate post-processing of the results. ElATools provides reliable means to investigate the mechanical stability based on the  calculation of six (three) eigenvalues of the elastic tensor in 3D (2D) materials. It can efficiently identify anomalous mechanical properties, such as negative  linear compressibility, negative Poisson’s ratio, and highly-anisotropic elastic modulus in 2D and 3D materials, which are central properties to design and  develop high-performance nanoscale electromechanical devices.
-<h3 align="left">Connect with me:</h3>
-<p align="left">
-<a href="https://linkedin.com/in/https://www.linkedin.com/in/shahram-yalameha-20a9871aa/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/neutral-icons/src/images/icons/Social/linked-in-alt.svg" alt="https://www.linkedin.com/in/shahram-yalameha-20a9871aa/" height="30" width="40" /></a>
-</p> 
+> We introduce a computational method and a user-friendly code, named ElATools,developed for the analysis of anisotropic elastic properties. ElATools enables   facile analysis of the second-order elastic stiffness tensor of two-dimensional (2D) and three-dimensional (3D) crystal systems. It computes and displays the  main mechanical properties including the bulk modulus, Young’s modulus, shear modulus, p-wave modulus, universal anisotropy index, Chung-Buessem anisotropy index, log-Euclidean anisotropy parameter, Cauchy pressure, Poisson’s ratio, and Pugh’s ratio, using three averaging schemes of Voigt, Reuss, and Hill. ElATools has a database with more than 13,000 elastic stiffness constants for 3D materials available to the user. The program supports output files of the well-known computational codes IRelat, ElaStic, and AELAS. Three types of plotting and visualization tools are integrated to conveniently interface with GNUPLOT, XMGRACE  ,and view3dscene, offering immediate post-processing of the results. ElATools provides reliable means to investigate the mechanical stability based on the  calculation of six (three) eigenvalues of the elastic tensor in 3D (2D) materials. It can efficiently identify anomalous mechanical properties, such as negative  linear compressibility, negative Poisson’s ratio, and highly-anisotropic elastic modulus in 2D and 3D materials, which are central properties to design and  develop high-performance nanoscale electromechanical devices. 
 
 ## Features
 The following features of ElATools are highlighted:
@@ -90,4 +86,59 @@ The following features of ElATools are highlighted:
    - gnu 
    - dat
 ## Installation
+You need to install the following packages:
 
+* Fortran compiler (Ifort (Recom.) or gfortran  )
+* Lapack and Blas library
+
+Compilation
+-----------
+
+
+Then Go into ElATools_SRC/src directory, Choose and Edit Makefile, Change the blas library ” libs= ” to your lapack+blas library
+After the compliation, the binary ‘Elatools.x , dat2wrl.x, dat2gnu.x and dat2agr.x’ are copied to Elatools.x /bin/, you can put this path to the system PATH with
+::
+
+ export PATH=/where/you/downloaded/ElaTools_SRC/bin:$PATH
+
+to the **.bashrc** file in your home directory.
+
+Usage
+-----
+
+Now you can enjoy your exploration for materials with ElATools.
+There is a file you need to prepare,
+
+* For IRelast code **INVELC-matrix** file,
+* For Elast code **elast.output** file,
+* For AELAS code **ELADAT** file,
+* For any code **Cij.dat/Cij-2D.dat** tensor file.
+
+After the preparation of this file, you can just run Elatools.x  in the same folder
+::
+
+  Elatools.x 
+
+For 3D representation of properties:
+::
+
+  dat2wrl.x
+
+For 2D representation of properties:
+::
+
+  data2gnu.x
+and 
+::
+
+  dat2agr.x
+
+Plotting tools
+--------------
+
+   - `Gnuplot <http://gnuplot.sourceforge.net/>`_
+   - `Xmgrace <http://plasma-gate.weizmann.ac.il/Grace/>`_
+   - `Titania <http://create3000.de/>`_
+   - `Meshlab <http://www.meshlab.net/>`_
+   - `View3dscene <https://castle-engine.io/view3dscene.php>`_
+   
