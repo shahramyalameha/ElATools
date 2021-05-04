@@ -71,10 +71,10 @@ subroutine setreset()
      if (val0=='com') then; WRITE(2,'(a)')'set output "Compressibiliy.ps"';                               endif  
        if (val0=='she') then; WRITE(2,'(a)')'set output "Shear.ps"';                                     endif
          if (val0=='pug') then; WRITE(2,'(a)')'set output "Pugh.ps"';                                   endif
-	          if (val0=='you') then; WRITE(2,'(a)')'set output "Young.ps"';                              endif
-	            if (val0=='bul') then; WRITE(2,'(a)')'set output "Bulk.ps"';                            endif
-	              if (val0=='sou') then; WRITE(2,'(a)')'set output "Sound.ps';                         endif
-	                if (val0=='2poi') then; WRITE(2,'(a)')'set output "Poissons_2D.ps"';              endif   
+	          if (val0=='you') then; WRITE(2,'(a)')'set output "Young.ps"';                               endif
+	            if (val0=='bul') then; WRITE(2,'(a)')'set output "Bulk.ps"';                             endif
+	              if (val0=='sou') then; WRITE(2,'(a)')'set output "Sound.ps';                          endif
+	                if (val0=='2poi') then; WRITE(2,'(a)')'set output "Poissons_2D.ps"';               endif   
                     if (val0=='2you') then; WRITE(2,'(a)')'set output "Young_2D.ps"';              endif
                       if (val0=='2she') then; WRITE(2,'(a)')'set output "Shear_2D.ps"';           endif
                         if (val0=='pp') then; WRITE(2,'(a)')'set output "Phase-P.ps"';             endif
@@ -93,15 +93,15 @@ subroutine setreset()
       ChARACTER(len=2) :: e1,e2
       integer          :: h,k,l
       call plan(e1,e2,h,k,l)
-     if (val0=='poi') then; WRITE(2,'(a,3I1,a)')'set title "Poissons Ratio \n (', h,k,l,')-plane"';                                                  endif
-        if (val0=='com') then; WRITE(2,'(a,3I1,a)')'set title "Linear Compressibiliy (1/TPa)\n (', h,k,l,')-plane"';                                  endif 
-           if (val0=='she') then; WRITE(2,'(a,3I1,a)')'set title "Shear Modulus (GPa) \n (', h,k,l,')-plane"';                                         endif
-             if (val0=='puh') then; WRITE(2,'(a,3I1,a)')'set title "Pugh Ratio \n (', h,k,l,')-plane"';                                                 endif
-	              if (val0=='you') then; WRITE(2,'(a,3I1,a)')'set title "Young Modulus (GPa) \n (', h,k,l,')-plane"';                                      endif
-	                if (val0=='bul') then; WRITE(2,'(a,3I1,a)')'set title "Bulk Modulus (GPa) \n (', h,k,l,')-plane"';                                      endif
-		                 if (val0=='sou') then; WRITE(2,'(a,3I1,a)')'set title "Sound \n (', h,k,l,')-plane"';                                                 endif
-                       if (val0=='2poi') then; WRITE(2,'(a,3I1,a)')'set title "Poissons Ratio"';                                                            endif
-                         if (val0=='2you') then;  WRITE(2,'(a,3I1,a)')'set title "Young Modulus (N/m)';                                                      endif
+     if (val0=='poi') then; WRITE(2,'(a,3I1,a)')'set title "Poissons Ratio \n (', h,k,l,')-plane"';                                                   endif
+        if (val0=='com') then; WRITE(2,'(a,3I1,a)')'set title "Linear Compressibiliy (1/TPa)\n (', h,k,l,')-plane"';                                   endif 
+           if (val0=='she') then; WRITE(2,'(a,3I1,a)')'set title "Shear Modulus (GPa) \n (', h,k,l,')-plane"';                                          endif
+             if (val0=='puh') then; WRITE(2,'(a,3I1,a)')'set title "Pugh Ratio \n (', h,k,l,')-plane"';                                                  endif
+	              if (val0=='you') then; WRITE(2,'(a,3I1,a)')'set title "Young Modulus (GPa) \n (', h,k,l,')-plane"';                                        endif
+	                if (val0=='bul') then; WRITE(2,'(a,3I1,a)')'set title "Bulk Modulus (GPa) \n (', h,k,l,')-plane"';                                        endif
+		                 if (val0=='sou') then; WRITE(2,'(a,3I1,a)')'set title "Sound \n (', h,k,l,')-plane"';                                                    endif
+                       if (val0=='2poi') then; WRITE(2,'(a,3I1,a)')'set title "Poissons Ratio"';                                                             endif
+                         if (val0=='2you') then;  WRITE(2,'(a,3I1,a)')'set title "Young Modulus (N/m)';                                                       endif
                            if (val0=='2she') then;  WRITE(2,'(a,3I1,a)')'set title "Shear Modulus (N/m)';                                                      endif
                              if (val0=='pp') then; WRITE(2,'(a,3I1,a)')'set title "Phase-P (km/s)\n (', h,k,l,')-plane"';                                     endif
                                if (val0=='ps') then; WRITE(2,'(a,3I1,a)')'set title "Phase-Slow (km/s)\n (', h,k,l,')-plane"';                               endif

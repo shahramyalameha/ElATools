@@ -9,25 +9,31 @@
 
 PROGRAM gnu_conv
   USE ISO_FORTRAN_ENV
-  INTEGER                       :: argl,i,N_frame=0,Nploter,Ng,Ns  
-  ChARACTER(len=:), allocatable :: a ,b
-  ChARACTER(len=10)             :: val='',namepro=' ' ,val0,namepro2=' ',val1=''
-  real(8)                       :: MAXpo, MAXyo, MAXsh
-     ! Get command line args (Fortran 2003 standard)
-  IF (command_argument_count() > 0) then
-     CALL get_command_argument(1, length=argl)
-     allocate(ChARACTER(argl) :: a)
-     CALL get_command_argument(1, a)
-     READ(a,*) namepro
-
-     val=namepro	
-
-  ENDIF
+  INTEGER                          :: argl,i,N_frame=0,Nploter,Ng,Ns,N_arg
+  ChARACTER(len=7)                 :: a=' ' 
+  ChARACTER(len=10)                :: namepro=' ' ,val0,namepro2=' ',val1='',val='',clor_val=" "
+  ChARACTER(len=7), dimension(10) :: arg_mane
+  real(8)                          :: MAXpo, MAXyo, MAXsh
   
+  clor_val=" "
+     ! Get command line args (Fortran 2003 standard)
+  N_arg = 0
+  DO
+    CALL get_command_argument(N_arg, a)
+    IF (LEN_TRIM(a) == 0) EXIT
+
+    arg_mane(N_arg)=TRIM(a)
+    N_arg = N_arg+1
+  END DO
+
+ val      = arg_mane(1)	
+ clor_val = arg_mane(2)	
+ 
+ ! write(*,*) val,clor_val
   IF (val == "-h" .OR. val == "")THEN
-       WRITE(*,*)'Using: dat2gnu_lapw [ Properties ] in the  DatFile_*** folder' 
+       WRITE(*,*)'Using: dat2gnu_lapw [ Properties ] [hmap colors] in the  DatFile_*** folder' 
        WRITE(*,*)''
-       call system ("sleep 1")
+       call system ("sleep 0.5")
        WRITE(*,*)'[3D Properties]:                                         '
        WRITE(*,*)' poi     => Poisson’s ratio                         '
        WRITE(*,*)' shear   => Shear modulus                           '
@@ -56,43 +62,50 @@ PROGRAM gnu_conv
        WRITE(*,*)' 2dyoung => Young’s modulus                         '
        WRITE(*,*)' 2dshear => Shear modulus                           '
        WRITE(*,*)' 2d      => Generate all propreites                 '
+       WRITE(*,*)' '
+       WRITE(*,*)'[hmap colors]:                                      '
+       WRITE(*,*)'bbry     => black-blue-red-yellow                   '
+       WRITE(*,*)'grv      => green-red-violet                        '
+       WRITE(*,*)'bbvy     => black-blue-violet-yellow-white          '
+       WRITE(*,*)'bgyr     => blue-green-yellow-red                   '
+       WRITE(*,*)'bryw     => black-red-yellow-white                  '
        STOP
   ENDIF
 
    
 IF (val=='all' .OR. val=='All') then
   do i=1,25
-   IF (i==1) then;  val='poi';   call ploter(val); endif
-   IF (i==2) then;  val='comp';  call ploter(val); endif
-   IF (i==3) then;  val='shear'; call ploter(val); endif
-   IF (i==4) then;  val='sound'; call ploter(val); endif
-   IF (i==5) then;  val='bulk';  call ploter(val); endif	
-   IF (i==6) then;  val='young'; call ploter(val); endif
-   IF (i==7) then;  val='pugh';  call ploter(val); endif
-   IF (i==8) then;  val='pp';    call ploter(val); endif
-   IF (i==9) then;  val='pf';    call ploter(val); endif
-   IF (i==10) then; val='ps';    call ploter(val); endif
-   IF (i==10) then; val='gp';    call ploter(val); endif
-   IF (i==11) then; val='gf';    call ploter(val); endif
-   IF (i==12) then; val='gs';    call ploter(val); endif
-   IF (i==13) then; val='pall';  call ploter(val); endif
-   IF (i==14) then; val='gall';  call ploter(val); endif
-   IF (i==15) then; val='pfall'; call ploter(val); endif
+   IF (i==1) then;  val='poi';   call ploter(val,clor_val); endif
+   IF (i==2) then;  val='comp';  call ploter(val,clor_val); endif
+   IF (i==3) then;  val='shear'; call ploter(val,clor_val); endif
+   IF (i==4) then;  val='sound'; call ploter(val,clor_val); endif
+   IF (i==5) then;  val='bulk';  call ploter(val,clor_val); endif	
+   IF (i==6) then;  val='young'; call ploter(val,clor_val); endif
+   IF (i==7) then;  val='pugh';  call ploter(val,clor_val); endif
+   IF (i==8) then;  val='pp';    call ploter(val,clor_val); endif
+   IF (i==9) then;  val='pf';    call ploter(val,clor_val); endif
+   IF (i==10) then; val='ps';    call ploter(val,clor_val); endif
+   IF (i==10) then; val='gp';    call ploter(val,clor_val); endif
+   IF (i==11) then; val='gf';    call ploter(val,clor_val); endif
+   IF (i==12) then; val='gs';    call ploter(val,clor_val); endif
+   IF (i==13) then; val='pall';  call ploter(val,clor_val); endif
+   IF (i==14) then; val='gall';  call ploter(val,clor_val); endif
+   IF (i==15) then; val='pfall'; call ploter(val,clor_val); endif
 
-   IF (i==16) then;  val='hmpoi';   call ploter(val); endif
-   IF (i==17) then;  val='hmcomp';  call ploter(val); endif
-   IF (i==18) then;  val='hmshear'; call ploter(val); endif
-   IF (i==19) then;  val='hmsound'; call ploter(val); endif
-   IF (i==20) then;  val='hmbulk';  call ploter(val); endif	
-   IF (i==21) then;  val='hmyoung'; call ploter(val); endif
-   IF (i==22) then;  val='hmpugh';  call ploter(val); endif
-   IF (i==23) then; val='hmpall';  call ploter(val); endif
-   IF (i==24) then; val='hmgall';  call ploter(val); endif
-   IF (i==25) then; val='hmpfall'; call ploter(val); endif
+   IF (i==16) then;  val='hmpoi';   call ploter(val,clor_val); endif
+   IF (i==17) then;  val='hmcomp';  call ploter(val,clor_val); endif
+   IF (i==18) then;  val='hmshear'; call ploter(val,clor_val); endif
+   IF (i==19) then;  val='hmsound'; call ploter(val,clor_val); endif
+   IF (i==20) then;  val='hmbulk';  call ploter(val,clor_val); endif	
+   IF (i==21) then;  val='hmyoung'; call ploter(val,clor_val); endif
+   IF (i==22) then;  val='hmpugh';  call ploter(val,clor_val); endif
+   IF (i==23) then; val='hmpall';  call ploter(val,clor_val); endif
+   IF (i==24) then; val='hmgall';  call ploter(val,clor_val); endif
+   IF (i==25) then; val='hmpfall'; call ploter(val,clor_val); endif
    write(*,*)'======='
   enddo
 else
-  call ploter(val)
+  call ploter(val,clor_val)
  endif
  OPEN(22,file='.MaMiout') 
  READ(22,*) MAXyo
@@ -117,8 +130,8 @@ close(22)
 END PROGRAM
 !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
- SUBROUTINE ploter(val)
-   ChARACTER(len=10) :: val ,val0
+ SUBROUTINE ploter(val,clor_val)
+   ChARACTER(len=10) :: val ,val0,clor_val
    DOUBLE PRECISION  :: max=0d0,&
    Maxyoung,  &
    Minyoung,  &
@@ -220,7 +233,20 @@ WRITE(2,'(a)')'set format z "%11.4e"'
 WRITE(2,'(a)')'set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')'set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')'set view map'
-WRITE(2,'(a)')'set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
+
 WRITE(2,'(a)')'unset ztics'
 
 WRITE(2,'(a)')'set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
@@ -291,7 +317,20 @@ WRITE(2,'(a)')' set format z "%11.4e"'
 WRITE(2,'(a)')' set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')' set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')' set view map'
-WRITE(2,'(a)')' set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
+
 WRITE(2,'(a)')' unset ztics'
 WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
@@ -357,7 +396,19 @@ WRITE(2,'(a)')' set format z "%11.4e"'
 WRITE(2,'(a)')' set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')' set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')' set view map'
-WRITE(2,'(a)')' set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
 WRITE(2,'(a)')' unset ztics'
 WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
@@ -425,7 +476,19 @@ WRITE(2,'(a)')' set format z "%11.4e"'
 WRITE(2,'(a)')' set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')' set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')' set view map'
-WRITE(2,'(a)')' set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
 WRITE(2,'(a)')' unset ztics'
 WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
@@ -532,7 +595,19 @@ WRITE(2,'(a)')' set format z "%11.4e"'
 WRITE(2,'(a)')' set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')' set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')' set view map'
-WRITE(2,'(a)')' set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
 WRITE(2,'(a)')' unset ztics'
 WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
@@ -593,7 +668,19 @@ WRITE(2,'(a)')' set format z "%11.4e"'
 WRITE(2,'(a)')' set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')' set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')' set view map'
-WRITE(2,'(a)')' set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
 WRITE(2,'(a)')' unset ztics'
 WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
@@ -621,7 +708,19 @@ WRITE(2,'(a)')'set format z "%11.4e"'
 WRITE(2,'(a)')'set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')'set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')'set view map'
-WRITE(2,'(a)')'set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
 WRITE(2,'(a)')'unset ztics'
 WRITE(2,'(a)')'set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')'set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
@@ -953,7 +1052,19 @@ WRITE(2,'(a)')'set format z "%11.4e"'
 WRITE(2,'(a)')'set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')'set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')'set view map'
-WRITE(2,'(a)')'set palette rgb 30,13,10'
+IF      (clor_val=='bbry') then
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
 WRITE(2,'(a)')'unset ztics'
 WRITE(2,'(a)')'set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')'set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
