@@ -3,7 +3,7 @@
 !               Please report bugs or suggestions to:  yalameha93@gmail.com                `
 !                                                                                          `
 !```````````````````````````````````````````````````````````````````````````````````````````
-! SUBROUTINE: fOR 3D MATERIAL, Detection of Ductile/Brittle and Covalent-like bonding/Metallic-like bonding im materials.
+! SUBROUTINE: fOR 3D MATERIAL, Detection of Ductile/Brittle and Covalent-like bonding/Metallic-like bonding and bond_stretching_bending in materials.
 
 SUBROUTINE ductiletester_KG(kgh,bdout)
  IMPLICIT NONE
@@ -33,7 +33,7 @@ SUBROUTINE ductiletester_PR(nuh,bdout)
     ENDIF
   ENDIF 
 END SUBROUTINE ductiletester_PR
-
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 SUBROUTINE coval_metal_Pc(Pc,Cov_met)
   CHARACTER(LEN=22)  :: Cov_met
   DOUBLE PRECISION   :: Pc
@@ -45,6 +45,19 @@ SUBROUTINE coval_metal_Pc(Pc,Cov_met)
   ENDIF
 ENDIF
 END SUBROUTINE coval_metal_Pc   
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+SUBROUTINE bond_stretching_bending (kel, st_ben)
+ IMPLICIT NONE
+  CHARACTER(LEN=31) :: st_ben
+  DOUBLE PRECISION  :: kel
+  IF (kel == 0.5D0) st_ben = "Bond bending = Bond stretching"
+  IF (kel >  0.5D0) st_ben = "Bond bending < Bond stretching"
+  IF (kel <  0.5D0) st_ben = "Bond bending > Bond stretching"
+END SUBROUTINE bond_stretching_bending
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+
+
    
    
    
