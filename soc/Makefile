@@ -48,7 +48,7 @@ OBJS =  Eatools_main.o	 Eatools_2Dyoung.o Eatools_2Dpoisson.o  Eatools_2Dshear.o
              	Eatools_dutester.o Eatools_proelast.o Eatools_sh.o Eatools_welc.o Eatools_pugh.o Eatools_3dPLpugh.o \
         Eatools_wave_start.o Eatools_wave_vgvf.o Eatools_wave_rot.o Eatools_wave_cal.o Eatools_wave_main.o Eatools_2dcal_wave.o
 OBJS1 =	wrl_calylm.o wrl_colorsign.o wrl_end.o wrl_main.o 	\
-	       wrl_mesh.o wrl_shape.o wrl_spherappear.o wrl_spher.o wrl_start.o
+	       wrl_mesh.o wrl_shape.o wrl_spherappear.o wrl_spher.o wrl_start.o wrl_setcolor.o
 OBJS2 = agr_autoset.f90 agr_curvef.f90 agr_main.f90 agr_minmax.f90 	\
        	agr_polar.f90 agr_setplot.f90 agr_start.f90 agr_winend.f90 agr_win.f90 agr_fzero.o 	
 OBJS3 = gnu_main.o gnu_subs.o gnu_3dmap.o

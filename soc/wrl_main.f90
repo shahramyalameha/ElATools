@@ -4,7 +4,7 @@
 !               Please report bugs or suggestions to:  yalameha93@gmail.com                `
 !                                                                                          `
 !```````````````````````````````````````````````````````````````````````````````````````````
-!!  "wrl_conv: data file ( of AAEP code) to wrl file. 
+!!  "wrl_conv: data file ( of ElaTools code) to wrl file. 
 
 
 PROGRAM wrl_conv
@@ -43,46 +43,57 @@ PROGRAM wrl_conv
   VV_P_PF_min,&
   VV_Sf_PF_min,&
   VV_Ss_PF_min
-  INTEGER                             :: h_ex,k_ex,l_ex
+  INTEGER                             :: h_ex,k_ex,l_ex,num_color
   ChARACTER(LEN=6)                    :: e1,e2
   ChARACTER(LEN=2)                    :: ynveloc
   DOUBLE PRECISION, DIMENSION(3)        :: color_back =(/.0,.0,.0/),&
                                            color_front=(/1.,1.,1./),k
-  DOUBLE PRECISION, DIMENSION(4)        :: color_pos  =(/.0,.8,.0,.0/),&
-                                           color_neg  =(/.8,.0,.0,.0/),&
-                                           color_max  =(/.0,.0,.8,.5/),&
+  DOUBLE PRECISION, DIMENSION(4)        :: color_pos  =(/.0,.8,.0,.0/),&  !< poi +min
+                                           color_neg  =(/.8,.0,.0,.0/),&  !< poi -
+                                           color_max  =(/.0,.0,.8,.5/),&  !< poi +max
                                            color_minp =(/.0,.8,.0,.0/),&
                                            color_minn =(/.8,.0,.0,.0/),&
                                            color_avep =(/.0,.0,.0,1./),&
                                            color_aven =(/.0,.0,.0,1./),&
                                           color_priam =(/.0,.0,.8,.0/),&
                                            color_fast =(/.0,.8,.0,.0/),&
-                                           color_slow =(/.7,.0,.0,.0/)                                     
+                                           color_slow =(/.7,.0,.0,.0/),& 
+                                           color_set1                 ,&
+                                           color_ser2                 ,&
+                                           color_set3             
                                          
   DOUBLE PRECISION, DIMENSION(1930000)  :: datapoints=0d0
   DOUBLE PRECISION, DIMENSION(1930000)  :: G_max,shminp,shminn,shavep,SINver,CO,comminp,pugh_max,pughminp,pughminn,pughavep,&
 		                                       comminn,NPratio_max,pminp,pminn,pavep,paven,&
                                            BINver,maxEVaLM1,maxEVaTM1,minEVaTM1,VVG_P,VVP_P,VV_P_PF,VVG_Sf,VVP_Sf,VV_Sf_PF,&
                                            VVG_Ss,VVP_Ss,VV_Ss_PF
+  ChARACTER(len=7), dimension(10)       :: arg_mane
   INTEGER,          DIMENSION(190300,4) :: mesh=0
   INTEGER                               :: n_phif, n_thetaf, num_mesh,ii=0,argl,cutmesh
-  character(len=10)                     :: val='',namepro
-  character(len=:), allocatable         :: a
+  character(len=10)                     :: val='',namepro 
+  character(len=1)                      :: clor_val=" "
+  ChARACTER(len=7)                      :: a=' '
   
     OPEN(69, file="MESH")
     read(69,*)n_phif,n_thetaf,cutmesh
     WRITE(*,*)"meash:",n_phif,n_thetaf,cutmesh
 
     close(69)
-  ! Get command line args (Fortran 2003 standard)
-  IF (command_argument_count() > 0) then
-     CALL get_command_argument(1, length=argl)
-     allocate(character(argl) :: a)
-     CALL get_command_argument(1, a)
-     READ(a,*) namepro
-          val=namepro
-     WRITE(*,'(2a)')namepro,'was read well...'
-  ENDif
+
+     ! Get command line args (Fortran 2003 standard)
+  N_arg = 0
+  DO
+    CALL get_command_argument(N_arg, a)
+    IF (LEN_TRIM(a) == 0) EXIT
+
+    arg_mane(N_arg)=TRIM(a)
+    N_arg = N_arg+1
+  END DO
+
+ val      = arg_mane(1)	
+ clor_val = arg_mane(2)	
+ 
+      WRITE(*,'(3a)')val,'was read well...'
      IF (val=='-h' .OR. val=="") then
        Write(*,*)'Using: dat2wrl_lapw [ Properties ] out of DatFile_*** folder'
        WRITE(*,*)''
@@ -179,7 +190,14 @@ if (val=='young' .or. val=='Young' .or. val=='yon') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,SINver)
-   CALL shape_appearance_wrl(color_pos)
+! for v1.6.3
+   if (clor_val=="1") THEN
+     CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+     CALL shape_appearance_wrl(color_set1)
+   else
+    CALL shape_appearance_wrl(color_pos)
+   endif
+! rof v1.6.3
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Young.wrl was created.' 
@@ -195,14 +213,29 @@ if (val=='shear'.or. val=='Shear' .or. val=='she') then
    CALL shape_wrl()
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,G_max)
-   CALL shape_appearance_wrl(color_max)
+   ! for v1.6.3
+    if (clor_val=="1") THEN
+     CALL set_colors(val,1, color_set1,color_set2,color_set3)
+     CALL shape_appearance_wrl(color_set1)
+   else
+    CALL shape_appearance_wrl(color_max)
+   endif
+! rof v1.6.3
    CALL close_shape_wrl
    
    CALL shape_wrl()
   CALL spheroid_wrl(n_phif,n_thetaf,mesh)
-   CALL color_sign_wrl(color_minp,color_minn,n_phif,n_thetaf,shminp)   
+   ! for v1.6.3
+    if (clor_val=="1") THEN
+     CALL set_colors(val, 2,color_set1,color_set2,color_set3)
+     CALL color_sign_wrl(color_set2,color_minn,n_phif,n_thetaf,shminp) 
+  else
+    CALL color_sign_wrl(color_minp,color_minn,n_phif,n_thetaf,shminp)   
+  endif
+! rof v1.6.3  
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,shminp)
    CALL shape_appearance_wrl((/0d0,0d0,0d0/))
+
    CALL close_shape_wrl
    
    CALL shape_wrl()
@@ -226,12 +259,26 @@ if (val=='pugh'.or. val=='Pugh' .or. val=='pug') then
    CALL shape_wrl()
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,pugh_max)
+      ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val,1, color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
    CALL shape_appearance_wrl(color_max)
+  endif
+! rof v1.6.3
    CALL close_shape_wrl
    
    CALL shape_wrl()
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
-   CALL color_sign_wrl(color_minp,color_minn,n_phif,n_thetaf,pughminp)   
+   ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 2,color_set1,color_set2)
+    CALL color_sign_wrl(color_set2,color_minn,n_phif,n_thetaf,pughminp)  
+ else
+  CALL color_sign_wrl(color_minp,color_minn,n_phif,n_thetaf,pughminp)   
+endif
+! rof v1.6.3 
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,pughminp)
    CALL shape_appearance_wrl((/0d0,0d0,0d0/))
    CALL close_shape_wrl
@@ -261,7 +308,14 @@ if (val=='poisson'.or. val=='Poisson' .or. val=='poi') then
      CALL shape_wrl()
      CALL spheroid_wrl(n_phif,n_thetaf,mesh)
      CALL mesh_datapoints_wrl(n_phif,n_thetaf,NPratio_max)
-     CALL shape_appearance_wrl(color_max)
+  ! for v1.6.3
+     if (clor_val=="1") THEN
+      CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+      CALL shape_appearance_wrl(color_set1)
+    else
+      CALL shape_appearance_wrl(color_max)
+    endif
+ ! rof v1.6.3
      CALL close_shape_wrl
    ENDif
    
@@ -269,7 +323,14 @@ if (val=='poisson'.or. val=='Poisson' .or. val=='poi') then
      CALL shape_wrl()
      CALL spheroid_wrl(n_phif,n_thetaf,mesh)
      CALL mesh_datapoints_wrl(n_phif,n_thetaf,pminp)
-     CALL shape_appearance_wrl(color_minp)
+       ! for v1.6.3
+     if (clor_val=="1") THEN
+      CALL set_colors(val, 2,color_set1,color_set2,color_set3)
+      CALL shape_appearance_wrl(color_set2)
+    else
+      CALL shape_appearance_wrl(color_minp)
+    endif
+ ! rof v1.6.3
      CALL close_shape_wrl
    ENDif  
    
@@ -277,7 +338,14 @@ if (val=='poisson'.or. val=='Poisson' .or. val=='poi') then
      CALL shape_wrl()
      CALL spheroid_wrl(n_phif,n_thetaf,mesh)
      CALL mesh_datapoints_wrl(n_phif,n_thetaf,pminn)
-     CALL shape_appearance_wrl(color_minn)
+ ! for v1.6.3
+     if (clor_val=="1") THEN
+      CALL set_colors(val, 3,color_set1,color_set2,color_set3)
+      CALL shape_appearance_wrl(color_set3)
+    else
+      CALL shape_appearance_wrl(color_minn)
+    endif
+ ! rof v1.6.3
      CALL close_shape_wrl
    ENDif
    
@@ -310,7 +378,15 @@ if (val=='compress'.or. val=='com' .or. val=='comp') then
    
    CALL shape_wrl()
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
-   CALL color_sign_wrl(color_pos,color_neg,n_phif,n_thetaf,co)  
+   ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2)
+    CALL set_colors(val, 2,color_set1,color_set2)
+    CALL color_sign_wrl(color_set2,color_set2,n_phif,n_thetaf,co)  
+   else
+    CALL color_sign_wrl(color_pos,color_neg,n_phif,n_thetaf,co)  
+  endif
+! rof v1.6.3 
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,co)
    CALL shape_appearance_wrl((/0d0,0d0,0d0,color_pos(4)/))
    CALL close_shape_wrl
@@ -330,7 +406,14 @@ if (val=='bulk'.or. val=='Bulk' .or. val=='bul') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
    !CALL color_sign_wrl((/0d0,0d0,.9d0/),color_neg,n_phif,n_thetaf,BINver)  
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,BINver)
-   CALL shape_appearance_wrl(color_pos)
+   ! for v1.6.3
+  if (clor_val=="1") THEN
+     CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+     CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_pos)
+  endif
+! rof v1.6.3
    CALL close_shape_wrl
    close(41)
          WRITE(*,'(2a)') ' > Bulk.wrl was created.' 
@@ -373,7 +456,14 @@ if (val=='PhaseP'.or. val=='phasep' .or. val=='pp') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VVP_P)
-   CALL shape_appearance_wrl(color_priam)
+  ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_priam)
+  endif
+! rof v1.6.3  
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Phase-P.wrl was created.' 
@@ -389,7 +479,14 @@ if (val=='PhaseF'.or. val=='phasef' .or. val=='pf') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VVP_Sf)
-   CALL shape_appearance_wrl(color_fast)
+  ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_fast)
+  endif
+! rof v1.6.3     
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Phase-Fast.wrl was created.' 
@@ -405,7 +502,14 @@ if (val=='PhaseS'.or. val=='phases' .or. val=='ps') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VVP_Ss)
-   CALL shape_appearance_wrl(color_slow)
+  ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_slow)
+  endif
+! rof v1.6.3    
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Phase-Slow.wrl was created.' 
@@ -421,7 +525,15 @@ if (val=='GroupP'.or. val=='groupp' .or. val=='gp') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VVG_P)
-   CALL shape_appearance_wrl(color_priam)
+  ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_priam)  
+  endif
+! rof v1.6.3    
+
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Group-P.wrl was created.' 
@@ -437,7 +549,14 @@ if (val=='Groupf'.or. val=='groupf' .or. val=='gf') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VVG_Sf)
-   CALL shape_appearance_wrl(color_fast)
+  ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_fast)
+  endif
+! rof v1.6.3    
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Group-Fast.wrl was created.' 
@@ -469,7 +588,14 @@ ENDif
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VV_P_PF)
-   CALL shape_appearance_wrl(color_priam)
+  ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_priam)
+  endif
+! rof v1.6.3     
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Power-Flow-P.wrl was created.' 
@@ -486,7 +612,14 @@ ENDif
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VV_Sf_PF)
-   CALL shape_appearance_wrl(color_fast)
+  ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_fast)
+  endif
+! rof v1.6.3    
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Power-Flow-Fast.wrl was created.' 
@@ -502,7 +635,14 @@ ENDif
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
   !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,SINver)
    CALL mesh_datapoints_wrl(n_phif,n_thetaf,VV_Sf_PF)
-   CALL shape_appearance_wrl(color_fast)
+     ! for v1.6.3
+   if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+    CALL shape_appearance_wrl(color_fast)
+  endif
+! rof v1.6.3  
    CALL close_shape_wrl
    close(41)
      WRITE(*,'(2a)') ' > Power-Flow-slow.wrl was created.' 
