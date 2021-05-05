@@ -1,7 +1,6 @@
 # El _A_ Tools [![Website](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=ElaTools&url=https%3A%2F%2Fyalameha.gitlab.io%2Felastictools%2Findex.html)](https://yalameha.gitlab.io/elastictools/index.html)
-!<p align="center">
-  <img src="./ezgif.com-gif-maker.gif" width="350" title="hover text">
-  <img src="./ezgif.com-gif-maker.gif" width="350" alt="accessibility text">
+<p align="center">
+  <img src="./ezgif.com-gif-maker.gif" width="250" title="hover text">
 </p>  
 ## _A tool for analyzing anisotropic elastic properties of the 2D and 3D materials_
 
