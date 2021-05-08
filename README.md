@@ -120,6 +120,7 @@ The db directory contains the elastic constant database file. The path of these 
 chmod +x run_path.sh ; ./run_path.sh
 
 Then you need the complete path (example: /home/.../soc/db/ ) of the elastic constant database files (Cijs.binery and All_2ID_cop.csv) in the db directory, which is different for the user system.
+
 Usage
 -----
 
