@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="./ezgif.com-gif-maker.gif" width="250" title="hover text">
-  <img src="./phase_smap.png" width="250" title="hover text">
+  <img src="./phase_smap.png" width="350" title="hover text">
 </p>  
 
 ## _A tool for analyzing anisotropic elastic properties of the 2D and 3D materials_
