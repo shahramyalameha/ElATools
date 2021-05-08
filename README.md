@@ -1,4 +1,5 @@
 # El _A_ Tools [![Website](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=ElaTools&url=https%3A%2F%2Fyalameha.gitlab.io%2Felastictools%2Findex.html)](https://yalameha.gitlab.io/elastictools/index.html)
+[![Group Chat](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=ElaTools&url=https%3A%2F%2Fyalameha.gitlab.io%2Felastictools%2Findex.html)](https://groups.google.com/g/elatools)
 <p align="center">
   <img src="./ezgif.com-gif-maker.gif" width="250" title="hover text">
 </p>  
