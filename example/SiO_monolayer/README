@@ -6,7 +6,7 @@ Cij:
    -6.9  120.2    0.00
     0.00    0.00   33.4
     
- run: EaTools_lapw
+ run: EaTools.x 
  select:  > 2 > 2 
  
  
