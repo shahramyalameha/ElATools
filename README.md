@@ -14,16 +14,10 @@
 
 If you use this tool, please cite the following work:
 
->> @article{yalameha2020insight,
-  title={Insight into the topological phase and elastic properties of halide perovskites CsSnX3 (X= l, Br, Cl) under hydrostatic pressures},
-  author={Yalameha, Shahram and Saeidi, Parviz and Nourbakhsh, Zahra and Vaez, Aminollah and Ramazani, Ali},
-  journal={Journal of Applied Physics},
-  volume={127},
-  number={8},
-  pages={085102},
-  year={2020},
-  publisher={AIP Publishing LLC}
-}
+>> Journal of Applied Physics 127, 085102 (2020); https://doi.org/10.1063/1.5125920
+
+>>>The code is open-source (licensed with a MIT license, see LICENSE.txt).
+
 
 ## Features
 The following features of ElATools are highlighted:
