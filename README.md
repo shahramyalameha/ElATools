@@ -16,7 +16,7 @@ If you use this tool, please cite the following work:
 
 >> Journal of Applied Physics 127, 085102 (2020); https://doi.org/10.1063/1.5125920
 
->>>The code is open-source (licensed with a MIT license, see LICENSE.txt).
+>>>The code is open-source (licensed with a GPLv3 license, see LICENSE file).
 
 
 ## Features
