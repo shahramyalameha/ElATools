@@ -14,6 +14,8 @@ PROGRAM wrl_conv
   Minyoung,  &
   Maxcomp,   &
   Mincomp,   &
+  Ha_max2,   &
+  Ha_min2,   &
   G_max2,    &
   G_min2,    &
   pugh_max2, &
@@ -65,7 +67,7 @@ PROGRAM wrl_conv
   DOUBLE PRECISION, DIMENSION(1930000)  :: datapoints=0d0
   DOUBLE PRECISION, DIMENSION(1930000)  :: G_max,shminp,shminn,shavep,SINver,CO,comminp,pugh_max,pughminp,pughminn,pughavep,&
 		                                       comminn,NPratio_max,pminp,pminn,pavep,paven,&
-                                           BINver,maxEVaLM1,maxEVaTM1,minEVaTM1,VVG_P,VVP_P,VV_P_PF,VVG_Sf,VVP_Sf,VV_Sf_PF,&
+                                           BINver,maxEVaLM1,maxEVaTM1,minEVaTM1,VVG_P,VVP_P,VV_P_PF,VVG_Sf,VVP_Sf,VV_Sf_PF,hardvar ,&
                                            VVG_Ss,VVP_Ss,VV_Ss_PF
   ChARACTER(len=7), dimension(10)       :: arg_mane
   INTEGER,          DIMENSION(190300,4) :: mesh=0
@@ -104,6 +106,7 @@ PROGRAM wrl_conv
        WRITE(*,*)' young  =>  Young’s modulus                 '
        WRITE(*,*)' bulk   =>  Bulk modulus                    '
        WRITE(*,*)' comp   =>  Linear compressibility          '
+       WRITE(*,*)' hard   =>  Hardness                        '
        WRITE(*,*)' pp     =>  Phase velocity: P-mode          '
        WRITE(*,*)' ps     =>  Phase velocity: Slow-mode       '
        WRITE(*,*)' pf     =>  Phase velocity: Fast-mode       '
@@ -142,11 +145,13 @@ PROGRAM wrl_conv
     val=='PFactF'.or. val=='pfoupf' .or. val=='pff' .or. &
     val=='PFactS'.or. val=='pfoups' .or. val=='pfs')then
     WRITE(*,*) "Sorry! Your request is invalid!"
+    call sleep(1)
+    WRITE(*,*) "Have phase and group velocity calculations been performed?"    
     stop
     ENDif
   endif
  OPEN(36,file='.MaMiout')
- read(36,*)  Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2,G_min2,Maxbulk,Minbulk,Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2,pugh_min2 
+ read(36,*)  Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2,G_min2,Maxbulk,Minbulk,Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2,pugh_min2 ,Ha_max2,Ha_min2
  IF (ynveloc=='Y' .OR. ynveloc=='y')THEN
    OPEN(37,file='.MaMiout2')
    read(37,*) VVP_P_max ,VVP_P_min ,VVP_Sf_max ,VVP_Sf_min ,VVP_Ss_max ,VVP_Ss_min ,VVG_P_max ,&
@@ -168,7 +173,7 @@ PROGRAM wrl_conv
      ! print*, ii
      read(1,*) G_max(ii),shminp(ii),shminn(ii),shavep(ii),SINver(ii),CO(ii),comminp(ii),&
 		                      comminn(ii),NPratio_max(ii),pminp(ii),pminn(ii),pavep(ii),paven(ii),BINver(ii),&
-                          maxEVaLM1(ii),maxEVaTM1(ii),minEVaTM1(ii),pugh_max(ii),pughminp(ii),pughminn(ii),pughavep(ii) 
+                          maxEVaLM1(ii),maxEVaTM1(ii),minEVaTM1(ii),pugh_max(ii),pughminp(ii),pughminn(ii),pughavep(ii),hardvar(ii) 
     IF (ynveloc=='Y' .OR. ynveloc=='y')THEN
      read(5,*) VVP_P(ii),VVG_P(ii),VVP_Sf(ii),VVG_Sf(ii),VVP_Ss(ii),VVG_Ss(ii),VV_P_PF(ii),VV_Sf_PF(ii),VV_Ss_PF(ii)
           
@@ -203,6 +208,30 @@ if (val=='young' .or. val=='Young' .or. val=='yon') then
      WRITE(*,'(2a)') ' > Young.wrl was created.' 
    STOP
 ENDif
+!> v1.6.5
+if (val=='hardness' .or. val=='Hardness' .or. val=='hard') then   
+  max=Ha_max2*1.5
+  max=max*1.5  
+  OPEN (41, FILE ='Hardness.wrl')
+  CALL cal_YLM(num_mesh,n_phif,n_thetaf,mesh)
+  CALL start_wrl((/0.75d0,0.75d0,0.75d0/),(/1.0d0,0.0d0,0.75d0/),max)
+  CALL shape_wrl()
+  CALL spheroid_wrl(n_phif,n_thetaf,mesh)
+   CALL mesh_datapoints_wrl(n_phif,n_thetaf,hardvar)
+! for v1.6.3
+  if (clor_val=="1") THEN
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+    CALL shape_appearance_wrl(color_set1)
+  else
+   CALL shape_appearance_wrl(color_pos)
+  endif
+! rof v1.6.3
+  CALL close_shape_wrl
+  close(41)
+    WRITE(*,'(2a)') ' > Hardness.wrl was created.' 
+  STOP
+ENDif
+!< 1.6.5
 if (val=='shear'.or. val=='Shear' .or. val=='she') then
    max=G_max2*1.5
    if (abs(G_min2).GE.max) max=-G_min2

@@ -31,44 +31,45 @@ PROGRAM gnu_conv
  
  ! write(*,*) val,clor_val
   IF (val == "-h" .OR. val == "")THEN
-       WRITE(*,*)'Using: dat2gnu_lapw [ Properties ] [hmap colors] in the  DatFile_*** folder' 
+       WRITE(*,*)'Using: dat2gnu.x [ Properties ] [hmap colors] in the  DatFile_*** folder' 
        WRITE(*,*)''
        call system ("sleep 0.5")
-       WRITE(*,*)'[3D Properties]:                                         '
-       WRITE(*,*)' poi     => Poisson’s ratio                         '
-       WRITE(*,*)' shear   => Shear modulus                           '
-       WRITE(*,*)' young   => Young’s modulus                         '
-       WRITE(*,*)' bulk    => Bulk modulus                            '
-       WRITE(*,*)' comp    => Linear compressibility                  '
-       WRITE(*,*)' pp      => Phase velocity: P-mode                  '
-       WRITE(*,*)' ps      => Phase velocity: Slow-mode               '
-       WRITE(*,*)' pf      => Phase velocity: Fast-mode               '
-       WRITE(*,*)' gp      => Group velocity: P-mode                  '
-       WRITE(*,*)' gs      => Group velocity: Slow-mode               '
-       WRITE(*,*)' gf      => Group velocity: Fast-mode               '
-       WRITE(*,*)' pall    => Phase and PFA: all-mode                 '
-       WRITE(*,*)' gall    => Group and PFA all-mode                  '
-       WRITE(*,*)' hmpoi   => 2D heat mape of Poisson’s ratio         '
-       WRITE(*,*)' hmcomp  => 2D heat mape of Linear compressibility  '
-       WRITE(*,*)' hmshear => 2D heat mape of Shear modulus           '
-       WRITE(*,*)' hmbulk  => 2D heat mape of Bulk modulus            '
-       WRITE(*,*)' hmyoung => 2D heat mape of Young’s modulus         '
-       WRITE(*,*)' hmpall  => 2D heat mape of Phase velocity: all-mode'
-       WRITE(*,*)' hmgall  => 2D heat mape of Group velocity: all-mode'
-       WRITE(*,*)' hmpfall => 2D heat mape of PFA: all-mode           '
+       WRITE(*,*)'[3D Properties]:                                     '
+       WRITE(*,*)' poi      => Poisson’s ratio                         '
+       WRITE(*,*)' shear    => Shear modulus                           '
+       WRITE(*,*)' young    => Young’s modulus                         '
+       WRITE(*,*)' bulk     => Bulk modulus                            '
+       WRITE(*,*)' comp     => Linear compressibility                  '
+       WRITE(*,*)' hard     => Hardness                                '       
+       WRITE(*,*)' pp       => Phase velocity: P-mode                  '
+       WRITE(*,*)' ps       => Phase velocity: Slow-mode               '
+       WRITE(*,*)' pf       => Phase velocity: Fast-mode               '
+       WRITE(*,*)' gp       => Group velocity: P-mode                  '
+       WRITE(*,*)' gs       => Group velocity: Slow-mode               '
+       WRITE(*,*)' gf       => Group velocity: Fast-mode               '
+       WRITE(*,*)' pall     => Phase and PFA: all-mode                 '
+       WRITE(*,*)' gall     => Group and PFA all-mode                  '
+       WRITE(*,*)' hmpoi    => 2D heat mape of Poisson’s ratio         '
+       WRITE(*,*)' hmcomp   => 2D heat mape of Linear compressibility  '
+       WRITE(*,*)' hmshear  => 2D heat mape of Shear modulus           '
+       WRITE(*,*)' hmbulk   => 2D heat mape of Bulk modulus            '
+       WRITE(*,*)' hmyoung  => 2D heat mape of Young’s modulus         '
+       WRITE(*,*)' hmpall   => 2D heat mape of Phase velocity: all-mode'
+       WRITE(*,*)' hmgall   => 2D heat mape of Group velocity: all-mode'
+       WRITE(*,*)' hmpfall  => 2D heat mape of PFA: all-mode           '
        WRITE(*,*)''
-       WRITE(*,*)'[2D Properties]:                                      '
-       WRITE(*,*)' 2dpoi   => Poisson’s ratio                         '
-       WRITE(*,*)' 2dyoung => Young’s modulus                         '
-       WRITE(*,*)' 2dshear => Shear modulus                           '
-       WRITE(*,*)' 2d      => Generate all propreites                 '
+       WRITE(*,*)'[2D Properties]:                                     '
+       WRITE(*,*)' 2dpoi    => Poisson’s ratio                         '
+       WRITE(*,*)' 2dyoung  => Young’s modulus                         '
+       WRITE(*,*)' 2dshear  => Shear modulus                           '
+       WRITE(*,*)' 2d       => Generate all propreites                 '
        WRITE(*,*)' '
-       WRITE(*,*)'[hmap colors]:                                      '
-       WRITE(*,*)'bbry     => black-blue-red-yellow                   '
-       WRITE(*,*)'grv      => green-red-violet                        '
-       WRITE(*,*)'bbvy     => black-blue-violet-yellow-white          '
-       WRITE(*,*)'bgyr     => blue-green-yellow-red                   '
-       WRITE(*,*)'bryw     => black-red-yellow-white                  '
+       WRITE(*,*)'[hmap colors]:                                       '
+       WRITE(*,*)'bbry      => black-blue-red-yellow                   '
+       WRITE(*,*)'grv       => green-red-violet                        '
+       WRITE(*,*)'bbvy      => black-blue-violet-yellow-white          '
+       WRITE(*,*)'bgyr      => blue-green-yellow-red                   '
+       WRITE(*,*)'bryw      => black-red-yellow-white                  '
        STOP
   ENDIF
 
@@ -102,6 +103,9 @@ IF (val=='all' .OR. val=='All') then
    IF (i==23) then; val='hmpall';  call ploter(val,clor_val); endif
    IF (i==24) then; val='hmgall';  call ploter(val,clor_val); endif
    IF (i==25) then; val='hmpfall'; call ploter(val,clor_val); endif
+! new!
+   IF (i==26) then; val='hard'; call ploter(val,clor_val); endif
+
    write(*,*)'======='
   enddo
 else
@@ -165,15 +169,17 @@ END PROGRAM
    VV_Ss_PF_max,&
    VV_P_PF_min,&
    VV_Sf_PF_min,&
-   VV_Ss_PF_min
+   VV_Ss_PF_min,&
+   Ha_max2,    &
+   Ha_min2
 
    if (val=='all' .OR. val=='poi' .OR. val=='comp'.OR. val=='shear' .OR.val=='sound' .OR. val=='bulk' .or. val=='young'&
                   .OR.val=='pugh' .OR. val=='pp' .OR.  val=='pf'.OR. val=='ps' .OR. val=='gp' .OR.val=='gf' &
                   .OR.val=='gs' .OR. val=='pall' .OR. val=='gall' .OR.val=='pfall' .OR. val=='hmpoi' .OR. val=='hmcomp'&
                   .OR.val=='hmshear' .OR.val=='hmsound' .OR. val=='hmbulk' &
-                  .OR.val=='hmpugh' .OR. val=='hmpall' .OR. val=='hmgall' .OR.val=='hmpfall' ) then
+                  .OR.val=='hmpugh' .OR. val=='hmpall' .OR. val=='hmgall' .OR.val=='hmpfall' .OR. val == "hard") then
      OPEN(32,file='.MaMiout',status='old')
-     read(32,*) Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2,G_min2,Maxbulk,Minbulk,Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2,pugh_min2
+     read(32,*) Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2,G_min2,Maxbulk,Minbulk,Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2,pugh_min2,Ha_max2,Ha_min2
      !write(*,*)Maxyoung,Maxcomp,G_max2,Maxbulk,Pratio_max,pugh_max2,maxEVaTMf
      close(32)
      OPEN(30,file='.MaMiout2',status='old')
@@ -185,6 +191,7 @@ END PROGRAM
  if (val=='poi' .OR. val=='poissons' ) then
         WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='poissons.gpi'); val0='poi' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')' stats "2dcut_poisson.dat" u 2 nooutput'
@@ -225,6 +232,7 @@ END PROGRAM
   call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='poissons_smap.gpi')
+Call copyri()
 WRITE(2,'(a)')' reset'
 WRITE(2,'(a)')'set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')'set output  "poissons_smap.png"'
@@ -277,6 +285,7 @@ endif
  if (val=='comp' .OR. val=='compressibiliy' .or. val=='com') then
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='compressibiliy.gpi'); val0='com' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_comp.dat' u 2 nooutput"
@@ -309,6 +318,7 @@ endif
   call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='compressibiliy_smap.gpi');  	
+Call copyri()
 WRITE(2,'(a)')' reset'
 WRITE(2,'(a)')' set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')' set output  "compressibiliy_smap.png"'
@@ -354,6 +364,7 @@ endif
   if (val=='shear' .OR. val=='she' .or. val=='Shear') then
          WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='shear.gpi'); val0='she' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_shear.dat' u 2 nooutput"
@@ -388,6 +399,7 @@ endif
   call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='shear_smap.gpi') 
+Call copyri()
 WRITE(2,'(a)')' reset'
 WRITE(2,'(a)')' set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')' set output  "shear_smap.png"'
@@ -434,6 +446,7 @@ endif
   if (val=='pugh' .OR. val=='pug' .or. val=='Pugh') then
          WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='pugh.gpi'); val0='pug' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_pugh.dat' u 2 nooutput"
@@ -468,6 +481,7 @@ endif
     call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='phug_smap.gpi') 
+Call copyri()
 WRITE(2,'(a)')' reset'
 WRITE(2,'(a)')' set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')' set output  "phug_smap.png"'
@@ -513,6 +527,7 @@ endif
   if (val=='sound' .OR. val=='sou' .or. val=='Sound') then
          WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='sound.gpi'); val0='sou' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
   WRITE(2,'(a)')"stats '2dcut_sound.dat' u 4 nooutput"
@@ -554,6 +569,7 @@ endif
   
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='bulk.gpi'); val0='bul' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_bulk.dat' u 2 nooutput"
@@ -587,6 +603,7 @@ endif
   call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='bulk_smap.gpi'); 
+Call copyri()
 WRITE(2,'(a)')' reset'
 WRITE(2,'(a)')' set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')' set output  "bulk_smap.png"'
@@ -622,10 +639,86 @@ WRITE(2,'(a)')' print "> bulk_smap.png was generated... "'
 write(*,"(A)")" > Using: gnuplot bulk_smap.gpi"
 
 endif
+!///////////////////
+if (val=='hard' .OR. val=='hardness' .or. val=='Hard') then
+  WRITE(*,'(2a)') val,'was READ well...'
+open(2,file='hardness.gpi'); val0='hard' 	
+Call copyri()
+CALL setreset()
+CALL unset1() 
+WRITE(2,'(a)')"stats '2dcut_hardness.dat' u 2 nooutput"
+WRITE(2,'(a)')'maxig=ceil(STATS_max)'
+WRITE(2,'(a)')'maxi=maxig'
+WRITE(2,'(a)')'stats "2dcut_hardness.dat" u 3 nooutput'
+WRITE(2,'(a)')'maxif=ceil(STATS_max)'
+WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
+CALL set1()
+CALL settit(val0) 
+WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2\'
+WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
+CALL setterm() 
+CALL setoutput(val0)
+CALL unset1() 
+WRITE(2,'(a)')"stats '2dcut_hardness.dat' u 2 nooutput"
+WRITE(2,'(a)')'maxig=ceil(STATS_max)'
+WRITE(2,'(a)')'maxi=maxig'
+WRITE(2,'(a)')'stats "2dcut_hardness.dat" u 2 nooutput'
+WRITE(2,'(a)')'maxif=ceil(STATS_max)'
+WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
+CALL set1()
+CALL settit(val0)  
+WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2 ,\'
+WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
+write(*,"(A,F7.2,A,F8.2,A)")" > Using: go to gnuplot, call 'hardness.gpi' '",Ha_max2/2,"' '",Ha_max2+1d0,"'(or other scale)  "
+ 
+endif
+!///////////////////
+
+if (val=='hmhard' .OR. val=='hmhar' .or. val=='hmhardness') then
+call threeDdmap()
+WRITE(*,'(2a)') val,'was READ well...'
+open(2,file='hardness_smap.gpi'); 
+Call copyri()
+WRITE(2,'(a)')' reset'
+WRITE(2,'(a)')' set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
+WRITE(2,'(a)')' set output  "hardness_smap.png"'
+WRITE(2,'(a)')' set multiplot layout 1,1'
+WRITE(2,'(a)')' set format z "%11.4e"'
+WRITE(2,'(a)')' set xlabel "{/Symbol q} (Degree)"  '
+WRITE(2,'(a)')' set ylabel "{/Symbol f} (Degree)"  '
+WRITE(2,'(a)')' set view map'
+IF      (clor_val=='bbry') then
+WRITE(2,'(a)')' set palette rgb 7,5,15'
+else IF (clor_val=='grv') then
+WRITE(2,'(a)')' set palette rgb 3,11,6'
+else IF (clor_val=='bbvy') then
+WRITE(2,'(a)')' set palette rgb 30,31,32'
+else IF (clor_val=='bgyr') then
+WRITE(2,'(a)')' set palette rgb 33,13,10'
+else IF (clor_val=='bryw') then
+WRITE(2,'(a)')' set palette rgb 34,35,36'
+else
+WRITE(2,'(a)')' set palette rgb 30,13,10'
+END IF
+WRITE(2,'(a)')' unset ztics'
+WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
+WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
+WRITE(2,'(a)')' set size 0.333 ,1.1'
+WRITE(2,'(a)')' set origin 0.3333,-0.03'
+WRITE(2,'(a)')' set title "Hardness"'
+WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($24) w  pm3d notitle'
+WRITE(2,'(a)')' unset multiplot'
+WRITE(2,'(a)')' unset output'
+WRITE(2,'(a)')' reset'
+WRITE(2,'(a)')' print "> hardness_smap.png was generated... "'
+write(*,"(A)")" > Using: gnuplot hardness_smap.gpi"
+
+endif
   !///////////////////
   if (val=='young' .OR. val=='you' .or. val=='Young') then
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='young.gpi'); val0='you' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_young.dat' u 2 nooutput"
@@ -660,6 +753,7 @@ endif
   call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='young_smap.gpi'); 
+Call copyri()
 WRITE(2,'(a)')' reset'
 WRITE(2,'(a)')' set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')' set output  "young_smap.png"'
@@ -700,6 +794,7 @@ if (val=='hmphaseall'.or. val=='hmpall' .or. val=='hmpa') then
   call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
   open(2,file='phase_smap.gpi'); 
+  Call copyri()
 WRITE(2,'(a)')'reset'
 WRITE(2,'(a)')'set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')'set output  "phase_smap.png"'
@@ -748,6 +843,7 @@ if (val=='hmgroupall'.or. val=='hmgall' .or. val=='hmga') then
   call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
   open(2,file='group_smap.gpi');
+  Call copyri()
 WRITE(2,'(a)')'reset'
 WRITE(2,'(a)')'set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')'set output  "group_smap.png"'
@@ -783,6 +879,7 @@ endif
   if (val=='PhaseP'.or. val=='phasep' .or. val=='pp') then
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='phase-p.gpi'); val0='pp'   
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_pveloc.dat' u 2 nooutput"
@@ -814,7 +911,8 @@ endif
 
   if (val=='PhaseF'.or. val=='phasef' .or. val=='pf') then
        WRITE(*,'(2a)') val,'was READ well...'
-   open(2,file='phase-fast.gpi'); val0='pf'   
+   open(2,file='phase-fast.gpi'); val0='pf' 
+   Call copyri()  
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_pveloc.dat' u 3 nooutput"
@@ -847,6 +945,7 @@ endif
   if (val=='PhaseS'.or. val=='phases' .or. val=='ps') then
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='phase-slow.gpi'); val0='ps'   
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_pveloc.dat' u 4 nooutput"
@@ -879,6 +978,7 @@ endif
   if (val=='GroupP'.or. val=='groupp' .or. val=='gp') then
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='group-p.gpi'); val0='ps'   
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_gveloc.dat' u 2 nooutput"
@@ -910,6 +1010,7 @@ endif
   if (val=='GroupF'.or. val=='groupf' .or. val=='gf') then
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='group-fast.gpi'); val0='pf'   
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_gveloc.dat' u 3 nooutput"
@@ -942,6 +1043,7 @@ endif
   if (val=='GroupS'.or. val=='groups' .or. val=='gs') then
        WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='group-slow.gpi'); val0='ps'   
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    WRITE(2,'(a)')"stats '2dcut_gveloc.dat' u 4 nooutput"
@@ -974,6 +1076,7 @@ endif
  if (val=='phaseall'.or. val=='pall' .or. val=='pa') then
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='phase.gpi'); val0='pall'   
+Call copyri()
 CALL setreset()
 CALL unset1() 
 WRITE(2,'(a)')"stats '2dcut_pveloc.dat' u 2 nooutput"
@@ -1008,6 +1111,7 @@ endif
 if (val=='groupall'.or. val=='gall' .or. val=='ga') then
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='group.gpi'); val0='gall'   
+Call copyri()
 CALL setreset()
 CALL unset1() 
 WRITE(2,'(a)')"stats '2dcut_gveloc.dat' u 2 nooutput"
@@ -1044,6 +1148,7 @@ if (val=='hmpowerfall'.or. val=='hmpfall' .or. val=='hmpfa') then
     call threeDdmap()
   WRITE(*,'(2a)') val,'was READ well...'
   open(2,file='powerfolw_smap.gpi');
+  Call copyri()
 WRITE(2,'(a)')'reset'
 WRITE(2,'(a)')'set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')'set output  "powerfolw_smap.png"'
@@ -1093,6 +1198,7 @@ endif
 if (val=='powerfall'.or. val=='pfall' .or. val=='pfa') then
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='powerfolw.gpi'); val0='gall'   
+Call copyri()
 CALL setreset()
 CALL unset1() 
 WRITE(2,'(a)')"stats '2dcut_pfaveloc.dat' u 2 nooutput"
@@ -1135,6 +1241,7 @@ endif
  if (val=='2dpoi' ) then
        ! WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='2Dpoissons.gpi'); val0='2poi' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    CALL set1_2d()
@@ -1156,6 +1263,7 @@ endif
   if (val=='2dyoung') then
       ! WRITE(*,'(2a)') val,'was READ well...'
    open(2,file='2Dyoung.gpi'); val0='2you' 	
+   Call copyri()
    CALL setreset()
    CALL unset1() 
    CALL set1_2d()
@@ -1172,6 +1280,7 @@ endif
    if (val=='2dshear') then
       ! WRITE(*,'(2a)') val,'was READ well...'
       open(2,file='2Dshear.gpi'); val0='2she'  
+      Call copyri()
       CALL setreset()
       CALL unset1() 
       CALL set1_2d()

@@ -18,7 +18,7 @@ WRITE(*,'(a)')"  E |____ |L|| (A| ||T|| (O) || (O) ||L|\_S \  "
 WRITE(*,'(a)')"  |______||_| \__,_||_| \___/  \___/ |_||___/  "
 WRITE(*,'(a)')"            45 6C 41 74 6F 6F 6C 73            "
 WRITE(*,'(a)')'========= Shahram Yalameha (c) 2018 ==========='
-WRITE(*,'(a)')'                  v1.6.3                       '
+WRITE(*,'(a)')'                  v1.6.4                       '
 WRITE(*,'(a)')'                   From                        '
 WRITE(*,'(a)')'           Elastic Tools Project               '
 WRITE(*,*)'                                                   '
@@ -36,7 +36,7 @@ WRITE(99,'(a)')"  E |____ |L|| (A| ||T|| (O) || (O) ||L|\_S \  "
 WRITE(99,'(a)')"  |______||_| \__,_||_| \___/  \___/ |_||___/  "
 WRITE(99,'(a)')"            45 6C 41 74 6F 6F 6C 73            "
 WRITE(99,'(a)')'========= Shahram Yalameha (c) 2018 ==========='
-WRITE(99,'(a)')'                  v1.6.3                       '
+WRITE(99,'(a)')'                  v1.6.4                       '
 WRITE(99,'(a)')'                   From                        '
 WRITE(99,'(a)')'           Elastic Tools Project               '
 WRITE(99,*)'                                                   '
