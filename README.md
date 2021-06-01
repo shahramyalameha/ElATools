@@ -16,7 +16,15 @@
 
 The paper of this tool is under review. If you use this tool, please cite the following work (form temporarily):
 
->> Journal of Applied Physics 127, 085102 (2020); https://doi.org/10.1063/1.5125920
+```
+@article{yalameha2021elatools,
+  title={ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
+  author={Yalameha, Shahram and Nourbakhsh, Zahra and Vashaee, Daryoosh},
+  journal={arXiv preprint arXiv:2105.07279},
+  year={2021}
+}
+```
+
 
 >>>The code is open-source (licensed with a GPLv3 license, see LICENSE file).
 
