@@ -60,7 +60,8 @@ The following features of ElATools are highlighted:
    - 3D representation of Shear modulus (tested) 
    - 3D representation of Linear Compressibiliy (tested) 
    - 3D representation of Young modulus  (tested) 
-   - 3D representation of Poisson's ratio (tested) 
+   - 3D representation of Poisson's ratio (tested)
+   - 3D representation of Hardness (testing) **New**
    - 3D representation of Pugh ratio (testing)
    - 3D representation of Phase velocity_P, Fast and slow modes (tested) **New**
    - 3D representation of Group velocity_P, Fast and slow modes (tested)  **New**
@@ -70,6 +71,7 @@ The following features of ElATools are highlighted:
    - 2D Heat map of Linear Compressibiliy (tested) **New**
    - 2D Heat map of Young modulus  (tested) **New**
    - 2D Heat map of Poisson ratio (tested) **New**
+   - 2D Heat map of Hardness (testing) **New**
    - 2D Heat map of Pugh ratio (testing) **New**
    - 2D Heat map of Phase velocity_P, Fast and slow modes (tested) **New**
    - 2D Heat map of Group velocity_P, Fast and slow modes (tested)  **New**
