@@ -125,7 +125,7 @@ Then you need the complete path (example: /home/.../soc/db/ ) of the elastic con
 the user system.
 
 Then Go into ElATools-v*.*.*/soc directory, Choose and Edit Makefile, Change the blas library ” libs= ” to your lapack+blas library
-After the compliation, the binary ‘Elatools.x , dat2wrl.x, dat2gnu.x and dat2agr.x’ are copied to Elatools.x /bin/, you can put this path to the system PATH with
+After the compliation (run **make** in soc), the binary ‘Elatools.x , dat2wrl.x, dat2gnu.x and dat2agr.x’ are copied to Elatools.x /bin/, you can put this path to the system PATH with
 ::
 
  export PATH=/where/you/downloaded/ElaTools-v*.*.*/bin:$PATH
