@@ -110,7 +110,7 @@ The following features of ElATools are highlighted:
 ## Installation
 You need to install the following packages:
 
-* Fortran compiler (Ifort (Recom.) or gfortran  )
+* Fortran compiler (Ifort v19 and later (Recom.) or gfortran  )
 * Lapack and Blas library
 
 Compilation
