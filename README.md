@@ -111,6 +111,7 @@ The following features of ElATools are highlighted:
    - agr 
    - gnu 
    - dat
+   - html **new**  v1.7.0 and later
 ## Installation
 You need to install the following packages:
 
