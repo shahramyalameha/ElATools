@@ -3,9 +3,9 @@
 <p align="center">
   <img src="pic/ezgif.com-gif-maker.gif" width="250" title="hover text">
   <img src="pic/phase_smap.png" width="600" title="hover text">
-  <img src="pic/1.png" width="220" title="hover text">
-  <img src="pic/2.png" width="220" title="hover text">
-  <img src="pic/3.png" width="220" title="hover text">
+  <img src="pic/1.png" width="150" title="hover text">
+  <img src="pic/2.png" width="150" title="hover text">
+  <img src="pic/3.png" width="150" title="hover text">
 </p>  
 
 ## _A tool for analyzing anisotropic elastic properties of the 2D and 3D materials_
