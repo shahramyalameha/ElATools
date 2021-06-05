@@ -1,4 +1,4 @@
-# El _A_ Tools [![Website](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=ElaTools&url=https%3A%2F%2Fyalameha.gitlab.io%2Felastictools%2Findex.html)](https://yalameha.gitlab.io/elastictools/index.html) [![Chat](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=Chat&url=https%3A%2F%2Fgroups.google.com%2g%2elatools)](https://groups.google.com/g/elatools)
+# ElATools [![Website](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=ElaTools&url=https%3A%2F%2Fyalameha.gitlab.io%2Felastictools%2Findex.html)](https://yalameha.gitlab.io/elastictools/index.html) [![Chat](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=Chat&url=https%3A%2F%2Fgroups.google.com%2g%2elatools)](https://groups.google.com/g/elatools)
 
 <p align="center">
   <img src="./ezgif.com-gif-maker.gif" width="250" title="hover text">
@@ -14,9 +14,17 @@
 [![GitHub stars](https://img.shields.io/github/stars/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/stargazers)
 > We introduce a computational method and a user-friendly code, named ElATools,developed for the analysis of anisotropic elastic properties. ElATools enables   facile analysis of the second-order elastic stiffness tensor of two-dimensional (2D) and three-dimensional (3D) crystal systems. It computes and displays the  main mechanical properties including the bulk modulus, Young’s modulus, shear modulus, p-wave modulus, universal anisotropy index, Chung-Buessem anisotropy index, log-Euclidean anisotropy parameter, Cauchy pressure, Poisson’s ratio, and Pugh’s ratio, using three averaging schemes of Voigt, Reuss, and Hill. ElATools has a database with more than 13,000 elastic stiffness constants for 3D materials available to the user. The program supports output files of the well-known computational codes IRelat, ElaStic, and AELAS. Three types of plotting and visualization tools are integrated to conveniently interface with GNUPLOT, XMGRACE  ,and view3dscene, offering immediate post-processing of the results. ElATools provides reliable means to investigate the mechanical stability based on the  calculation of six (three) eigenvalues of the elastic tensor in 3D (2D) materials. It can efficiently identify anomalous mechanical properties, such as negative  linear compressibility, negative Poisson’s ratio, and highly-anisotropic elastic modulus in 2D and 3D materials, which are central properties to design and  develop high-performance nanoscale electromechanical devices. 
 
-The paper of this tool is under review. If you use this tool, please cite the following work (form temporarily):
+The paper of this tool is under review. If you use this tool, please cite the following work in arXiv (form temporarily):
 
->> Journal of Applied Physics 127, 085102 (2020); https://doi.org/10.1063/1.5125920
+```
+@article{yalameha2021elatools,
+  title={ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
+  author={Yalameha, Shahram and Nourbakhsh, Zahra and Vashaee, Daryoosh},
+  journal={arXiv preprint arXiv:2105.07279},
+  year={2021}
+}
+```
+
 
 >>>The code is open-source (licensed with a GPLv3 license, see LICENSE file).
 
@@ -52,7 +60,8 @@ The following features of ElATools are highlighted:
    - 3D representation of Shear modulus (tested) 
    - 3D representation of Linear Compressibiliy (tested) 
    - 3D representation of Young modulus  (tested) 
-   - 3D representation of Poisson's ratio (tested) 
+   - 3D representation of Poisson's ratio (tested)
+   - 3D representation of Hardness (testing) **New**
    - 3D representation of Pugh ratio (testing)
    - 3D representation of Phase velocity_P, Fast and slow modes (tested) **New**
    - 3D representation of Group velocity_P, Fast and slow modes (tested)  **New**
@@ -62,6 +71,7 @@ The following features of ElATools are highlighted:
    - 2D Heat map of Linear Compressibiliy (tested) **New**
    - 2D Heat map of Young modulus  (tested) **New**
    - 2D Heat map of Poisson ratio (tested) **New**
+   - 2D Heat map of Hardness (testing) **New**
    - 2D Heat map of Pugh ratio (testing) **New**
    - 2D Heat map of Phase velocity_P, Fast and slow modes (tested) **New**
    - 2D Heat map of Group velocity_P, Fast and slow modes (tested)  **New**
@@ -100,7 +110,7 @@ The following features of ElATools are highlighted:
 ## Installation
 You need to install the following packages:
 
-* Fortran compiler (Ifort (Recom.) or gfortran  )
+* Fortran compiler (Ifort v19 and later (Recom.) or gfortran  )
 * Lapack and Blas library
 
 Compilation
@@ -115,7 +125,7 @@ Then you need the complete path (example: /home/.../soc/db/ ) of the elastic con
 the user system.
 
 Then Go into ElATools-v*.*.*/soc directory, Choose and Edit Makefile, Change the blas library ” libs= ” to your lapack+blas library
-After the compliation, the binary ‘Elatools.x , dat2wrl.x, dat2gnu.x and dat2agr.x’ are copied to Elatools.x /bin/, you can put this path to the system PATH with
+After the compliation (run **make** in soc), the binary ‘Elatools.x , dat2wrl.x, dat2gnu.x and dat2agr.x’ are copied to Elatools.x /bin/, you can put this path to the system PATH with
 ::
 
  export PATH=/where/you/downloaded/ElaTools-v*.*.*/bin:$PATH
