@@ -139,6 +139,7 @@ After the compliation (run **make** in soc), the binary ‘Elatools.x , dat2wrl.
 
 to the **.bashrc** file in your home directory.
 
+**Note:** If you are using the ifort compiler with version 13, replace the option **-qopenmp** with option **-openmp**.
 
 Usage
 -----
