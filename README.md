@@ -11,6 +11,8 @@
 
 ## _A tool for analyzing anisotropic elastic properties of the 2D and 3D materials_
 
+**Google group:** https://groups.google.com/g/elatools?pli=1
+
 [![GitHub license](https://img.shields.io/github/license/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/blob/main/LICENSE.md)
 [![Latest Version](https://img.shields.io/github/v/release/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/issues) 
