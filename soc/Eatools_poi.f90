@@ -64,7 +64,7 @@ SUBROUTINE CPratio(a1111,MinPratio,MaxPratio,AvePratio,&
 		v23  = v(2)*v(3); v33  = v(3)*v(3) 
 
 
-		a1122 =     k11*v11*S(1,1)          &
+		a1122 =   k11*v11*S(1,1)          &
                 +(k11*v22+k22*v11)*S(1,2) &
                 +(k11*v33+k33*v11)*S(1,3) &
                 + k22*v22*S(2,2)          &
@@ -72,7 +72,7 @@ SUBROUTINE CPratio(a1111,MinPratio,MaxPratio,AvePratio,&
                 + k33*v33*S(3,3)  
 	   
 
-    	a1122  =a1122 &
+    	a1122  =a1122                                     &
                  +(k11*v23+k23*v11)*S(1,4)                &
                  +(k11*v13+k13*v11)*S(1,5)                &
                  +(k11*v12+k12*v11)*S(1,6)                &
@@ -86,11 +86,11 @@ SUBROUTINE CPratio(a1111,MinPratio,MaxPratio,AvePratio,&
                  +(k23*v12+k12*v23)*S(4,6)+k13*v13*S(5,5) &
 				 +(k13*v12+k12*v13)*S(5,6)+k12*v12*S(6,6) 
 		Pratio = -a1122/a1111
-		IF (kk.EQ.0) THEN 
+	IF (kk.EQ.0) THEN 
 			MaxPratio=Pratio; MinPratio=Pratio;
 			vec1max = v(1);  vec2max = v(2); vec3max = v(3) 
 			vec1min = v(1);  vec2min = v(2); vec3min = v(3)      
-		ELSE
+    ELSE
 		IF (Pratio.GE.MaxPratio) THEN
 			MaxPratio=Pratio
 	       vec1max = v(1); vec2max = v(2); vec3max = v(3)

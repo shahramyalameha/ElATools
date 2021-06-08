@@ -3,7 +3,7 @@
 !               Please report bugs or suggestions to:  yalameha93@gmail.com                `
 !                                                                                          `
 !```````````````````````````````````````````````````````````````````````````````````````````
-! SUBROUTINE: fOR 3D MATERIAL , CALCULATED poiison's retio.
+! SUBROUTINE: fOR 2D MATERIAL , CALCULATED poiison's retio.
  SUBROUTINE poisson_2D(vv11,vv22,vv33,phi,phi_poisson,MaxPratio,MinPratio,l)
   implicit none
   DOUBLE PRECISION                    :: vv11,vv22,vv33,Y1,Y2,A,B,T,Y3,MaxPratio,MinPratio,phi,Pe,E

@@ -24,7 +24,7 @@
     READ(51,*) (S(i,j),j=1,n)
   ENDDO
   close(51)
-  She= (S(1,1)+S(2,2)-S(1,2))*vv33+(1.d0/4.d0)*S(3,3)*(vv11+vv22-2.d0*vv33)
+  She= (S(1,1)+S(2,2)-2.d0*S(1,2))*vv33+(1.d0/4.d0)*S(3,3)*(vv11+vv22-2.d0*vv33)
   phi_shear(l) =1D0/((4D0*She))                                ! method_ 2 by Sij (Recommend)
  !write(*,*)phi_shear(l)
   MaxShear=phi_shear(l)

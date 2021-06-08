@@ -5,11 +5,12 @@
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: fOR 2D MATERIAL , CALCULATED young's modulus.
   
-SUBROUTINE yound_2D(vv11,vv22,vv33,phi,phi_young,l )! 
+SUBROUTINE yound_2D(vv11,vv22,vv33,phi,phi_young,l)! 
  implicit none
- DOUBLE PRECISION :: vv11,vv22,vv33,Y1,Y2,A,B,T,phi,E,Pe
+
+ DOUBLE PRECISION                  :: vv11,vv22,vv33,Y1,Y2,A,B,T,phi,E,Pe
  DOUBLE PRECISION, DIMENSION(201)  :: phi_young,phi_young_test
- DOUBLE PRECISION, DIMENSION(3,3):: C,S
+ DOUBLE PRECISION, DIMENSION(3,3)  :: C,S
  Integer::n,i,j,l
  n=3
  OPEN(58,FILE="Cij-2D.dat",STATUS='OLD',ACTION='READ')
@@ -32,4 +33,5 @@ phi_young(l)=1.d0/E
    !Pe=vv33*(S(1,1)+S(2,2)-S(3,3))+S(1,2)*(vv11+vv22)
    !phi_young_test(l)=-(Pe/E)
     !write(*,*)phi_young_test(l)
+
 end SUBROUTINE

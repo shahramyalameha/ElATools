@@ -45,13 +45,13 @@ OBJS =  Eatools_main.o	 Eatools_2Dyoung.o Eatools_2Dpoisson.o  Eatools_2Dshear.o
         Eatools_3dPLbul.o Eatools_3dPLpoi.o Eatools_3dPLyou.o Eatools_hkl.o Eatools_cijinv.o \
         Eatools_cijinv2D.o  Eatools_poi.o Eatools_so.o Eatools_2dcal.o Eatools_2dPLv2.o Eatools_aniso.o \
         Eatools_3dPLcom.o Eatools_stability.o Eatools_db.o	Eatools_3dPLsh.o Eatools_ang2car.o Eatools_dsyec3.o \
-             	Eatools_dutester.o Eatools_proelast.o Eatools_sh.o Eatools_welc.o Eatools_pugh.o Eatools_3dPLpugh.o \
-        Eatools_wave_start.o Eatools_wave_vgvf.o Eatools_wave_rot.o Eatools_wave_cal.o Eatools_wave_main.o Eatools_2dcal_wave.o
+             	Eatools_dutester.o Eatools_proelast.o Eatools_sh.o Eatools_welc.o Eatools_pugh.o Eatools_3dPLpugh.o Eatools_hardness.o \
+        Eatools_wave_start.o Eatools_wave_vgvf.o Eatools_wave_rot.o Eatools_wave_cal.o Eatools_wave_main.o Eatools_2dcal_wave.o Eatools_2Dadv.o
 OBJS1 =	wrl_calylm.o wrl_colorsign.o wrl_end.o wrl_main.o 	\
 	       wrl_mesh.o wrl_shape.o wrl_spherappear.o wrl_spher.o wrl_start.o wrl_setcolor.o
 OBJS2 = agr_autoset.f90 agr_curvef.f90 agr_main.f90 agr_minmax.f90 	\
        	agr_polar.f90 agr_setplot.f90 agr_start.f90 agr_winend.f90 agr_win.f90 agr_fzero.o 	
-OBJS3 = gnu_main.o gnu_subs.o gnu_3dmap.o
+OBJS3 = gnu_main.o gnu_subs.o gnu_3dmap.o gnu_copyri.o
 OBJS4 = rho_main.o rho_mass.o
 
 $(EXEC):	$(OBJS) $(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4)  Makefile

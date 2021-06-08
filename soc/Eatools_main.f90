@@ -21,35 +21,35 @@
   DOUBLE PRECISION, PARAMETER        :: pi=3.14159265358979323846264338327950D0,ee=0.0001D0
   DOUBLE PRECISION, DIMENSION(6,6)   :: C1p=0D0,S1=0D0,C=0D0,S=0D0,CP=0D0,C3=0D0,CCo=0d0,Eig3d
   DOUBLE PRECISION, DIMENSION(10100) :: shear2dmax,  Ax,&
- shear2dminp,  &
- shear2dminn,  &
- comMIN2d,     &
- comMAX2d,     &
- bulkmin2d,    &
- bulkmax2d,    &
- young2dmin,   &
- young2dmax,   &
- hard2dmax,    &
- hard2dmin,    &
- poisson2dmax, &
- poisson2dminn,&
- poisson2dminp,&
- LM2d=0D0,     &
- TMmin2d=0D0,  &
- TMmax2d=0D0,  &
- pugh2dmax,    &
- pugh2dminp,   &
- pugh2dminn,   &
- VVG_P_2D,     & 
- VVP_P_2D,     &
- VV_P_PF_2D,   &
- VVG_Sf_2D,    &
- VVP_Sf_2D,    &
- VV_Sf_PF_2D,  &
- VVG_Ss_2D,    &
- VVP_Ss_2D,    &
- VV_Ss_PF_2D
-
+                                        shear2dminp,  &
+                                        shear2dminn,  &
+                                        comMIN2d,     &
+                                        comMAX2d,     &
+                                        bulkmin2d,    &
+                                        bulkmax2d,    &
+                                        young2dmin,   &
+                                        young2dmax,   &
+                                        hard2dmax,    &
+                                        hard2dmin,    &
+                                        poisson2dmax, &
+                                        poisson2dminn,&
+                                        poisson2dminp,&
+                                        LM2d=0D0,     &
+                                        TMmin2d=0D0,  &
+                                        TMmax2d=0D0,  &
+                                        pugh2dmax,    &
+                                        pugh2dminp,   &
+                                        pugh2dminn,   &
+                                        VVG_P_2D,     & 
+                                        VVP_P_2D,     &
+                                        VV_P_PF_2D,   &
+                                        VVG_Sf_2D,    &
+                                        VVP_Sf_2D,    &
+                                        VV_Sf_PF_2D,  &
+                                        VVG_Ss_2D,    &
+                                        VVP_Ss_2D,    &
+                                        VV_Ss_PF_2D
+ ChARACTER(LEN=3)                  :: adv
  DOUBLE PRECISION, DIMENSION(3,3)  :: EVe=0D0, C2D,Eig2d
 
  DOUBLE PRECISION, DIMENSION(3)    :: vec=0d0,&
@@ -57,8 +57,8 @@
  vec1=0d0,                                    &
  EVa,                                         &
  CElastcode=0d0
- INTEGER :: loop, d2d3 ,Stable                !0> Stable, 1> unStable
- INTEGER ::i=0,  &
+ INTEGER :: loop, d2d3 ,Stable,adv_mubner                !0> Stable, 1> unStable
+ INTEGER ::i=0,   &
  num=1,           &
  lm,MinTm,        &
  MaxTm,           &
@@ -101,22 +101,22 @@
  G_min2_theta=0D0,          &
  G_min2_phi=0D0,            &
 
-Ha_max2 = 0D0,&
-Ha_min2 = 0.0D0,& 
-Ha_max2_theta = 0D0,& 
-Ha_min2_theta = 0D0, &
-Ha_max2_phi   = 0D0, &
-Ha_min2_phi   = 0D0,&
+Ha_max2 = 0D0,              &
+Ha_min2 = 0.0D0,            & 
+Ha_max2_theta = 0D0,        & 
+Ha_min2_theta = 0D0,        &
+Ha_max2_phi   = 0D0,        &
+Ha_min2_phi   = 0D0,        &
 
- Pugh_max=0D0,                 &
- Pugh_min=0D0,                 &
- Pugh_Ave=0D0,                 &
- Pugh_max2=0D0,                &
- Pugh_min2=1D0,                &
- Pugh_max2_theta=0D0,          &
- Pugh_max2_phi=0D0,            &
- Pugh_min2_theta=0D0,          &
- Pugh_min2_phi=0D0,            &
+ Pugh_max=0D0,              &
+ Pugh_min=0D0,              &
+ Pugh_Ave=0D0,              &
+ Pugh_max2=0D0,             &
+ Pugh_min2=1D0,             &
+ Pugh_max2_theta=0D0,       &
+ Pugh_max2_phi=0D0,         &
+ Pugh_min2_theta=0D0,       &
+ Pugh_min2_phi=0D0,         &
  Maxcomp_theta=0D0,         &
  Maxcomp_phi=0D0,           &
  Mincomp_theta=0D0,         &
@@ -145,9 +145,9 @@ Ha_min2_phi   = 0D0,&
  v1maxmax=0D0,              &
  v2maxmax=0D0,              &
  v3maxmax=0D0,              &
- pmax=0.0001D0,              &
- pminp=0.0001D0,             &
- pminn=0.0001D0,             &
+ pmax=0.0001D0,             &
+ pminp=0.0001D0,            &
+ pminn=0.0001D0,            &
  pavep=0D0,                 &
  paven=0.0D0,               &
  shmax=0.01D0,              &
@@ -155,11 +155,11 @@ Ha_min2_phi   = 0D0,&
  shminn=0.01D0,             &
  shavep=0D0,                &
  shaven=0D0,                &
- pughmax=0.01D0,              &
- pughminp=0.01D0,             &
- pughminn=0.01D0,             &
- pughavep=0D0,                &
- pughaven=0D0,                &
+ pughmax=0.01D0,            &
+ pughminp=0.01D0,           &
+ pughminn=0.01D0,           &
+ pughavep=0D0,              &
+ pughaven=0D0,              &
  comminn=0.1D0,             &
  comminp=0.1D0                
  REAL(dp) ::SS=1.0_dp,SINver=0.0_dp
@@ -173,11 +173,11 @@ Ha_min2_phi   = 0D0,&
  c1=0D0,                           &
  inter_theta=0D0,                  &
  phi=0,                            &
- BINver=0D0,hardvar=0D0,            &
+ BINver=0D0,hardvar=0D0,           &
  a1,a2,a3
  
  DOUBLE PRECISION :: Minyoung=10d8,&
- Minbulk=0.0d0,                      &
+ Minbulk=0.0d0,                    &
  Maxyoung=0D0,                     &
  Maxbulk=0D0,                      &
  Minyoung_theta=0D0,               &
@@ -620,6 +620,14 @@ ELSE
       CALL sleep(2)
     END IF    
     IF (Ncod .eq. 3) then
+      WRITE(*,*)" > Select using option:"      
+      write(*,*) "========================="
+      WRITE(*,*) "  Default  option  => 1  "
+      WRITE(*,*) "  Advanced option  => 2  "
+      write(*,*) "========================="
+      read(*,*)adv_mubner
+      IF (adv_mubner == 2 ) adv = "adv"
+      IF (adv_mubner == 1 ) adv = "ndv"
       OPEN(11,FILE="Cij-2D.dat",status='old', err=13691)        
       READ(11,*) C2D(1,1),C2D(1,2),C2D(1,3)
       READ(11,*) C2D(2,1),C2D(2,2),C2D(2,3)
@@ -734,7 +742,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
       v23=vec(2)*vec(3) ; v33=vec(3)*vec(3)
       If (yn_veloc=='Y' .or. yn_veloc=='y') then
         call callCij (CCO)
-        call wave_main_AAEP(i,j,theta,phi,vec,CCO,density, VVG_P,    &
+        call wave_main_AAEP(i,j,theta,phi,vec,CCO,density, VVG_P,      &
                                                              VVP_P,    &
                                                              VV_P_PF,  &
                                                              VVG_Sf,   &
@@ -1942,8 +1950,9 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
 
     CALL SYSTEM('rm -rf *.gnu')
   ELSE
-    IF(d2d3 == 2) then                                        !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start  
-      CALL analiz_2D_sys()
+    IF(d2d3 == 2) then      !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start  
+      CALL analiz_2D_sys(adv)
+    
  
       WRITE(*,*)"#==================================#"
       PRINT*," > Do you want to prepare the data for ploting? (Y/N):"

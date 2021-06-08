@@ -3,19 +3,19 @@
 !               Please report bugs or suggestions to:  yalameha93@gmail.com                `
 !                                                                                          `
 !```````````````````````````````````````````````````````````````````````````````````````````
-! SUBROUTINE: fOR 2D MATERIAL , CALCULATE vectors and (theta, pihi) in the (001) plane
+! SUBROUTINE: fOR 2D MATERIAL , CALCULATE vectors and (theta, pih) in the (001) plane
 
 SUBROUTINE twoD_calc(vv11,vv12,vv13,vv22,vv23,vv33,mmx,kky,llz,smkl,i,phi,theta,vec)
     IMPLICIT NONE
-	  DOUBLE PRECISION                              :: smkl,smkl2,&
-		                                            twoDTheta=0D0,&
+	  DOUBLE PRECISION                  :: smkl,smkl2,&
+		                                  twoDTheta=0D0,&
 		                                           mmx, &
 		                                           kky, &
 		                                           llz, &
-                                                   vv11,&
+                                               vv11,&
 		                                           vv12,&
 		                                           vv13,&
-		                                           vv22,&
+                                               vv22,&
 		                                           vv23,&
 		                                           vv33,theta,phi
 	  DOUBLE PRECISION, DIMENSION(3)               :: vec
@@ -52,7 +52,7 @@ SUBROUTINE twoD_calc(vv11,vv12,vv13,vv22,vv23,vv33,mmx,kky,llz,smkl,i,phi,theta,
     ENDIF
     vv11 = vec(1)*vec(1) ; vv12 = vec(1)*vec(2)
     vv13 = vec(1)*vec(3) ; vv22 = vec(2)*vec(2)
-   vv23 = vec(2)*vec(3) ; vv33 = vec(3)*vec(3)
+    vv23 = vec(2)*vec(3) ; vv33 = vec(3)*vec(3)
    !write(*,*)vv11,vv13,vv23,vv12,vv22,vv33
 
    END SUBROUTINE

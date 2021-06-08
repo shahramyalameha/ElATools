@@ -9,7 +9,7 @@ real, DIMENSION(10000000)::c1,c2,c3,c4,c5,c6,cc
 integer::i,j,stat
 !read(*,*)id 
      call system("clear")
- open (12,file='/home/shahram/Desktop/Cubelast/code/programMY/AAEP/soc/eatools_v1.6.2/db/All_2ID_cop.csv')
+ open (12,file='/home/shahram/Desktop/Cubelast/code/programMY/AAEP/soc/eatools_v1.6.4/db/All_2ID_cop.csv')
 do  i=1,13122
    read(12,* )id2(i)
    if (id2(i)==id )then
@@ -21,7 +21,7 @@ enddo
  close (12)
 
  i=0
- open (11,file='/home/shahram/Desktop/Cubelast/code/programMY/AAEP/soc/eatools_v1.6.2/db/Cijs.binery')
+ open (11,file='/home/shahram/Desktop/Cubelast/code/programMY/AAEP/soc/eatools_v1.6.4/db/Cijs.binery')
 do  i=1,2043900
    read(11,'(Z16)',IOSTAT=stat )c1(i) ,c2(i),c3(i),c4(i),c5(i),c6(i)
  !   write(14,'(B64)')c1(j) ,c2(j),c3(j),c4(j),c5(j),c6(j)
