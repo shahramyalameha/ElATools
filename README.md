@@ -1,11 +1,17 @@
 # ElATools [![Website](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=ElaTools&url=https%3A%2F%2Fyalameha.gitlab.io%2Felastictools%2Findex.html)](https://yalameha.gitlab.io/elastictools/index.html) [![Chat](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=Chat&url=https%3A%2F%2Fgroups.google.com%2g%2elatools)](https://groups.google.com/g/elatools)
 
 <p align="center">
-  <img src="./ezgif.com-gif-maker.gif" width="250" title="hover text">
-  <img src="./phase_smap.png" width="600" title="hover text">
+  <img src="pic/ezgif.com-gif-maker.gif" width="250" title="hover text">
+  <img src="pic/phase_smap.png" width="700" title="hover text">
+  
+  <img src="pic/1.png" width="150" title="hover text">
+  <img src="pic/2.png" width="150" title="hover text">
+  <img src="pic/3.png" width="150" title="hover text">
 </p>  
 
 ## _A tool for analyzing anisotropic elastic properties of the 2D and 3D materials_
+
+**Google group:** https://groups.google.com/g/elatools?pli=1
 
 [![GitHub license](https://img.shields.io/github/license/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/blob/main/LICENSE.md)
 [![Latest Version](https://img.shields.io/github/v/release/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/releases/latest)
@@ -107,6 +113,7 @@ The following features of ElATools are highlighted:
    - agr 
    - gnu 
    - dat
+   - html **new**  v1.7.0 and later
 ## Installation
 You need to install the following packages:
 
@@ -132,6 +139,7 @@ After the compliation (run **make** in soc), the binary ‘Elatools.x , dat2wrl.
 
 to the **.bashrc** file in your home directory.
 
+**Note:** If you are using the ifort compiler with version 13, replace the option **-qopenmp** with option **-openmp**.
 
 Usage
 -----
