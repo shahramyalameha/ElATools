@@ -35,15 +35,19 @@ SUBROUTINE ductiletester_PR(nuh,bdout)
 END SUBROUTINE ductiletester_PR
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 SUBROUTINE coval_metal_Pc(Pc,Cov_met)
-  CHARACTER(LEN=22)  :: Cov_met
+  CHARACTER(LEN=5)  :: Cov_met
   DOUBLE PRECISION   :: Pc
-  IF (Pc < 0.0 ) then
-    Cov_met= "Covalent-like bonding"
+ IF (Pc == 0.0D0 ) then
+      Cov_met= " - "
+  ELsE
+  IF (Pc < 0.0D0) then
+    Cov_met= "ClB"
   ELSE
-    IF (Pc> 0 ) then
-    Cov_met= "Metallic-like bonding"
+    IF (Pc> 0.0D0 ) then
+      Cov_met= "MlB"
+    ENDIF
   ENDIF
-ENDIF
+ ENDIF
 END SUBROUTINE coval_metal_Pc   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 SUBROUTINE bond_stretching_bending (kel, st_ben)

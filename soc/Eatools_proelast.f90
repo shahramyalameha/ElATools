@@ -61,9 +61,15 @@ SUBROUTINE proelast()
 					                H_5_v,&
 					                inv_kgv,&
 					                inv_kgr,&
-					                inv_kgh
+					                inv_kgh,&
+					                Pc_hex_a,&
+					                Pc_hex_c,&
+					                Pc_orth_a,&
+					                Pc_orth_b,&
+					                Pc_orth_c
  CHARACTER(LEN=10) :: bdout1,bdout2
- CHARACTER(LEN=31) :: Cov_met,st_ben	 
+ CHARACTER(LEN=31) :: st_ben
+ CHARACTER(LEN=5)  ::	Cov_met,Cov_met_aa,Cov_met_c,Cov_met_oa,Cov_met_ob,Cov_met_oc
  DOUBLE PRECISION, DIMENSION(6,6) ::C=0D0,S=0D0				 
  INTEGER::i,j
     OPEN(44,FILE="Cij.dat",status='old')                             ! read cij data inpout
@@ -138,7 +144,12 @@ SUBROUTINE proelast()
     mv = kv + (4d0*gv/3d0)
     mr = kr + (4d0*gr/3d0)
     mh = (mv + mr)/2d0
-    Pc = C(1,1)- C(4,4)
+    Pc        = C(1,1) - C(4,4)
+    Pc_hex_a  = C(1,3) - C(4,4)
+    Pc_hex_c  = C(1,2) - C(6,6)
+    Pc_orth_a = C(2,3) - C(4,4)
+    Pc_orth_b = C(1,3) - C(5,5)
+    Pc_orth_c = C(1,2) - C(6,6)
     La1v = ( nuv * Ev )/ ( ( 1d0 + nuv )*( 1 - 2d0 * nuv ) )
     La1r = ( nur * Er )/ ( ( 1d0 + nur )*( 1 - 2d0 * nur ) )
     La1h = ( nuh * Eh )/ ( ( 1d0 + nuh )*( 1 - 2d0 * nuh ) )
@@ -159,7 +170,6 @@ SUBROUTINE proelast()
     
     CALL ductiletester_KG(kgh,bdout1)
     CALL ductiletester_PR(nuh,bdout2)
-    Call coval_metal_Pc(Pc,Cov_met)
     CALL bond_stretching_bending (kel, st_ben)
     
     WRITE(*,*)'============================================================='
@@ -256,18 +266,63 @@ SUBROUTINE proelast()
     Ac = (gv-gr)/(gv+gr)
     WRITE(*,'(a,3F10.4)')' > Universal anisotropy index (AU)        :', au
     WRITE(*,'(a,3F10.4)')' > Log-Euclidean anisotropy parameter (AL):',al
-    WRITE(*,'(a,3F10.4)')' > Chung-Buessem Anisotropy Index (Ac)    :',ac 
-    WRITE(*,'(a,F10.4,a,a,a)')' > Cauchy pressure(GPa) (Pc)              : ',Pc,'       <--(  ',Cov_met,')'
+    WRITE(*,'(a,3F10.4)')' > Chung-Buessem Anisotropy Index (Ac)    :',ac     
     WRITE(*,'(a,F10.4,a,a,a)')' > Kleinman parameter                     : ',kel,'       <--(  ',st_ben,')'                    
+    WRITE(*,*)'----------------------------------------------------------'
+    WRITE(*,'(a)')'              ---> Cauchy pressure(GPa) <---              '  
+    WRITE(*,*)'----------------------------------------------------------'    
+    Call coval_metal_Pc(Pc,Cov_met)     
+    WRITE(*,'(a,F8.2,a,a,a)')' Cubic       : (PC_a)           =(',Pc,')                  <--( ',Cov_met,')'
+    Call coval_metal_Pc(Pc_hex_a,Cov_met) 
+    Cov_met_aa=Cov_met
+ 
+    Call coval_metal_Pc(Pc_hex_c,Cov_met)
+    Cov_met_c=Cov_met
+    WRITE(*,'(a,F8.2,F8.2,a,a,a,a)')' Hexagonal   : (PC_a,PC_c)      =(',Pc_hex_a,Pc_hex_c,')          <--( ',Cov_met_aa ,Cov_met_c,')'
+    WRITE(*,'(a,F8.2,F8.2,a,a,a,a)')' Trigonal    : (PC_a,PC_c)      =(',Pc_hex_a,Pc_hex_c,')          <--( ',Cov_met_aa ,Cov_met_c,')'
+    WRITE(*,'(a,F8.2,F8.2,a,a,a,a)')' Tetragonal  : (PC_a,PC_c)      =(',Pc_hex_a,Pc_hex_c,')          <--( ',Cov_met_aa ,Cov_met_c,')'
+    Call coval_metal_Pc(Pc_orth_a,Cov_met)   
+    Cov_met_oa=Cov_met     
+    Call coval_metal_Pc(Pc_orth_b,Cov_met)   
+    Cov_met_ob=Cov_met 
+    Call coval_metal_Pc(Pc_orth_c,Cov_met)   
+    Cov_met_oc=Cov_met  
+    WRITE(*,'(a,3F8.2,a,3a,a)')' Orthorhombic: (PC_a,PC_b,PC_c) =(',Pc_orth_a,Pc_orth_b,Pc_orth_c,')  <--( ',Cov_met_oa,Cov_met_ob,Cov_met_oc,')'
     WRITE(*,*)'=========================================================='
+    WRITE(*,"(a)")'> CLB: Covalent-like bonding'
+    WRITE(*,"(a)")'> MLB: Metallic-like bonding'      
     WRITE(*,*)''
-    
+    !REfs of Cauchy pressure:
+    !Journal of Physics and Chemistry of Solids 138 (2020) 109253
+    !Materials Today Communications 26 (2021) 101991
     WRITE(99,'(a,3F10.4)')' > Universal anisotropy index (AU)        :', au
     WRITE(99,'(a,3F10.4)')' > Log-Euclidean anisotropy parameter (AL):',al
     WRITE(99,'(a,3F10.4)')' > Chung-Buessem Anisotropy Index (Ac)    :',ac 
     WRITE(99,'(a,F10.4,a,a21,a)')' > Cauchy pressure(GPa) (Pc)              : ',Pc,'     <--(  ',Cov_met,')'
     WRITE(99,'(a,F10.4,a,a,a)')' > Kleinman parameter                     : ',kel,'       <--(  ',st_ben,')' 
+    WRITE(99,*)'----------------------------------------------------------'
+    WRITE(99,'(a)')'              ---> Cauchy pressure(GPa) <---              '  
+    WRITE(99,*)'----------------------------------------------------------'    
+    Call coval_metal_Pc(Pc,Cov_met)     
+    WRITE(99,'(a,F8.2,a,a,a)')' Cubic       : (PC_a)           =(',Pc,')                  <--( ',Cov_met,')'
+    Call coval_metal_Pc(Pc_hex_a,Cov_met) 
+    Cov_met_aa=Cov_met
+ 
+    Call coval_metal_Pc(Pc_hex_c,Cov_met)
+    Cov_met_c=Cov_met
+    WRITE(99,'(a,F8.2,F8.2,a,a,a,a)')' Hexagonal   : (PC_a,PC_c)      =(',Pc_hex_a,Pc_hex_c,')          <--( ',Cov_met_aa ,Cov_met_c,')'
+    WRITE(99,'(a,F8.2,F8.2,a,a,a,a)')' Trigonal    : (PC_a,PC_c)      =(',Pc_hex_a,Pc_hex_c,')          <--( ',Cov_met_aa ,Cov_met_c,')'
+    WRITE(99,'(a,F8.2,F8.2,a,a,a,a)')' Tetragonal  : (PC_a,PC_c)      =(',Pc_hex_a,Pc_hex_c,')          <--( ',Cov_met_aa ,Cov_met_c,')'
+    Call coval_metal_Pc(Pc_orth_a,Cov_met)   
+    Cov_met_oa=Cov_met     
+    Call coval_metal_Pc(Pc_orth_b,Cov_met)   
+    Cov_met_ob=Cov_met 
+    Call coval_metal_Pc(Pc_orth_c,Cov_met)   
+    Cov_met_oc=Cov_met  
+    WRITE(99,'(a,3F8.2,a,3a,a)')' Orthorhombic: (PC_a,PC_b,PC_c) =(',Pc_orth_a,Pc_orth_b,Pc_orth_c,')  <--( ',Cov_met_oa,Cov_met_ob,Cov_met_oc,')'
     WRITE(99,*)'=========================================================='
+    WRITE(99,"(a)")'> CLB: Covalent-like bonding'
+    WRITE(99,"(a)")'> MLB: Metallic-like bonding'      
     WRITE(99,*)''
  
 END SUBROUTINE
