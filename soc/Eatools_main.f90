@@ -317,26 +317,34 @@ Ha_min2_phi   = 0D0,        &
  CALL WELCOME()
  WRITE(*,*) ' '
  CALL SYSTEM('sleep 1.5')
- CALL SYSTEM('clear')
+ 
+225 CALL SYSTEM('clear')
  WRITE(*,*)" > Select system dimension:"  !> go to type of system
- WRITE(*,*)"========================" 
+ CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
+ !WRITE(*,*)"========================" 
  WRITE(*,*)" 3D-Materials------ => 3"
  WRITE(*,*)" 2D-Materials------ => 2"
- WRITE(*,*)"========================" 
+ !WRITE(*,*)"========================" 
+ CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
  READ(*,*) d2d3 
    
    
 IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
+  CALL SYSTEM('clear')
   WRITE(*,*)" > Select using output code:"
-  WRITE(*,*)"============================================================" 
+  CALL SYSTEM('tput setaf 33;tput bold; echo "============================================================";tput sgr0')
+  !WRITE(*,*)"============================================================" 
   WRITE(*,*)" IRelast-----------------------(       wein2k         )-=> 1"
   WRITE(*,*)" Elast-------------------------(       wein2k         )-=> 2"
   WRITE(*,*)" AELAS-------------------------(        VASP          )-=> 3"
   WRITE(*,*)" ElaStic-----------------------(  QE,Wien2k,Exciting  )-=> 4"   
   WRITE(*,*)" Using Cij Tensor in Cij.dat---(     Other codes      )-=> 5" 
   WRITE(*,*)" Using EC Databank-------------(          MP          )-=> 6" 
-  WRITE(*,*)"============================================================" 
+  Write(*,*)" Back --------------------------------------------------=> 0"
+  !WRITE(*,*)"============================================================" 
+  CALL SYSTEM('tput setaf 33;tput bold; echo "============================================================";tput sgr0')  
   READ(*,*) Ncod
+  IF(Ncod .EQ. 0) then; Goto 225; endif
   IF (Ncod .eq. 1 .OR. Ncod .eq. 2 .OR. Ncod .eq. 3 .OR. Ncod .eq. 4 .OR. Ncod .eq. 5.OR. Ncod .eq. 6 ) THEN
   WRITE(*,*)" > Want to calculate phase and group velocities? (Y/n)" !> select code for calculate of phase and group velocities
   READ(*,*)yn_veloc
@@ -541,14 +549,18 @@ ELSE
     WRITE(140,"(I2)")1
     WRITE(140,*)'N'
     close(140)
-
+226 call system('clear')
     WRITE(*,*)" > Select using output code:"
-    WRITE(*,*)"====================================================="
+    CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
+    !WRITE(*,*)"====================================================="
     WRITE(*,*)" AELAS                            (    VASP   ) => 1"
     WRITE(*,*)" IRelast2D                        (   WIEN2K  ) => 2"    
     WRITE(*,*)" Using Cij Tensor in Cij-2D.dat   (other codes) => 3"
-    WRITE(*,*)"====================================================="
+    WRITE(*,*)" Back ----------------------------------------- => 0"    
+   !WRITE(*,*)"====================================================="
+     CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
     read(*,*) Ncod
+    IF(Ncod .EQ. 0) then; Goto 225; endif
     IF (Ncod .EQ. 1) then
       call system("sed '1,2d' ELADAT > ELADAT_temp")
       OPEN(79,FILE="Cij-2D.dat")
@@ -624,10 +636,12 @@ ELSE
       write(*,*) "========================="
       WRITE(*,*) "  Default  option  => 1  "
       WRITE(*,*) "  Advanced option  => 2  "
+      WRITE(*,*) "  Back             => 0  "      
       write(*,*) "========================="
       read(*,*)adv_mubner
       IF (adv_mubner == 2 ) adv = "adv"
       IF (adv_mubner == 1 ) adv = "ndv"
+      IF (adv_mubner == 0 ) goto 226
       OPEN(11,FILE="Cij-2D.dat",status='old', err=13691)        
       READ(11,*) C2D(1,1),C2D(1,2),C2D(1,3)
       READ(11,*) C2D(2,1),C2D(2,2),C2D(2,3)
@@ -647,7 +661,7 @@ ELSE
       END IF
       CALL sleep(1)
 !<
-      CALL proelast_2D ()
+      CALL proelast_2D()
       CALL sleep(2)
     END IF    
   ELSE
@@ -1999,8 +2013,8 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   STOP       
 
   1369 WRITE(*,*)  " > NOT FOUNDE    Cij.dat    FILE"             ; STOP
-  13691 WRITE(*,*) " > NOT FOUNDE   Cij-2D.dat  FILE"            ; STOP
-  13692 WRITE(*,*) " > NOT FOUNDE   ELC-matrix  FILE"            ; STOP  
+  13691 WRITE(*,*) " > NOT FOUNDE   Cij-2D.dat  FILE"             ; STOP
+  13692 WRITE(*,*) " > NOT FOUNDE   ELC-matrix  FILE"             ; STOP  
   1367 WRITE(*,*)  " > NOT FOUNDE INVELC-matrix FILE"             ; STOP
   1366 WRITE(*,*)  " > NOT FOUNDE elast.output  FILE "            ; STOP 
   1361 WRITE(*,*)  " > NOT FOUNDE    ELADAT     FILE "            ; STOP

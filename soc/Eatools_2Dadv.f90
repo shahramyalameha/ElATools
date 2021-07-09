@@ -5,6 +5,9 @@
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: fOR 2D MATERIAL , CALCULATED shear modulus.
 
+!REF: Jasiukiewicz, Cz, T. Paszkiewicz, and S. Wolski. "Auxetic properties and anisotropy of elastic material constants of 2D crystalline media." 
+!physica status solidi (b) 245.3 (2008): 562-569.
+
  SUBROUTINE adv_2D(phi,phi_pro,l,pro,method,Max_pro, Min_pro)
     implicit none
     CHARACTER(len=5)                    :: pro 
@@ -29,11 +32,11 @@
 
      IF(method == 'adv' .and. pro == "shear" ) THEN
       G_inver     =  S(1,1) *      ( COS(phi)*COS(phi)*SIN(phi)*SIN(phi) ) +&
-	                   S(1,2) *-2.D0*( COS(phi)*SIN(phi)*SIN(phi)*COS(phi) ) +&
-	                   S(2,2) *      ( SIN(phi)*SIN(phi)*COS(phi)*COS(phi) ) +&
-	                   S(1,3) *      ( SIN(phi)*SIN(phi)*COS(phi)*SIN(phi)  -      SIN(phi)*COS(phi)*COS(phi)*COS(phi) )+&
-	                   S(2,3) *      ( COS(phi)*COS(phi)*COS(phi)*SIN(phi)  -      SIN(phi)*COS(phi)*SIN(phi)*SIN(phi) )+&
-	                   S(3,3) *      ( COS(phi)*COS(phi)*COS(phi)*COS(phi)  - 2.D0*COS(phi)*SIN(phi)*SIN(phi)*COS(phi) + SIN(phi)*SIN(phi)*SIN(phi)*SIN(phi) ) * (1.d0/4.d0)
+	                    S(1,2) *-2.D0*( COS(phi)*SIN(phi)*SIN(phi)*COS(phi) ) +&
+	                    S(2,2) *      ( SIN(phi)*SIN(phi)*COS(phi)*COS(phi) ) +&
+	                    S(1,3) *      ( SIN(phi)*SIN(phi)*COS(phi)*SIN(phi)   -      SIN(phi)*COS(phi)*COS(phi)*COS(phi) )+&
+	                    S(2,3) *      ( COS(phi)*COS(phi)*COS(phi)*SIN(phi)   -      SIN(phi)*COS(phi)*SIN(phi)*SIN(phi) )+&
+	                    S(3,3) *      ( COS(phi)*COS(phi)*COS(phi)*COS(phi)   - 2.D0*COS(phi)*SIN(phi)*SIN(phi)*COS(phi)  + SIN(phi)*SIN(phi)*SIN(phi)*SIN(phi) ) * (1.d0/4.d0)
       phi_pro(l)  = 1.D0/(4.D0*G_inver)
       
      ENDIF
@@ -47,7 +50,7 @@
                     S(2,3) *2.d0*( SIN(phi)*COS(phi)*COS(phi)*COS(phi) ) 
       phi_pro(l)  = 1.D0 / E_inver
       
-     endif
+     ENDIF
      IF(method == 'adv' .and. pro == "poi" ) THEN
       E_inver     = S(1,1) *     ( COS(phi)*COS(phi)*COS(phi)*COS(phi) ) +&    
                     S(1,2) *2.d0*( SIN(phi)*COS(phi)*SIN(phi)*COS(phi) ) +&       
@@ -59,9 +62,9 @@
       poi_inver =   S(1,1) * ( SIN(phi)*SIN(phi)*COS(phi)*COS(phi) )                                      +&
                     S(1,2) * ( SIN(phi)*SIN(phi)*SIN(phi)*SIN(phi) + COS(phi)*COS(phi)*COS(phi)*COS(phi) )+&
                     S(2,2) * ( SIN(phi)*SIN(phi)*COS(phi)*COS(phi) )                                      +&
-                   S(1,3) * ( SIN(phi)*SIN(phi)*COS(phi)*SIN(phi) - SIN(phi)*COS(phi)*COS(phi)*COS(phi) )+&
+                    S(1,3) * ( SIN(phi)*SIN(phi)*COS(phi)*SIN(phi) - SIN(phi)*COS(phi)*COS(phi)*COS(phi) )+&
                     S(2,3) * ( COS(phi)*COS(phi)*COS(phi)*SIN(phi) - SIN(phi)*COS(phi)*SIN(phi)*SIN(phi) )+&
-                    S(3,3) * ( SIN(phi)*COS(phi)*COS(phi)*SIN(phi) * -1.D0 )
+                    S(3,3) * ( SIN(phi)*COS(phi)*COS(phi)*SIN(phi) * -1.0D0 )
       phi_pro(l)  = -(poi_inver / E_inver)
        !WRITE(*,*) phi*(180D0/3.1415),phi_pro(l) ,l
       IF (l.EQ.0) THEN 
@@ -72,7 +75,8 @@
           !WRITE(*,*) phi*(180D0/3.1415),Max_pro
         END IF  
         IF (phi_pro(l).LE.Min_pro) THEN
-          Min_pro=phi_pro(l)     
+          Min_pro=phi_pro(l) 
+          !WRITE(*,*) Min_pro    
         END IF  
       END IF
      ENDIF

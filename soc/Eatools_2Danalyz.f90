@@ -54,22 +54,21 @@ DO j=0, Nmesh_phi
 
    phi_pro=0.0
    Max_pro = 0D0
-   Min_pro = 3.5D0
+   Min_pro = 3.6D0
+!!!!!!!!
    pro = "poi"
    call adv_2D(phi,phi_pro,j,pro,method,Max_pro,Min_pro)
-   phi_poisson=phi_pro(j)
+    phi_poisson = phi_pro(j)
     poisson2dmax(j)  = Max_pro
-   IF (Min_pro.GE.0D0)  poisson2dminp(j) = Min_pro  
-   IF (Min_pro.LE.0D0)  poisson2dminn(j) = Max_pro 
+   IF (Min_pro.GE.0.0D0)  poisson2dminp(j) = Min_pro  
+   IF (Min_pro.LE.0.0D0)  poisson2dminn(j) = Min_pro 
    WRITE(62,"(F8.4,3F20.16)")phi*(180d0/PI), poisson2dmax(j) ,poisson2dminp(j), poisson2dminn(j)
-
+!!!!!!
    pro = "young"
    call adv_2D(phi,phi_pro,j,pro,method,Max_pro,Min_pro)
    WRITE(61,"(F8.4,2F21.16)") phi*(180D0/PI), phi_pro(j)
    phi_young(j)=phi_pro(j)
-
-
-
+!!!!!!
    phi_pro=0.0
    pro = "shear"
    call adv_2D(phi,phi_pro,j,pro,method,Max_pro,Min_pro)
