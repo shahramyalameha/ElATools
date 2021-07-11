@@ -339,13 +339,14 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   WRITE(*,*)" AELAS-------------------------(        VASP          )-=> 3"
   WRITE(*,*)" ElaStic-----------------------(  QE,Wien2k,Exciting  )-=> 4"   
   WRITE(*,*)" Using Cij Tensor in Cij.dat---(     Other codes      )-=> 5" 
-  WRITE(*,*)" Using EC Databank-------------(          MP          )-=> 6" 
+  WRITE(*,*)" Using EC Databank-------------(      offline MP      )-=> 6" 
+  WRITE(*,*)" Using EC Databank-------------(      online  MP      )-=> 7"
   Write(*,*)" Back --------------------------------------------------=> 0"
   !WRITE(*,*)"============================================================" 
   CALL SYSTEM('tput setaf 33;tput bold; echo "============================================================";tput sgr0')  
   READ(*,*) Ncod
   IF(Ncod .EQ. 0) then; Goto 225; endif
-  IF (Ncod .eq. 1 .OR. Ncod .eq. 2 .OR. Ncod .eq. 3 .OR. Ncod .eq. 4 .OR. Ncod .eq. 5.OR. Ncod .eq. 6 ) THEN
+  IF (Ncod .eq. 1 .OR. Ncod .eq. 2 .OR. Ncod .eq. 3 .OR. Ncod .eq. 4 .OR. Ncod .eq. 5 .OR. Ncod .eq. 6 .OR. Ncod .eq. 7) THEN
   WRITE(*,*)" > Want to calculate phase and group velocities? (Y/n)" !> select code for calculate of phase and group velocities
   READ(*,*)yn_veloc
   IF (yn_veloc=='Y' .or. yn_veloc=='y') then
@@ -438,7 +439,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
 
   IF (Ncod .EQ. 6) then
     5050 WRITE(*,*)"> ENTER ID: (EXAMPEL:  mp-10 or mvc-916)"
-    WRITE(*,*)"============================="
+    WRITE(*,*)"============================= offline"
     read(*,*)myid
     CALL databank(myid,yesno)
 
@@ -459,9 +460,38 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     CALL system('mv Cij-id.dat Cij.dat')
     GOTO 101
   ENDIF 
+
+
+
+IF (Ncod .EQ. 7) then
+  5051 WRITE(*,*)"> ENTER ID: (EXAMPEL:  mp-10 or mvc-916)"
+  WRITE(*,*)"============================= online"
+  read(*,*)myid
+  CALL aip_get_online(myid)
+  CALL system ("chmod +x aip.py; ./aip.py > Cij-id.dat") 
+  IF (yesno=='N')then
+    WRITE(*,*)"----------------------------------------------"
+    WRITE(*,*)"> Want to repeat again?(Y/n)"
+    READ(*,*)yesno2
+    IF (yesno2=='Y'.or. yesno2=='y')then
+      CALL SYSTEM('clear')
+      GOTO 5051
+    ELSE
+      GOTO 1370
+    END IF
+  END IF     
+    
+  CALL sleep (2)
+  CALL system('clear')
+  CALL system('mv Cij-id.dat Cij.dat')
+  CALL system("rm aip.py")
+  GOTO 101
+ENDIF 
 ELSE
   WRITE(*,*)"Invalid input!";   go to 1370
 ENDIF
+
+
 CALL system('clear')
 101 OPEN(11,FILE="Cij.dat",status='old', err=1369)                             ! read cij data inpout
 READ(11,*) C(1,1),C(1,2),C(1,3),C(1,4),C(1,5),C(1,6)
@@ -578,7 +608,7 @@ ELSE
         WRITE(*,*)"======================================";
         CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
         WRITE(*,*)"======================================"
-        WRITE(*,*)" > Elastic Stability Conditions:  Unstable; STOP"
+        WRITE(*, *)" > Elastic Stability Conditions:  Unstable; STOP"
         WRITE(99,*)" > Elastic Stability Conditions:  Unstable; STOP"
         STOP
       END IF
