@@ -17,7 +17,7 @@
                                         yn_veloc,&               !> Being in a database is  "Y" 
                                         order                                        
   CHARACTER(LEN=25)                  :: myid                     !> for databank
-  REAL                               :: CLaS,phi_meah,theta_meah,cutmesh
+  INTEGER                               :: CLaS,phi_meah,theta_meah,cutmesh
   DOUBLE PRECISION, PARAMETER        :: pi=3.14159265358979323846264338327950D0,ee=0.0001D0
   DOUBLE PRECISION, DIMENSION(6,6)   :: C1p=0D0,S1=0D0,C=0D0,S=0D0,CP=0D0,C3=0D0,CCo=0d0,Eig3d
   DOUBLE PRECISION, DIMENSION(10100) :: shear2dmax,  Ax,&
@@ -392,7 +392,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     WRITE(7,50) C(3,1),C(3,2),C(3,3),C(3,4),C(3,5),C(3,6)
     WRITE(7,50) C(4,1),C(4,2),C(4,3),C(4,4),C(4,5),C(4,6)
     WRITE(7,50) C(5,1),C(5,2),C(5,3),C(5,4),C(5,5),C(5,6)
-    WRITE(7,50) C(6,1),C(6,2),C(6,3),C(6,4),C(6,5),C(6,6)
+    WRITE(7,50) C(6,1),C(6,2),C(6,3),C(6,4),C(6,5),C(6,6) 
     CLOSE(7)        
     50 format(6F9.4)
     CLOSE(5)

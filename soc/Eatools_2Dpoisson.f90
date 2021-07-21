@@ -41,7 +41,8 @@
       MaxPratio=phi_poisson(l)
     END IF  
     IF (phi_poisson(l).LE.MinPratio) THEN
-      MinPratio=phi_poisson(l)     
+      MinPratio=phi_poisson(l)  
+      !write(*,*) MinPratio
     END IF  
   END IF
 end SUBROUTINE

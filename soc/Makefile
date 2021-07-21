@@ -13,14 +13,22 @@
 
 #---------------- compiler -----------------
 
-FC = ifort
+ FC = ifort
+#FC = gfortran
 #------------- compiler options ------------
 
-FOPT     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback -assume buffered_io  -pthread -I$(MKLROOT)/include
-FGEN     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback 
+ FOPT     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback -assume buffered_io  -pthread -I$(MKLROOT)/include   # for ifort v19 > 
+ FGEN     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback                                                      # for ifort v19 > 
+
+ #FOPT     = -ffree-form -O2 -ffree-line-length-none     # for gfortran
+#  FGEN     = -ffree-form -O2 -ffree-line-length-none     # for gfortran
+
 #-------------- loader options -------------
 
-LDFLAGS  = $(FOPT) -L$(MKLROOT)/lib/$(MKL_TARGET_ARCH) -pthread -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -qopenmp -lpthread
+ #LDFLAGS  = $(FOPT)  -lblas -llapack -lpthread           # for gfortran
+ 
+
+ LDFLAGS  = $(FOPT) -L$(MKLROOT)/lib/$(MKL_TARGET_ARCH) -pthread -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -qopenmp -lpthread  # for ifort v19 > 
 
 
 ###############################################################################
@@ -33,14 +41,14 @@ EXECNAME1 = dat2wrl.x
 EXECNAME2 = dat2agr.x
 EXECNAME3 = dat2gnu.x
 EXECNAME4 = dens_lapw
-EXECNAME4 = dat2html.x
+ 
 
 EXEC    = $(DESTDIR)$(EXECNAME)
 EXEC1   = $(DESTDIR)$(EXECNAME1)
 EXEC2   = $(DESTDIR)$(EXECNAME2)
 EXEC3   = $(DESTDIR)$(EXECNAME3)
 EXEC4   = $(DESTDIR)$(EXECNAME4)
-EXEC5   = $(DESTDIR)$(EXECNAME4)
+ 
 
 OBJS =  Eatools_main.o	 Eatools_2Dyoung.o Eatools_2Dpoisson.o  Eatools_2Dshear.o \
         Eatools_2DMaxMin.o Eatools_2Danalyz.o Eatools_2D_proelast.o Eatools_2dPL.o \
@@ -55,8 +63,7 @@ OBJS2 = agr_autoset.f90 agr_curvef.f90 agr_main.f90 agr_minmax.f90 	\
        	agr_polar.f90 agr_setplot.f90 agr_start.f90 agr_winend.f90 agr_win.f90 agr_fzero.o 	
 OBJS3 = gnu_main.o gnu_subs.o gnu_3dmap.o gnu_copyri.o
 OBJS4 = rho_main.o rho_mass.o 
-OBJS5 = html_colorscale.o html_gerdata.o html_scord.o html_strace.o html_elayout.o html_main.o html_setpare.o html_swin.o \
-        html_etrace.o html_mincord.o html_stitle.o html_gerdata_velop.o  html_gerdata_velog.o
+ 
 
 
 $(EXEC):	$(OBJS) $(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5)  Makefile
@@ -70,8 +77,7 @@ $(EXEC):	$(OBJS) $(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5)  Makefile
 	@echo	dat2gnu.x Created
 	$(FC) -o $(EXEC4) $(OBJS4) $(FOPT) $(LDFLAGS) 
 	@echo	dens. Created
-	$(FC) -o $(EXEC5) $(OBJS5) $(FOPT) $(LDFLAGS) 
-	@echo	dat2html.x Created
+ 
 .SUFFIXES: .o .f90
 
 .f90.o :

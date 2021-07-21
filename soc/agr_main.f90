@@ -257,7 +257,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 !====
   	   open(4,file='2dcut_bulk.dat',err=44)
           do i=1,361
-             READ(4,*) theta2,rho2,rho3
+             READ(4,*) theta2,rho2,rho3 
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F12.6,2X,F12.6)')x,y; endif
          enddo  

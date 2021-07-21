@@ -30,7 +30,7 @@ PROGRAM gnu_conv
  clor_val = arg_mane(2)	
  
  ! write(*,*) val,clor_val
-  IF (val == "-h" .OR. val == "")THEN
+  IF (val == "-h" .OR. val == "")THEN 
        WRITE(*,*)'Using: dat2gnu.x [ Properties ] [hmap colors] in the  DatFile_*** folder' 
        WRITE(*,*)''
        call system ("sleep 0.5")
@@ -108,27 +108,44 @@ IF (val=='all' .OR. val=='All') then
 
    write(*,*)'======='
   enddo
-else
-  call ploter(val,clor_val)
- endif
- OPEN(22,file='.MaMiout') 
- READ(22,*) MAXyo
- READ(22,*) MAXsh
- READ(22,*) MAXpo
-close(22) 
+    ELSE
+      CALL ploter(val,clor_val)
+Endif
+ 
+
 !WRITE(*,*)MAXyo,MAXsh, MAXpo
   IF (val=='2d' .OR. val=='2D') then
+    OPEN(22,file='.MaMiout') 
+    READ(22,*) MAXyo
+    READ(22,*) MAXsh
+    READ(22,*) MAXpo
+    close(22) 
     val='2dpoi';  call twoDplot(val,MAXpo, MAXyo, MAXsh) 
     val='2dyoung'; call twoDplot(val,MAXpo, MAXyo, MAXsh) 
     val='2dshear'; call twoDplot(val,MAXpo, MAXyo, MAXsh) 
   endif
   IF (val=='2dpoi' .OR. val=='2dpoisson') then
+    OPEN(22,file='.MaMiout') 
+    READ(22,*) MAXyo
+    READ(22,*) MAXsh
+    READ(22,*) MAXpo
+    close(22) 
     val='2dpoi';  call twoDplot(val,MAXpo, MAXyo, MAXsh) 
   endif
   IF (val=='2dyoung' .OR. val=='2dyoun') then
+    OPEN(22,file='.MaMiout') 
+    READ(22,*) MAXyo
+    READ(22,*) MAXsh
+    READ(22,*) MAXpo
+    close(22)   
     val='2dyoung'; call twoDplot(val,MAXpo, MAXyo, MAXsh) 
   endif
   IF (val=='2dshear' .OR. val=='2dshea') then
+    OPEN(22,file='.MaMiout') 
+    READ(22,*) MAXyo
+    READ(22,*) MAXsh
+    READ(22,*) MAXpo
+    close(22) 
     val='2dshear'; call twoDplot(val,MAXpo, MAXyo, MAXsh) 
   endif
 END PROGRAM
