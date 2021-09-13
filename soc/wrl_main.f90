@@ -44,7 +44,7 @@ PROGRAM wrl_conv
   VV_Ss_PF_max,&
   VV_P_PF_min,&
   VV_Sf_PF_min,&
-  VV_Ss_PF_min
+  VV_Ss_PF_min,km_max,km_min
   INTEGER                             :: h_ex,k_ex,l_ex,num_color
   ChARACTER(LEN=6)                    :: e1,e2
   ChARACTER(LEN=2)                    :: ynveloc
@@ -64,11 +64,11 @@ PROGRAM wrl_conv
                                            color_ser2                 ,&
                                            color_set3             
                                          
-  DOUBLE PRECISION, DIMENSION(1930000)  :: datapoints=0d0
-  DOUBLE PRECISION, DIMENSION(1930000)  :: G_max,shminp,shminn,shavep,SINver,CO,comminp,pugh_max,pughminp,pughminn,pughavep,&
+  DOUBLE PRECISION, DIMENSION(1910000)  :: datapoints=0d0
+  DOUBLE PRECISION, DIMENSION(1910000)  :: G_max,shminp,shminn,shavep,SINver,CO,comminp,pugh_max,pughminp,pughminn,pughavep,&
 		                                       comminn,NPratio_max,pminp,pminn,pavep,paven,&
                                            BINver,maxEVaLM1,maxEVaTM1,minEVaTM1,VVG_P,VVP_P,VV_P_PF,VVG_Sf,VVP_Sf,VV_Sf_PF,hardvar ,&
-                                           VVG_Ss,VVP_Ss,VV_Ss_PF
+                                           VVG_Ss,VVP_Ss,VV_Ss_PF,km
   ChARACTER(len=7), dimension(10)       :: arg_mane
   INTEGER,          DIMENSION(190300,4) :: mesh=0 
   INTEGER                               :: n_phif, n_thetaf, num_mesh,ii=0,argl,cutmesh
@@ -97,7 +97,7 @@ PROGRAM wrl_conv
  
       WRITE(*,'(3a)')val,'was read well...'
      IF (val=='-h' .OR. val=="") then
-       Write(*,*)'Using: dat2wrl_lapw [ Properties ] out of DatFile_*** folder'
+       Write(*,*)'Using: dat2wrl_lapw [ Properties ] [colors: 1 ] out of DatFile_*** folder'
        WRITE(*,*)''
        CALL system ("sleep 1")
        WRITE(*,*)'[3D Properties]: '
@@ -116,6 +116,7 @@ PROGRAM wrl_conv
        WRITE(*,*)' pfp    =>  Power Flow angle (PFA): P-mode  '
        WRITE(*,*)' pfs    =>  Power Flow angle: Slow-mode     '
        WRITE(*,*)' pff    =>  Group velocity: Fast-mode       '
+       WRITE(*,*)' km     =>  Min. thermal conductivity       '
        STOP
      END IF
   !
@@ -132,31 +133,32 @@ PROGRAM wrl_conv
  !WRITE(*,*) h_ex
  !WRITE(*,*) k_ex
  !WRITE(*,*) l_ex
- !WRITE(*,*) ynveloc
+  WRITE(*,*) ynveloc
 
  IF (ynveloc=='N' .OR. ynveloc=='n')THEN
-  if (val=='PhaseP'.or. val=='phasep' .or. val=='pp' .or. &
-    val=='PhaseF'.or. val=='phasef' .or. val=='pf' .or. &
-    val=='PhaseS'.or. val=='phases' .or. val=='ps' .or. &
-    val=='GroupP'.or. val=='groupp' .or. val=='gp' .or. &
-    val=='Groupf'.or. val=='groupf' .or. val=='gf' .or. &
-    val=='GroupS'.or. val=='groups' .or. val=='gs' .or. &
-    val=='PFactP'.or. val=='pfoupp' .or. val=='pfp' .or. &
-    val=='PFactF'.or. val=='pfoupf' .or. val=='pff' .or. &
-    val=='PFactS'.or. val=='pfoups' .or. val=='pfs')then
-    WRITE(*,*) "Sorry! Your request is invalid!"
-    call sleep(1)
-    WRITE(*,*) "Have phase and group velocity calculations been performed?"    
-    stop
-    ENDif
-  endif
+  IF (val=='PhaseP'.or. val=='phasep' .or. val=='pp' .or. &
+     val=='PhaseF'.or. val=='phasef' .or. val=='pf'   .or. &
+     val=='PhaseS'.or. val=='phases' .or. val=='ps'   .or. &
+     val=='GroupP'.or. val=='groupp' .or. val=='gp'   .or. &
+     val=='Groupf'.or. val=='groupf' .or. val=='gf'   .or. &
+     val=='GroupS'.or. val=='groups' .or. val=='gs'   .or. &
+     val=='PFactP'.or. val=='pfoupp' .or. val=='pfp'  .or. &
+     val=='PFactF'.or. val=='pfoupf' .or. val=='pff'  .or. &
+     val=='PFactS'.or. val=='pfoups' .or. val=='pfs'  .or. &
+     val=='km'    .or. val=='Km'     .or. val=='KM'   )then
+     WRITE(*,*) "Sorry! Your request is invalid!"
+     call sleep(1)
+     WRITE(*,*) "Have phase and group velocity calculations been performed?!"    
+     stop
+  ENDif
+ Endif
  OPEN(36,file='.MaMiout')
  read(36,*)  Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2,G_min2,Maxbulk,Minbulk,Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2,pugh_min2 ,Ha_max2,Ha_min2
  IF (ynveloc=='Y' .OR. ynveloc=='y')THEN
    OPEN(37,file='.MaMiout2')
    read(37,*) VVP_P_max ,VVP_P_min ,VVP_Sf_max ,VVP_Sf_min ,VVP_Ss_max ,VVP_Ss_min ,VVG_P_max ,&
             VVG_P_min ,VVG_Sf_max ,VVG_Sf_min ,VVG_Ss_max ,VVG_Ss_min,&
-            VV_P_PF_max,VV_Sf_PF_max,VV_Ss_PF_max,VV_P_PF_min,VV_Sf_PF_min,VV_Ss_PF_min
+            VV_P_PF_max,VV_Sf_PF_max,VV_Ss_PF_max,VV_P_PF_min,VV_Sf_PF_min,VV_Ss_PF_min,km_max,km_min
    close(37)
  
  ENDIF
@@ -168,21 +170,20 @@ PROGRAM wrl_conv
       !  0 1 0	#color 3 r g b values = green
    
     OPEN(1,file='.aelastpro')
-    OPEN(5,file='.aelastpro2')
+    OPEN(83,file='.aelastpro2')
     do ii=1, (n_phif*n_thetaf)+1
      ! print*, ii
-     read(1,*) G_max(ii),shminp(ii),shminn(ii),shavep(ii),SINver(ii),CO(ii),comminp(ii),&
-		                      comminn(ii),NPratio_max(ii),pminp(ii),pminn(ii),pavep(ii),paven(ii),BINver(ii),&
-                          maxEVaLM1(ii),maxEVaTM1(ii),minEVaTM1(ii),pugh_max(ii),pughminp(ii),pughminn(ii),pughavep(ii),hardvar(ii) 
-    IF (ynveloc=='Y' .OR. ynveloc=='y')THEN
-     read(5,*) VVP_P(ii),VVG_P(ii),VVP_Sf(ii),VVG_Sf(ii),VVP_Ss(ii),VVG_Ss(ii),VV_P_PF(ii),VV_Sf_PF(ii),VV_Ss_PF(ii)
-          
-      
-    ENDIF
+     read(1,*) G_max(ii),shminp(ii),shminn(ii),shavep(ii),SINver(ii),CO(ii),comminp(ii),                             &   ! 7
+		             comminn(ii),NPratio_max(ii),pminp(ii),pminn(ii),pavep(ii),paven(ii),BINver(ii),                       &   ! 14
+               maxEVaLM1(ii),maxEVaTM1(ii),minEVaTM1(ii),pugh_max(ii),pughminp(ii),pughminn(ii),pughavep(ii),hardvar(ii) ! 22
+     IF (ynveloc=='Y' .OR. ynveloc=='y')THEN
+ 
+      read(83,*) VVP_P(ii),VVG_P(ii),VVP_Sf(ii),VVG_Sf(ii),VVP_Ss(ii),VVG_Ss(ii),VV_P_PF(ii),VV_Sf_PF(ii),VV_Ss_PF(ii),km(ii)
+     ENDIF
 
         if (ii==(n_phif*n_thetaf)+1) exit
     ENDDO
-    close(5)
+    close(83)
     close(1)
 
 if (val=='young' .or. val=='Young' .or. val=='yon') then   
@@ -677,4 +678,27 @@ ENDif
      WRITE(*,'(2a)') ' > Power-Flow-slow.wrl was created.' 
    STOP    
  ENDif
+ if (val=='km' .or. val=='Km' .or. val=='KM') then   
+   max=km_max*1.5
+   max=max*1.5  
+   OPEN (41, FILE ='Conductivity.wrl')
+   CALL cal_YLM(num_mesh,n_phif,n_thetaf,mesh)
+   CALL start_wrl((/0.75d0,0.75d0,0.75d0/),(/1.0d0,0.0d0,0.75d0/),max)
+   CALL shape_wrl()
+   CALL spheroid_wrl(n_phif,n_thetaf,mesh)
+  !CALL signـcolor_wrl(color_minp,color_minn,n_phif,n_thetaf,km)
+   CALL mesh_datapoints_wrl(n_phif,n_thetaf,km)
+! for v1.6.3
+   if (clor_val=="1") THEN
+     CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+     CALL shape_appearance_wrl(color_set1)
+   else
+    CALL shape_appearance_wrl(color_pos)
+   endif
+! rof v1.6.3
+   CALL close_shape_wrl
+   close(41)
+     WRITE(*,'(2a)') ' > Conductivity.wrl was created.' 
+   STOP
+ENDif
 END program

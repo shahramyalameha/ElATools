@@ -5,16 +5,16 @@
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: fOR 2D MATERIAL , CALCULATE pro_2d_sys.dat (pro=young, shear and poisson)
 
-  SUBROUTINE MAX_Min_val (datinput,Maximum, Minimum,pl)
+  SUBROUTINE MAX_Min_val (datinput,Maximum, Minimum,npoit,pl)
  implicit none
   DOUBLE PRECISION :: Maximum,Minimum,phi,Input,phi_max,phi_min,Input1,Input2,Input3 
-  INTEGER          :: i,pl,datinput ! 1=poisson; 2=young 3=shear| pl =1 for plot ; pl=2 for data max_min
+  INTEGER          :: i,pl,npoit,datinput ! 1=poisson; 2=young 3=shear| pl =1 for plot ; pl=2 for data max_min
     
   
  IF(pl==1) THEN    
    IF(datinput==2)then
       open(45,file="young_2d_sys.dat")   
-      DO i=1,201
+      DO i=1,npoit
          read(45,*)phi,Input                              
          If (i == 1) Then
             Maximum = Input
@@ -34,7 +34,7 @@
    END IF
    If(datinput==1)then
       open(45,file="poisson_2d_sys.dat")   
-      DO i=1,201
+      DO i=1,npoit
          read(45,*)phi,Input1,Input2,Input3                         
          If (i == 1) Then
             Maximum = Input1
@@ -54,7 +54,7 @@
    END IF
    If(datinput==3)then
       open(45,file="shear_2d_sys.dat")   
-      DO i=1,201
+      DO i=1,npoit
          read(45,*)phi,Input1,Input2,Input3                         
          If (i == 1) Then
             Maximum = Input1
@@ -79,7 +79,7 @@ END IF
 IF(pl==2) THEN
    IF(datinput==2)then
       OPEN(45,FILE="young_2d_sys.dat")   
-      DO i=1,201
+      DO i=1,npoit
          READ(45,*)phi,Input                              
          IF (i == 1) Then
             Maximum = Input
@@ -106,7 +106,7 @@ IF(pl==2) THEN
 
    If(datinput==1)then
       OPEN(45,file="poisson_2d_sys.dat")   
-      DO i=1,201
+      DO i=1,npoit
          READ(45,*)phi,Input1,Input2,Input3 
          If (i == 1) Then
             Maximum = Input1
@@ -132,18 +132,19 @@ IF(pl==2) THEN
    END IF         
   
    If(datinput==3)then
+      Input1=0.0
       OPEN(45,file="shear_2d_sys.dat")   
-      DO i=1,201
+      DO i=1,npoit
          READ(45,*)phi,Input1
          If (i == 1) Then
             Maximum = Input1
             Minimum = Input1
          END IF
-         If (Input1 < Maximum) Then
+         If (Input1 > Maximum) Then
             Maximum = Input1
             phi_max=phi
          END IF
-         If (Input1 > Minimum) Then
+         If (Input1 < Minimum) Then
             Minimum = Input1
             phi_min=phi
          END IF

@@ -95,7 +95,7 @@ SUBROUTINE wave_cal(C,i,j,theta,phi,density,vec, VVG_P,    &
 
        VVG_Ss   =mv(3)%v_g%m_matrix(i,j)
        VVP_Ss   =mv(3)%v_f%m_matrix(i,j)
-       VV_Ss_PF=mv(3)%pow_fact%m_matrix(i,j)
+       VV_Ss_PF =mv(3)%pow_fact%m_matrix(i,j)
 
       
       

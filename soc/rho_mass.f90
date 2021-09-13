@@ -6,7 +6,7 @@
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: For 3D matereials; calculatet ATOMIC MASS main version. 
 
-	 SUBROUTINE find_mass(name,ma)
+	 SUBROUTINE find_mass(name,ma,ma2)
       CHARACTER(len=2) :: name
       CHARACTER(len=2) :: nam
 	  REAL(8)          :: ma
@@ -129,5 +129,7 @@
 !!!!!!!!!!!!!!!! PS: the value of 10^23,  to convert volume from Ang^3 to Cm^3 remove.
 !!!!!!!!!!!!!!!! 1 Ang^3 =10^(-24) Cm^3 
                 ma = ma/6.022045d0
+                ma2 = ma*1.661D0*(10**-24)
        
       END
+      

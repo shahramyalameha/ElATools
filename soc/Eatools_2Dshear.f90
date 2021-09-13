@@ -8,7 +8,7 @@
  SUBROUTINE shear_2D(vv11,vv22,vv33,phi,phi_shear,MaxShear ,l)
  implicit none
  DOUBLE PRECISION                    :: vv11,vv22,vv33,Y1,Y2,A,B,T,Y3,MaxShear,MinShear,phi,Pe,She
- DOUBLE PRECISION, DIMENSION(201)    :: phi_shear,Shear_max_phi
+ DOUBLE PRECISION, DIMENSION(2010)    :: phi_shear,Shear_max_phi
  DOUBLE PRECISION, DIMENSION(3,3)    :: C,S
  Integer                             :: n,i,j,l
   n=3

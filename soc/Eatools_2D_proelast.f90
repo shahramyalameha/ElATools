@@ -5,8 +5,12 @@
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: fOR 2D MATERIAL , CALCULATED main mechanical properties for 2D compounds.
 
+!                                                  << Ref. of anistropy >>
+!=============================================================================================================================
+! Li, Ruishan, et al. "Elastic anisotropy measure for two-dimensional crystals." Extreme Mechanics Letters 34 (2020): 100615.
+!=============================================================================================================================
 
-SUBROUTINE proelast_2D ()
+SUBROUTINE proelast_2D()
 implicit none
 DOuble precision :: c(3,3),a(3,3)
 integer          :: i,j
@@ -31,7 +35,7 @@ Bv            = (C(1,1)+C(2,2) + 2D0*C(1,2))/4D0
 Gv            = (C(1,1)+C(2,2) - 2D0*C(1,2)+4d0*C(3,3))/8d0
 Br            = 1d0/(a(1,1) + a(2,2) + 2d0*a(1,2))
 Gr            = 2d0/(a(1,1) + a(2,2) - 2d0*a(1,2)+a(3,3))
-A_SU          = SQRT( (((Bv/Br) - 1d0)**20d1) + 2d0*(((Gv/Gr) - 1d0)**2d0) )
+A_SU          = SQRT( (((Bv/Br) - 1.0d0)**2d0) + 2d0*(((Gv/Gr) - 1.0d0)**2d0) )
 A_Ranganathan = (Bv/Br)+(2d0*(Gv/Gr)) - 3d0
 A_Kube        = SQRT( (LOG10((Bv/Br)))**2d0 + 2d0* ((LOG10(Gv/Gr))**2d0) )
 Ex            = (c(1,1)*c(2,2) - c(1,2)*c(2,1))/c(2,2)
@@ -54,9 +58,9 @@ WRITE(*,'(a,F10.3,a)')' = Area modulus  [Kr]  (N/m)',Br,"          ="
 WRITE(*,'(a,F10.3,a)')' = Poisson ratio [vxy]      ',vxy,"          ="
 WRITE(*,'(a,F10.3,a)')' = Poisson ratio [vyx]      ',vyx,"          ="
 WRITE(*,*)'================================================================== '
-WRITE(*,'(a,F10.4,a)')' = Elastic anisotropy index (A_SU):            ',A_SU,"          ="
-WRITE(*,'(a,F10.4,a)')' = Ranganathan Elastic anisotropy index (A_SU):',A_Ranganathan,"          ="
-WRITE(*,'(a,F10.4,a)')' = Kube Elastic anisotropy index (A_SU):       ',A_Kube,"          ="
+WRITE(*,'(a,F10.4,a)')' = Elastic anisotropy index (A_SU):           ',A_SU,"          ="
+WRITE(*,'(a,F10.4,a)')' = Ranganathan Elastic anisotropy index (A_R):',A_Ranganathan,"          ="
+WRITE(*,'(a,F10.4,a)')' = Kube Elastic anisotropy index (A_K):       ',A_Kube,"          ="
 WRITE(*,*)'================================================================== '
   
 WRITE(99,*)'================================================'
@@ -72,9 +76,9 @@ WRITE(99,'(a,F10.3,a)')' = Area modulus  [Kr]  (N/m)',Br,"          ="
 WRITE(99,'(a,F10.3,a)')' = Poisson ratio [vxy]      ',vxy,"          ="
 WRITE(99,'(a,F10.3,a)')' = Poisson ratio [vyx]      ',vyx,"          ="
 WRITE(99,*)'================================================================== '
-WRITE(99,'(a,F10.4,a)')' = Elastic anisotropy index (A_SU):            ',A_SU,"          ="
-WRITE(99,'(a,F10.4,a)')' = Ranganathan Elastic anisotropy index (A_SU):',A_Ranganathan,"          ="
-WRITE(99,'(a,F10.4,a)')' = Kube Elastic anisotropy index (A_SU):       ',A_Kube,"          ="
+WRITE(99,'(a,F10.4,a)')' = Elastic anisotropy index (A_SU):           ',A_SU,"          ="
+WRITE(99,'(a,F10.4,a)')' = Ranganathan Elastic anisotropy index (A_R):',A_Ranganathan,"          ="
+WRITE(99,'(a,F10.4,a)')' = Kube Elastic anisotropy index (A_K):       ',A_Kube,"          ="
 WRITE(99,*)'================================================================== '
   
 end SUBROUTINE

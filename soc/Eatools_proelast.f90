@@ -7,6 +7,8 @@
 SUBROUTINE proelast()
  IMPLICIT NONE
  DOUBLE PRECISION :: av,&
+                     akl,&
+                     az,&
                      bv,&
                      cv,&
                      ar,&
@@ -116,47 +118,59 @@ SUBROUTINE proelast()
     WRITE(99,*)'#########################################################################' 
     WRITE(99,*)''
     call sleep(1)
-    av=(C(1,1)+C(2,2)+C(3,3))/3d0
-    bv=(C(1,2)+C(2,3)+C(1,3))/3d0
-    cv=(C(4,4)+C(5,5)+C(6,6))/3d0
-    ar=(S(1,1)+S(2,2)+S(3,3))/3d0
-    br=(S(1,2)+S(2,3)+S(1,3))/3d0
-    cr=(S(4,4)+S(5,5)+S(6,6))/3d0
-!
+    av=(C(1,1) + C(2,2) + C(3,3))/3d0
+    bv=(C(1,2) + C(2,3) + C(1,3))/3d0
+    cv=(C(4,4) + C(5,5) + C(6,6))/3d0
+    
+    ar=(S(1,1) + S(2,2) + S(3,3))/3d0
+    br=(S(1,2) + S(2,3) + S(1,3))/3d0
+    cr=(S(4,4) + S(5,5) + S(6,6))/3d0
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
     kv = (av+2d0*bv)/3d0
     kr = 1d0/(3d0*ar+6d0*br)
     kh = 0.5d0*(kv+kr) 
+    ! 
     gv = (av-bv+3d0*cv)/5d0
     gr = 5d0/(4d0*ar-4d0*br+3d0*cr)
     gh = 0.5d0*(gv+gr)
+    ! 
     Ev = 1d0/(1d0/(3d0*gv)+1d0/(9d0*kv))
     Er = 1d0/(1d0/(3d0*gr)+1d0/(9d0*kr))
-    Eh = 0.5d0*(Ev+Er)
-    nuv = 0.5d0*(1d0-(3d0*gv)/(3d0*kv+gv))
-    nur = 0.5d0*(1d0-(3d0*gr)/(3d0*kv+gr))
-    nuh = 0.5d0*(nuv+nur)
+    Eh = 1d0/(1d0/(3d0*gh)+1d0/(9d0*kh))
+    ! 
+    nuv = 0.5d0*(1.0d0-(3.0d0*gv)/(3.0d0*kv +gv))
+    nur = 0.5d0*(1.0d0-(3.0d0*gr)/(3.0d0*kr +gr))
+    nuh = 0.5d0*(1.0d0-(3.0d0*gh)/(3.0d0*kh +gh))
+    ! 
     Kgv = kv/gv
     Kgr = kr/gr
     kgh = kh/gh
+    ! 
     inv_kgv = 1.d0/Kgv
     inv_kgr = 1.d0/Kgr
     inv_kgh = 1.d0/kgh
+    ! 
     mv = kv + (4d0*gv/3d0)
     mr = kr + (4d0*gr/3d0)
     mh = (mv + mr)/2d0
+    ! 
     Pc        = C(1,1) - C(4,4)
     Pc_hex_a  = C(1,3) - C(4,4)
     Pc_hex_c  = C(1,2) - C(6,6)
     Pc_orth_a = C(2,3) - C(4,4)
     Pc_orth_b = C(1,3) - C(5,5)
     Pc_orth_c = C(1,2) - C(6,6)
+    ! 
     La1v = ( nuv * Ev )/ ( ( 1d0 + nuv )*( 1 - 2d0 * nuv ) )
     La1r = ( nur * Er )/ ( ( 1d0 + nur )*( 1 - 2d0 * nur ) )
     La1h = ( nuh * Eh )/ ( ( 1d0 + nuh )*( 1 - 2d0 * nuh ) )
     La2v = Ev / ( 2 * ( 1d0 + nuv ) )
     La2r = Er / ( 2 * ( 1d0 + nuh ) )
     La2h = Eh / ( 2 * ( 1d0 + nuh ) )
+    ! 
     kel  = ( C(1,1) + 8d0 * C(1,2) ) / ( 7d0 * C(1,1) - 2 * C(1,2) )
+    ! 
     H_a1_r = 0.1475D0 *  gr; H_a1_h = 0.1475D0 *  gh; H_a1_v = 0.1475D0 *  gv
     H_b1_r = 0.0607D0 *  Er; H_b1_h = 0.0607D0 *  Eh; H_b1_v = 0.0607D0 *  Ev
     H_2_r  = 0.1769D0 * gr - 2.899D0; H_2_h   = 0.1769D0 * gh - 2.899D0; H_2_v   = 0.1769D0 * gv - 2.899D0
@@ -222,16 +236,6 @@ SUBROUTINE proelast()
 !   Kleinman parameter   : L. Kleinman, Deformation Potentials in Silicon. I. Uniaxial Strain, Phys. Rev. 128 (1962) 2614–2621. doi:10.1103/PhysRev.128.2614.
 !                                                                                URL https://link.aps.org/doi/10.1103/PhysRev.128.2614
     WRITE(*,*)''
-    WRITE(*,*)'============================================================='
-    WRITE(*,*)' Hardness Information      |      Voigt     Reuss     Average      '
-    WRITE(*,*)'=============================================================' 
-    WRITE(*,'(a,3F10.3,a)')' = Hardness H_1a  (GPa)     | ', H_a1_v,H_a1_r,H_a1_h    ,'  ='
-    WRITE(*,'(a,3F10.3,a)')' = Hardness H_1b  (GPa)     | ', H_b1_v,H_b1_r,H_b1_h    ,'  ='
-    WRITE(*,'(a,3F10.3,a)')' = Hardness H_2   (GPa)     | ', H_2_v,H_2_r,H_2_h    ,'  ='
-    WRITE(*,'(a,3F10.3,a)')' = Hardness H_3   (GPa)     | ', H_3_v,H_3_r,H_3_h    ,'  ='
-    WRITE(*,'(a,3F10.3,a)')' = Hardness H_4   (GPa)     | ', H_4_v,H_4_r,H_4_h    ,'  ='
-    WRITE(*,'(a,3F10.3,a)')' = Hardness H_5   (GPa)     | ', H_5_v,H_5_r,H_5_h    ,'  ='
-    WRITE(*,*)'=============================================================' 
     WRITE(99,*)''
     WRITE(99,*)'============================================================='
     WRITE(99,*)' Hardness Information      |      Voigt     Reuss     Average      '
@@ -243,14 +247,6 @@ SUBROUTINE proelast()
     WRITE(99,'(a,3F10.3,a)')' = Hardness H_4   (GPa)    | ', H_4_v,H_4_r,H_4_h    ,'  ='
     WRITE(99,'(a,3F10.3,a)')' = Hardness H_5   (GPa)    | ', H_5_v,H_5_r,H_5_h    ,'  ='
     WRITE(99,*)'=============================================================' 
-    WRITE(*,*)'                    ***  Guide Table ***                    '    
-    WRITE(*,*)'-------------------------------------------------------------'
-    WRITE(*,*)" General | Cubic | Hexagonal | Orthorhombic | Rhombohedral| "
-    WRITE(*,*)'-------------------------------------------------------------'    
-    WRITE(*,*)'  H_2    |  H_2  |   H_1b    |    H_2       |     H_2     | <= Insulator'
-    WRITE(*,*)'  H_5    |  H_5  | H_1b,H_3  |     -        |     H_2     | <= Semiconductor'
-    WRITE(*,*)'  H_4    |  H_1a |   H_4     |    H_4       |     H_4     | <= Metal'
-    WRITE(*,*)'-------------------------------------------------------------'   
     WRITE(99,*)''     
     WRITE(99,*)'                    ***  Guide Table ***                    '    
     WRITE(99,*)'-------------------------------------------------------------'
@@ -262,12 +258,16 @@ SUBROUTINE proelast()
     WRITE(99,*)'-------------------------------------------------------------'   
     WRITE(99,*)'' 
     AU = (kv/kr) + 5d0*(gv/gr) - 6.0d0
-    AL = sqrt(5d0)*2.303d0*log(1 + (AU/5))
+    AL = sqrt(2.303d0*log(1 + (AU/5)))
     Ac = (gv-gr)/(gv+gr)
-    WRITE(*,'(a,3F10.4)')' > Universal anisotropy index (AU)        :', au
-    WRITE(*,'(a,3F10.4)')' > Log-Euclidean anisotropy parameter (AL):',al
-    WRITE(*,'(a,3F10.4)')' > Chung-Buessem Anisotropy Index (Ac)    :',ac     
-    WRITE(*,'(a,F10.4,a,a,a)')' > Kleinman parameter                     : ',kel,'       <--(  ',st_ben,')'                    
+    AZ = (2.d0*C(4,4))/ (C(1,1)-C(1,2))
+    AKL= sqrt(   (log(kv/kr)**2) + 5.0D0 * (log(gv/gr)**2)  )
+    WRITE(*,'(a,3F10.4)')' > Universal anisotropy index (AU)               :', au
+    WRITE(*,'(a,3F10.4)')' > Zener anisotropy Index (AZ)                   :',az       
+    !WRITE(*,'(a,3F10.4)')' > Log-Euclidean anisotropy parameter (AL)       :',al
+    WRITE(*,'(a,3F10.4)')' > Kube’s log-Euclidean anisotropy parameter (AL):',akl
+    WRITE(*,'(a,3F10.4)')' > Chung-Buessem Anisotropy Index (Ac)           :',Ac 
+    WRITE(*,'(a,F10.4,a,a,a)')' > Kleinman’s parameter                          :',kel,'       <--(  ',st_ben,')'                    
     WRITE(*,*)'----------------------------------------------------------'
     WRITE(*,'(a)')'              ---> Cauchy pressure(GPa) <---              '  
     WRITE(*,*)'----------------------------------------------------------'    
@@ -295,11 +295,12 @@ SUBROUTINE proelast()
     !REfs of Cauchy pressure:
     !Journal of Physics and Chemistry of Solids 138 (2020) 109253
     !Materials Today Communications 26 (2021) 101991
-    WRITE(99,'(a,3F10.4)')' > Universal anisotropy index (AU)        :', au
-    WRITE(99,'(a,3F10.4)')' > Log-Euclidean anisotropy parameter (AL):',al
-    WRITE(99,'(a,3F10.4)')' > Chung-Buessem Anisotropy Index (Ac)    :',ac 
-    WRITE(99,'(a,F10.4,a,a21,a)')' > Cauchy pressure(GPa) (Pc)              : ',Pc,'     <--(  ',Cov_met,')'
-    WRITE(99,'(a,F10.4,a,a,a)')' > Kleinman parameter                     : ',kel,'       <--(  ',st_ben,')' 
+    WRITE(99,'(a,3F10.4)')' > Universal anisotropy index (AU)               :', au
+    WRITE(99,'(a,3F10.4)')' > Zener anisotropy Index (AZ)                   :',Az        
+    !WRITE(99,'(a,3F10.4)')' > Log-Euclidean anisotropy parameter (AL)       :',al
+    WRITE(99,'(a,3F10.4)')' > Kube’s log-Euclidean anisotropy parameter (AL):',akl
+    WRITE(99,'(a,3F10.4)')' > Chung-Buessem Anisotropy Index (Ac)           :',ac 
+    WRITE(99,'(a,F10.4,a,a,a)')' > Kleinman’s parameter                          :',kel,'       <--(  ',st_ben,')'  
     WRITE(99,*)'----------------------------------------------------------'
     WRITE(99,'(a)')'              ---> Cauchy pressure(GPa) <---              '  
     WRITE(99,*)'----------------------------------------------------------'    

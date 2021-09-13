@@ -14,10 +14,10 @@
   INTEGER, PARAMETER                 :: dp = selected_real_kind(15, 307)
   CHARACTER(LEN=1)                   :: YN="Y" ,&                !> for plot 3d and 2d data is  "Y" 
                                         yesno,yesno2,&
-                                        yn_veloc,&               !> Being in a database is  "Y" 
-                                        order                                        
+                                        yn_veloc,yn_ewp,&                
+                                        order,yn_km                                   
   CHARACTER(LEN=25)                  :: myid                     !> for databank
-  INTEGER                               :: CLaS,phi_meah,theta_meah,cutmesh
+  INTEGER                               :: CLaS,phi_meah,theta_meah,cutmesh,npoint,ewp
   DOUBLE PRECISION, PARAMETER        :: pi=3.14159265358979323846264338327950D0,ee=0.0001D0
   DOUBLE PRECISION, DIMENSION(6,6)   :: C1p=0D0,S1=0D0,C=0D0,S=0D0,CP=0D0,C3=0D0,CCo=0d0,Eig3d
   DOUBLE PRECISION, DIMENSION(10100) :: shear2dmax,  Ax,&
@@ -30,6 +30,7 @@
                                         young2dmin,   &
                                         young2dmax,   &
                                         hard2dmax,    &
+                                        km2dmax  ,    &
                                         hard2dmin,    &
                                         poisson2dmax, &
                                         poisson2dminn,&
@@ -221,7 +222,7 @@ Ha_min2_phi   = 0D0,        &
  k33
 
  DOUBLE PRECISION, PARAMETER           ::  PI_C=3.14159265358979323846264338327950D0
- DOUBLE PRECISION                      ::  density,theta3,phi3
+ DOUBLE PRECISION                      ::  density,theta3,phi3,ma_avrag=1,dns,tot_at=0.0
  INTEGER                               ::  k, n, m, ac_mod, plan
  DOUBLE PRECISION, DIMENSION (0:9,1:3) ::  poin
  DOUBLE PRECISION                      ::  VVG_P,    &
@@ -284,10 +285,17 @@ Ha_min2_phi   = 0D0,        &
  VVP_Sf_min_theta=0D0,   &
  VV_Sf_PF_min_theta=0D0, &
  VVG_Ss_min_theta=0D0,   &
- VVP_Ss_min_theta=0D0,   &
+ VVP_Ss_min_theta=1D0,   &
  VV_Ss_PF_min_theta=0d0, &
- VV_Ss_PF_max_theta=0d0
-
+ VV_Ss_PF_max_theta=0d0, &
+ km                    , &
+ km_max=0.d0           , &
+ km_min=0.0d0          , &
+ km_min_phi=0.0d0      , &
+ km_max_phi=0.0d0      , &
+ km_min_theta=0.0d0    , &
+ km_max_theta=0.0d0   
+ 
  TYPE normals
  DOUBLE PRECISION, DIMENSION (1:3,1:3) :: normod
  END TYPE normals
@@ -311,27 +319,29 @@ Ha_min2_phi   = 0D0,        &
 
 !>>>>>>>>>>>>>>>>>>>>>>>>END<<<<<<<<<<<<<<<<<<<<<<<<< 
 
- OPEN(99,FILE="DATA.out") !> final static data
+
  CALL SYSTEM('clear')
  WRITE(*,*) ' '
  CALL WELCOME()
+
  WRITE(*,*) ' '
  CALL SYSTEM('sleep 1.5')
  
+ OPEN(99,FILE="DATA.out") !> final static data 
 225 CALL SYSTEM('clear')
  WRITE(*,*)" > Select system dimension:"  !> go to type of system
  CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
  !WRITE(*,*)"========================" 
- WRITE(*,*)" 3D-Materials------ => 3"
- WRITE(*,*)" 2D-Materials------ => 2"
+  WRITE(*,*)" 2D-Materials------ => 2"
+  WRITE(*,*)" 3D-Materials------ => 3"
  !WRITE(*,*)"========================" 
  CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
  READ(*,*) d2d3 
    
    
 IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
-  CALL SYSTEM('clear')
-  WRITE(*,*)" > Select using output code:"
+665  CALL SYSTEM('clear')
+  WRITE(*,*)" > Select the desired method (code, file and databank):"
   CALL SYSTEM('tput setaf 33;tput bold; echo "============================================================";tput sgr0')
   !WRITE(*,*)"============================================================" 
   WRITE(*,*)" IRelast-----------------------(       wein2k         )-=> 1"
@@ -347,21 +357,77 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   READ(*,*) Ncod
   IF(Ncod .EQ. 0) then; Goto 225; endif
   IF (Ncod .eq. 1 .OR. Ncod .eq. 2 .OR. Ncod .eq. 3 .OR. Ncod .eq. 4 .OR. Ncod .eq. 5 .OR. Ncod .eq. 6 .OR. Ncod .eq. 7) THEN
-  WRITE(*,*)" > Want to calculate phase and group velocities? (Y/n)" !> select code for calculate of phase and group velocities
+  WRITE(*,*)" > Do you want to calculate elastic wave properties? (Y/n)" !> select code for calculate of phase and group velocities
   READ(*,*)yn_veloc
-  IF (yn_veloc=='Y' .or. yn_veloc=='y') then
-    WRITE(*,*)"Density of Compound (kg/m^3):"
-    WRITE(*,*)"note: If you don't know, enter 0"
+  CALL SYSTEM('clear')
+IF (yn_veloc=='Y' .or. yn_veloc=='y') then
+  WRITE(*,*)" > Select the desired option:"
+  CALL SYSTEM('tput setaf 63;tput bold; echo "================================================================";tput sgr0')
+  WRITE(*,"(a)")" Phase, group and PFA without Min. thermal conductivity-----=> 1"
+  WRITE(*,"(a)")" Phase, group and PFA  with   Min. thermal conductivity-----=> 2"
+  Write(*,"(a)")" Back ------------------------------------------------------=> 0"
+  CALL SYSTEM('tput setaf 63;tput bold; echo "================================================================";tput sgr0')
+  Read(*,*) ewp
+!#######################################################################
+   IF (ewp== 1) then
+     WRITE(*,*)"Density of Compound (kg/m^3):"
+     WRITE(*,*)"Note: If you don't know, enter 0"
+     READ(*,*) density
+
+     IF (density==0)then
+       CALL system("dens.x dns")
+       OPEN(845,file=".rhocom")
+       READ(845,*)density
+       CLOSE(845)
+     END iF
+     WRITE (99,*) " > Density of Compound =", density,"(kg/m^3)"
+   ENdif   
+!#######################################################################
+  IF (ewp== 2) then
+    yn_km='y'
+    WRITE(*,*)"> Density of Compound (kg/m^3):"
+    WRITE(*,*)"Note: If you don't know, enter 0"
     READ(*,*) density
+
     IF (density==0)then
-      CALL system("dens_lapw")
+      CALL system("dens.x dns")
       OPEN(845,file=".rhocom")
       READ(845,*)density
       CLOSE(845)
     END iF
-    WRITE (99,*) " > Density of Compound =", density
+!!!!!!!!!!!!!!  
+       open(124,file='.mavg_com')  
+       
+       WRITE(*,*)"> Mean mass of atoms in each unit cell (gr):"
+       WRITE(*,*)"Note: If you don't know, enter 0"
+       READ(*,*) ma_avrag
+       Write(124,*) ma_avrag
+       WRITE(*,*)"> Total of atoms in each unit cell:"
+       WRITE(*,*)"Note: If you don't know, enter 0"
+       READ(*,*) tot_at
+       WRITE(124,*) tot_at
+       
+       close(124)
+     IF (ma_avrag==0 .or. tot_at==0)then    
+       CALL system("dens.x mav") 
+       
+       OPEN(414,file=".mavg_com")
+       READ(414,*) ma_avrag
+       READ(414,*) tot_at
+       CLOSE(414)
+     ENDIF
+     WRITE (99,*) " > Mean mass of atoms =", ma_avrag, "(gr)"
+
+     WRITE (99,*) ""
   ENDIF
-  IF (Ncod .eq. 1) then
+ !####################################################################### 
+  IF (ewp== 0) then
+   Goto 665
+  Endif
+  
+ENDIF
+ !!!!!!!!!!!!!!!!!!!      
+   IF (Ncod .eq. 1) then
     OPEN(4,FILE="INVELC-matrix",status='old',err=1367)
     CALL system ('cp INVELC-matrix Cij.dat')
     CALL C_Inv_M(6) 
@@ -521,16 +587,16 @@ S(6,1)=S1(6,1); S(6,2)=S1(6,2); S(6,3)=S1(6,3); S(6,4)=S1(6,4); S(6,5)=S1(6,5); 
 !> Stability 
 call stability3d( Stable, C,Eig3d )
 IF (Stable==1) THEN
-  WRITE(*,*)"======================================";
-  call system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-  WRITE(*,*)"======================================"
+  CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
+  CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
+  CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
   WRITE(99,"(a)")" > Elastic Stability Conditions:  Unstable; STOP"
  
 END IF
 IF (Stable==0) THEN
-   WRITE(*,*)"======================================";
-   call system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-   WRITE(*,*)"======================================";
+   CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
+   CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
+   CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
    WRITE(99,"(a)")" > Elastic Stability Conditions:  Stable"
 
 END IF
@@ -540,10 +606,14 @@ END IF
 CALL sleep(1) 
  !<
 CALL proelast()
-WRITE (*,*) " "
+ 
 
-IF (yn_veloc=='Y' .or. yn_veloc=='y') WRITE (*,*) " > Density of Compound =", density
-WRITE(*,*)" > Enter phi-meah and theta-meah between 50 and 250 (Recommended: 150):"
+IF (yn_veloc=='Y' .or. yn_veloc=='y') WRITE (*,*) " > Density of Compound =", density,"(kg/m^3)"
+IF (ewp== 2)                          WRITE (*,*) " > Mean mass of atoms =", ma_avrag, "(gr)"
+IF (ewp== 2)                          CALL pro_wave(density,ma_avrag)
+WRITE(*,*)""
+CALL system ('tput setaf 122;tput bold; echo " > Enter phi-meah and theta-meah between 50 and 250 (Recom.: 150*150):";tput sgr0')
+!WRITE(*,*)" > Enter phi-meah and theta-meah between 50 and 250 (Recommended: 150):"
 OPEN(59,file='MESH')
 READ(*,*)phi_meah,theta_meah
 cutmesh=(phi_meah*theta_meah)+1
@@ -551,7 +621,8 @@ WRITE(59,*)phi_meah,theta_meah,cutmesh
 close(59)
 
 WRITE (*,*) " "
-WRITE(*,*)" > Select the (hkl) Miller indices for 2D cut:" 
+CALL system ('tput setaf 142;tput bold; echo " > Select the (hkl) Miller indices for 2D cut:";tput sgr0')
+!WRITE(*,*)"> Select the (hkl) Miller indices for 2D cut:" 
 READ(*,*) mmx,kky,llz
 mmx1=mmx
 kky1=kky
@@ -580,7 +651,7 @@ ELSE
     WRITE(140,*)'N'
     close(140)
 226 call system('clear')
-    WRITE(*,*)" > Select using output code:"
+    WRITE(*,*)" > Select the desired method (code or file):"
     CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
     !WRITE(*,*)"====================================================="
     WRITE(*,*)" AELAS                            (    VASP   ) => 1"
@@ -591,6 +662,7 @@ ELSE
      CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
     read(*,*) Ncod
     IF(Ncod .EQ. 0) then; Goto 225; endif
+
     IF (Ncod .EQ. 1) then
       call system("sed '1,2d' ELADAT > ELADAT_temp")
       OPEN(79,FILE="Cij-2D.dat")
@@ -601,29 +673,33 @@ ELSE
       ENDDO
       close(53)
       close(79)
-      CALL C_Inv_M2D(3)
+      !CALL C_Inv_M2D(3)
+
   !> Stability
-      CALL stability2d( Stable, C2D )
+      CALL stability2d( Stable, C2D,Eig2d )
       IF (Stable == 1) THEN
-        WRITE(*,*)"======================================";
+        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
         CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-        WRITE(*,*)"======================================"
-        WRITE(*, *)" > Elastic Stability Conditions:  Unstable; STOP"
-        WRITE(99,*)" > Elastic Stability Conditions:  Unstable; STOP"
+        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
+        Write(99,*)" ========================================" 
+        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*)" ========================================"         
         STOP
       END IF
       IF (Stable == 0) THEN
-        WRITE(*,*)"======================================"; 
+        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-        WRITE(*,*)"======================================"
-        WRITE(*,*)" > Elastic Stability Conditions:  Stable"
-        WRITE(99,*)" > Elastic Stability Conditions:  Stable"
+        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
+        Write(99,*)" ========================================" 
+        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*)" ========================================" 
       END IF
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,*)" "
-      CALL sleep(1)
+ 
   !<
+      CALL C_Inv_M2D(3)
       CALL proelast_2D ()
       CALL sleep(2)
     ENDIF
@@ -644,31 +720,45 @@ ELSE
         WRITE(79,50) (C2D(i,j),j=1,3)
       ENDDO
       close(79)
-      CALL C_Inv_M2D(3)
+      !CALL C_Inv_M2D(3)
 !> Stability
-      CALL stability2d( Stable, C2D )
+      CALL stability2d( Stable, C2D,Eig2d )
       IF (Stable == 1) THEN
+        Write(*,*)""
+        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
         CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-        WRITE(*,*)"======================================"
+        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
+        Write(99,*)" ========================================" 
+        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*)" ========================================"         
         STOP
       END IF
       IF (Stable == 0) THEN
+        Write(*,*)""
+        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-        WRITE(*,*)"======================================" 
+        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
+        Write(99,*)" ========================================" 
+        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*)" ========================================" 
       END IF
-      CALL sleep(1)
+      WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
+      WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
 !<
+     CALL C_Inv_M2D(3)
       CALL proelast_2D ()
       CALL sleep(2)
     END IF    
     IF (Ncod .eq. 3) then
-      WRITE(*,*)" > Select using option:"      
-      write(*,*) "========================="
-      WRITE(*,*) "  Default  option  => 1  "
-      WRITE(*,*) "  Advanced option  => 2  "
-      WRITE(*,*) "  Back             => 0  "      
-      write(*,*) "========================="
+      call system('clear')
+      WRITE(*,*)" > Select the type of two-dimensional system:"    
+      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
+      WRITE(*,*) " Default  option (Hex., Squ., and Rec. systems) => 1  "
+      WRITE(*,*) " Advanced option (       Oblique systems      ) => 2  "
+      WRITE(*,*) " Back ------------------------------------------=> 0  "      
+      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
       read(*,*)adv_mubner
+
       IF (adv_mubner == 2 ) adv = "adv"
       IF (adv_mubner == 1 ) adv = "ndv"
       IF (adv_mubner == 0 ) goto 226
@@ -677,22 +767,38 @@ ELSE
       READ(11,*) C2D(2,1),C2D(2,2),C2D(2,3)
       READ(11,*) C2D(3,1),C2D(3,2),C2D(3,3)
       close(11)
-      CALL C_Inv_M2D(3)
+      
 !> Stability
-      CALL stability2d( Stable, C2D )
+      CALL stability2d( Stable, C2D,Eig2d )
       IF (Stable == 1) THEN
+        Write(*,*)""
+        CALL system ('tput setaf 9;tput bold; echo " ========================================";tput sgr0')     
         CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-        WRITE(*,*)"======================================"
+        CALL system ('tput setaf 9;tput bold; echo " ========================================";tput sgr0')
+        Write(99,*)" ========================================" 
+        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*)" ========================================" 
         STOP
       END IF
       IF (Stable == 0) THEN
+        Write(*,*)""
+        CALL system ('tput setaf 10;tput bold; echo " ========================================";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-        WRITE(*,*)"======================================" 
+        CALL system ('tput setaf 10;tput bold; echo " ========================================";tput sgr0')
+        Write(99,*)" ========================================" 
+        Write(99,*) " > Elastic Stability Conditions:  Stable" 
+        Write(99,*)" ========================================" 
       END IF
-      CALL sleep(1)
+      WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
+      WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
 !<
+      CALL C_Inv_M2D(3)
       CALL proelast_2D()
-      CALL sleep(2)
+      CALL sleep(1)
+      write(*,*)""
+      CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
+      !WRITE(*,*)" > Enter phi-mesh. Be divisible by 100.(e.g. 100, 200, 300, etc):"
+      read(*,*)npoint
     END IF    
   ELSE
     WRITE(*,*)"Invalid Input!";   
@@ -710,7 +816,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
 !open(78,file='uuu')
   OPEN(111, file="3d_SD.dat")
   OPEN(14,FILE="3d_comp.dat"    )
-  OPEN(28,FILE="3d_harnness.dat" )
+  OPEN(28,FILE="3d_hardness.dat" )
  ! OPEN(29,FILE="CompN_Min.dat"    )
   
   OPEN(65,FILE="3d_pugh.dat"    )
@@ -739,15 +845,18 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   !OPEN(33,FILE="MaxTm_sound.dat"  )
   !OPEN(34,FILE="MinTm_sound.dat"  )
   If (yn_veloc=='Y' .or. yn_veloc=='y') then
-    OPEN(100,FILE="VVP_P.dat"       )
-    OPEN(101,FILE="VVG_P.dat"       )
-    OPEN(102,FILE="VV_P_PF.dat"     )
-    OPEN(103,FILE="VVG_Sf.dat"      )
-    OPEN(104,FILE="VVP_Sf.dat"      )
-    OPEN(105,FILE="VV_Sf_PF.dat"    )
-    OPEN(106,FILE="VVG_Ss.dat"      )
-    OPEN(107,FILE="VVP_Ss.dat"      )	  
-    OPEN(108,FILE="VVP_Ss_PF.dat"   )   
+    OPEN(100,FILE="3d_pp.dat"  ) ! 3d_pp.dat  > VVP_P.dat
+    OPEN(101,FILE="3d_gp.dat"  ) ! 3d_gp.dat  > VVG_P.dat
+    OPEN(102,FILE="3d_pfp.dat" ) ! 3d_pfp.dat > VV_P_PF.dat
+    OPEN(103,FILE="3d_gf.dat"  ) ! 3d_gf.dat  > VVG_Sf.dat
+    OPEN(104,FILE="3d_pf.dat"  ) ! 3d_pf.dat  > VVP_Sf.dat
+    OPEN(105,FILE="3d_pff.dat" ) ! 3d_fpf.dat > VV_Sf_PF.dat
+    OPEN(106,FILE="3d_gs.dat"  ) ! 3d_gs.dat  > VVG_Ss.dat
+    OPEN(107,FILE="3d_ps.dat"  )	! 3d_ps.dat  > VVP_Ss.dat
+    OPEN(108,FILE="3d_pfs.dat" ) ! 3d_spf.dat > VVP_Ss_PF.dat
+  ENDIF  
+   If (yn_km=='Y' .or. yn_km=='y') then
+    OPEN(110,FILE="3d_km.dat"       )
   ENDIF  
   !IF (MOD(Nmesh_thata,Nmesh_thataf).NE.0) THEN
    ! Nmesh_thata=(Nmesh_thata/Nmesh_thataf)*Nmesh_thataf
@@ -766,6 +875,97 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   If (yn_veloc=='Y' .or. yn_veloc=='y') then
     open(55,file='.aelastpro2')
   endif
+  
+!! Start loop=0 for wave  and elste pro.============================
+
+        call callCij (CCO)
+        i=0
+        j=0
+        theta=DBLE(i)/DBLE(Nmesh_thata)*PI
+        phi=DBLE(j)/DBLE(Nmesh_phi)*2D0*PI
+        vec(1)=SIN(theta)*COS(phi)
+        vec(2)=SIN(theta)*SIN(phi)
+        vec(3)=COS(theta)
+        v11=vec(1)*vec(1) ; v12=vec(1)*vec(2)
+        v13=vec(1)*vec(3) ; v22=vec(2)*vec(2)
+        v23=vec(2)*vec(3) ; v33=vec(3)*vec(3)
+                
+        BB=( S(1,1)+S(1,2)+S(1,3) )*v11&
+        +( S(1,6)+S(2,6)+S(3,6) )*v12&
+        +( S(1,5)+S(2,5)+S(3,5) )*v13&
+        +( S(1,2)+S(2,2)+S(2,3) )*v22&
+        +( S(1,4)+S(2,4)+S(3,4) )*v23&
+        +( S(1,3)+S(2,3)+S(3,3) )*v33 
+      BINver=1D0/BB
+      Maxbulk = BINver
+      Minbulk = BINver
+      !!
+      SS=v11*v11*S(1,1)&
+      +2*v12*v12*S(1,2)&
+      +2*v13*v13*S(1,3)&
+      +2*v12*v13*S(1,4)&
+      +2*v11*v13*S(1,5)&
+      +2*v11*v12*S(1,6)+  v22*v22*S(2,2)&
+      +2*v23*v23*S(2,3)&
+      +2*v22*v23*S(2,4)&
+      +2*v12*v23*S(2,5)&
+      +2*v12*v22*S(2,6)+  v33*v33*S(3,3)&
+      +2*v23*v33*S(3,4)&
+      +2*v13*v33*S(3,5)&
+      +2*v13*v23*S(3,6)+  v23*v23*S(4,4)&
+      +2*v13*v23*S(4,5)&
+      +2*v12*v23*S(4,6)+  v13*v13*S(5,5)&
+      +2*v12*v13*S(5,6)+  v12*v12*S(6,6)
+      SINver=1.0_dp/SS   !Young
+      CALL CShear(G_min,G_max,G_Ave,phi,theta,v11,v12,v13,v22,v23,v33,a6666,sheainvar)
+      CALL CHardness(BINver,SINver,sheainvar,hardvar)
+      !write(*,*)hardvar
+        Ha_max2 = hardvar
+        Ha_min2 = hardvar
+        
+ If (yn_veloc=='Y' .or. yn_veloc=='y') then        
+        call wave_main_AAEP(i,j,theta,phi,vec,CCO,density,   VVG_P,    &
+                                                             VVP_P,    &
+                                                             VV_P_PF,  &
+                                                             VVG_Sf,   &
+                                                             VVP_Sf,   &
+                                                             VV_Sf_PF, &
+                                                             VVG_Ss,   &
+                                                             VVP_Ss,   &
+                                                             VV_Ss_PF  )
+
+       
+        VVG_P_min         = VVG_P 
+        VVP_P_min         = VVP_P 
+        VV_P_PF_min       = VV_P_PF 
+        ! 
+        VVG_P_max         = VVG_P 
+        VVP_P_max         = VVP_P 
+        VV_P_PF_max       = VV_P_PF
+        
+        VVG_Sf_min        = VVG_Sf 
+        VVP_Sf_min        = VVP_Sf 
+        VV_Sf_PF_min      = VV_Sf_PF 
+        ! 
+        VVG_Sf_max        = VVG_Sf 
+        VVP_Sf_max         = VVP_Sf 
+        VV_Sf_PF_max       = VV_Sf_PF
+        ! 
+        VVG_Ss_min        = VVG_Ss 
+        VVP_Ss_min        = VVP_Ss  
+        VV_Ss_PF_min      = VV_Ss_PF
+        ! 
+        VVG_Ss_max        = VVG_Ss 
+        VVP_Ss_max         = VVP_Ss  
+        VV_Ss_PF_max      = VV_Ss_PF
+    
+endif 
+ If (yn_km=='Y' .or. yn_km=='y') then   
+       Call Ckm_cal(density, SINver, ma_avrag, km )
+         km_max           = km
+         km_min           = km      
+ endif 
+!! Finish loop=0 for wave and elsat pro.============================
 
   OPEN(10,file="Cij.dat")
   DO i=0,Nmesh_thata
@@ -786,7 +986,8 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
       v23=vec(2)*vec(3) ; v33=vec(3)*vec(3)
       If (yn_veloc=='Y' .or. yn_veloc=='y') then
         call callCij (CCO)
-        call wave_main_AAEP(i,j,theta,phi,vec,CCO,density, VVG_P,      &
+
+       CALL wave_main_AAEP( i,j,theta,phi,vec,CCO,density,   VVG_P,    &
                                                              VVP_P,    &
                                                              VV_P_PF,  &
                                                              VVG_Sf,   &
@@ -794,16 +995,10 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
                                                              VV_Sf_PF, &
                                                              VVG_Ss,   &
                                                              VVP_Ss,   &
-                                                             VV_Ss_PF   )
-        VVG_P_min         = VVG_P 
-        VVP_P_min         = VVP_P 
-        VV_P_PF_min       = VV_P_PF 
-        VVG_Sf_min        = VVG_Sf 
-        VVP_Sf_min        = VVP_Sf 
-        VV_Sf_PF_min      = VV_Sf_PF 
-        VVG_Ss_min        = VVG_Ss 
-        VVP_Ss_min        = VVP_Ss 
-        VV_Ss_PF_min      = VV_Ss_PF
+                                                             VV_Ss_PF  )
+
+
+        ! write(*,*)VVP_P,VVP_Ss,VVP_Sf
         IF (VVG_P .GE.VVG_P_max) THEN
           VVG_P_max       =  VVG_P 
           VVG_P_max_phi   = (phi *180.0D0)/PI
@@ -824,7 +1019,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
         IF (VVP_P .LE.VVP_P_min) THEN
           VVP_P_min       = VVP_P
           VVP_P_min_phi   = (phi *180.0D0)/PI
-          VVP_P_min_theta =  (theta*180.0D0)/PI                   
+          VVP_P_min_theta = (theta*180.0D0)/PI                   
         ENDIF
  
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&&&&&&&&&&&&&&&&&
@@ -873,41 +1068,41 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
           VV_Sf_PF_min_theta = (theta*180.0D0)/PI                    
         ENDIF
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&&&&&&&&&&&&&&&&&
-        IF (VVP_Ss.GE.VVP_Ss_min) THEN
+        IF (VVP_Ss.GE.VVP_Ss_max) THEN
           VVP_Ss_max       = VVP_Ss
           VVP_Ss_max_phi   = (phi *180.0D0)/PI
           VVP_Ss_max_theta = (theta*180.0D0)/PI 
         ENDIF 
 !
-        IF (VVP_Ss.LE.VVP_Ss_min ) THEN
-          VVP_Ss_min       = VV_Sf_PF  
+        IF (VVP_Ss.LE.VVP_Ss_min) THEN
+          VVP_Ss_min       = VVP_Ss  
           VVP_Ss_min_phi   =(phi *180.0D0)/PI
           VVP_Ss_min_theta = (theta*180.0D0)/PI                     
         ENDIF
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&&&&&&&&&&&&&&&&
-        IF (VVG_Ss.GE.VVG_Ss_min) THEN
+        IF (VVG_Ss.GE.VVG_Ss_max) THEN
           VVG_Ss_max       = VVG_Ss
           VVG_Ss_max_phi   = (phi *180.0D0)/PI
           VVG_Ss_max_theta = (theta*180.0D0)/PI 
         ENDIF 
-        IF (VVG_Ss.LE.VVG_Ss_min ) THEN
+        IF (VVG_Ss.LE.VVG_Ss_min) THEN
           VVG_Ss_min       = VVG_Ss  
           VVG_Ss_min_phi   =(phi *180.0D0)/PI
           VVG_Ss_min_theta = (theta*180.0D0)/PI                     
         ENDIF
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&&&&&&&&&&&&&&&&&
-        IF (VV_Ss_PF.GE.VV_Ss_PF_min) THEN
+        IF (VV_Ss_PF.GE.VV_Ss_PF_max) THEN
           VV_Ss_PF_max       = VV_Ss_PF
           VV_Ss_PF_max_phi   = (phi *180.0D0)/PI
           VV_Ss_PF_max_theta = (theta*180.0D0)/PI 
         ENDIF 
-        IF (VV_Ss_PF.LE.VV_Ss_PF_min ) THEN
+        IF (VV_Ss_PF.LE.VV_Ss_PF_min) THEN
           VV_Ss_PF_min       = VV_Ss_PF  
           VV_Ss_PF_min_phi   =(phi *180.0D0)/PI
           VV_Ss_PF_min_theta = (theta*180.0D0)/PI                     
         ENDIF
       ENDIF
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&&&&&&&&&&&&&&&&&
+
       CALL Csound(vec,v11,v12,v22,v13,v23,v33,EVa,Lm,MaxTm,MinTm)
       maxEVaLM = EVa(Lm)
       maxEVaTM = EVa(MaxTm)
@@ -977,7 +1172,27 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
         Minyoung_phi   = phi
         !WRITE(*,*)Minyoung
       ENDIF
-       !
+ !-----------------------------------------------
+  If (yn_km=='Y' .OR. yn_km=='y') THEN
+     
+      
+    CALL Ckm_cal(density, SINver, ma_avrag, km )
+    
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&&&&&&&&&&&&&&&& > v1.7.0
+
+        IF (km.GE.km_max) THEN
+          km_max       = km
+          km_max_phi   = (phi *180.0D0)/PI
+          km_max_theta = (theta*180.0D0)/PI 
+        ENDIF 
+        IF (km.LE.km_min) THEN
+          km_min       = km  
+          km_min_phi   = (phi *180.0D0)/PI
+          km_min_theta = (theta*180.0D0)/PI                     
+        ENDIF
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!&&&&&&&&&&&&&&&&&
+  ENDIF      
+  !-----------------------------------------------
       CALL CShear(G_min,G_max,G_Ave,phi,theta,v11,v12,v13,v22,v23,v33,a6666,sheainvar)
 
       IF (G_max.GE.G_max2) THEN
@@ -994,20 +1209,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
       IF (G_min.ge.0D0) shminp =  G_min
       IF (G_Ave.LE.0D0) shaven = -G_Ave
       IF (G_Ave.ge.0D0) shavep =  G_Ave
-!!!!!!!!!!!!!!!!!!!v1.6.3
-      CALL CHardness(BINver,SINver, hardvar)
- 
-      IF (hardvar.GE.Ha_max2) THEN
-        Ha_max2       = hardvar   
-        Ha_max2_theta = theta
-        Ha_max2_phi   = phi
-      ENDIF  
-      IF (hardvar.LE.Ha_min2) THEN
-        Ha_min2       = hardvar
-        Ha_min2_theta = theta
-        Ha_min2_phi   = phi
-      ENDIF
- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       CALL Cpugh(pugh_min,pugh_max,pugh_Ave,phi,theta,v11,v12,v13,v22,v23,v33,a6666,sheainvar)
 
       IF (pugh_max.GE.pugh_max2) THEN
@@ -1089,17 +1291,33 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
       IF (NPratio_min.ge.0.0000D0) pminp =  NPratio_min
       IF (NPratio_ave.LE.0.0000D0) paven = -NPratio_ave
       IF (NPratio_ave.ge.0.0000D0) pavep =  NPratio_ave
+!!!!!!!!!!!!!!!!!!!  v1.6.3
+      CALL CHardness(BINver,SINver,G_max*1000D0, hardvar)
+ 
+      IF (hardvar.GE.Ha_max2) THEN
+        Ha_max2       = hardvar   
+        Ha_max2_theta = theta
+        Ha_max2_phi   = phi
+      ENDIF  
+      IF (hardvar.LE.Ha_min2) THEN
+        Ha_min2       = hardvar
+        Ha_min2_theta = theta
+        Ha_min2_phi   = phi
+      ENDIF
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
+
       !open(41,file='o')
       WRITE(59,*) G_max*1000D0,shminp*1000D0,shminn*1000D0,shavep*1000D0,SINver,CO*1000d0,comminp*1000d0,&
-      comminn*1000d0,NPratio_max,pminp,pminn,pavep,paven,BINver,maxEVaLM,maxEVaTM,minEVaTM,pugh_max*1000D0,&
-      pughminp*1000D0,pughminn*1000D0,pughavep*1000D0,hardvar
+                  comminn*1000d0,NPratio_max,pminp,pminn,pavep,paven,BINver,maxEVaLM,maxEVaTM,minEVaTM,pugh_max*1000D0,&
+                  pughminp*1000D0,pughminn*1000D0,pughavep*1000D0,hardvar
       If (yn_veloc=='Y' .or. yn_veloc=='y') then
-        WRITE(55,*) VVP_P/1000D0,VVG_P/1000D0,VVP_Sf/1000D0,VVG_Sf/1000D0,VVP_Ss/1000D0,VVG_Ss/1000D0,VV_P_PF,VV_Sf_PF,VV_Ss_PF
+        WRITE(55,*) VVP_P/1000D0,VVG_P/1000D0,VVP_Sf/1000D0,VVG_Sf/1000D0,VVP_Ss/1000D0,VVG_Ss/1000D0,VV_P_PF,VV_Sf_PF,VV_Ss_PF,km
       endif
       
       
       WRITE(111,*) theta, phi
-      WRITE(28,"(4F30.15)")  vec(1)*ABS( hardvar ),    vec(2)*ABS( hardvar ),    vec(3)*ABS( hardvar )                     !>> hardness
+      WRITE(28,"(4F30.15)")  vec(1)*ABS(   hardvar   ),    vec(2)*ABS(   hardvar   ),    vec(3)*ABS(   hardvar   )                     !>> hardness
       !WRITE(18,*) vec(1)*ABS( G_Ave*1000D0 ),    vec(2)*ABS( G_Ave*1000D0 ),    vec(3)*ABS( G_Ave*1000D0 )   !>> shear
       WRITE(16,"(12F30.15)") vec(1)*ABS( G_max*1000D0 ),    vec(2)*ABS( G_max*1000D0 ),    vec(3)*ABS( G_max*1000D0 ),&    !>> shear
                              vec(1)*ABS(shminp*1000D0 ),    vec(2)*ABS( shminp*1000D0),    vec(3)*ABS(shminp*1000D0 ),&    !>> shear
@@ -1143,6 +1361,11 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
         WRITE(107,*) vec(1)*ABS(    VVP_Ss  ),    vec(2)*ABS(   VVP_Ss    ) ,vec(3)*ABS(   VVP_Ss   )   !>>  VVP_Ss
         WRITE(108,*) vec(1)*ABS(  VV_Ss_PF  ),    vec(2)*ABS(   VV_Ss_PF  ) ,vec(3)*ABS(  VV_Ss_PF  )   !>>  VVP_Ss_PF
       end if
+      
+      If (yn_km=='Y' .or. yn_km=='y') then
+      WRITE(110,*) vec(1)*ABS(    km   ),    vec(2)*ABS(   km     ) ,vec(3)*ABS(   km    )     !>>  k_m
+      ENDIF
+      
     ENDDO 
      
     WRITE(16,*) " "
@@ -1157,7 +1380,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
    !WRITE(18,*) " "
     WRITE(15,*) " "
     WRITE(14,*) " "
-    !WRITE(28,*) " "
+     WRITE(28,*) " "
     !WRITE(29,*) " "
     WRITE(20,*) " "
     !WRITE(21,*) " "
@@ -1189,7 +1412,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   CLOSE(31)
   CLOSE(32)
   !CLOSE(33)
-  !CLOSE(34)
+
   CLOSE (100)
   CLOSE (101)
   CLOSE (102)
@@ -1199,6 +1422,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   CLOSE (106)
   CLOSE (107)
   CLOSE (108)
+  CLOSE(110)
   close(41)
 
   close(59)
@@ -1207,7 +1431,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     open(37,file='.MaMiout2')
     write(37,*) VVP_P_max/1000D0,VVP_P_min/1000D0,VVP_Sf_max/1000D0,VVP_Sf_min/1000D0,VVP_Ss_max/1000D0,VVP_Ss_min/1000D0,VVG_P_max/1000D0,&
                 VVG_P_min/1000D0,VVG_Sf_max/1000D0,VVG_Sf_min/1000D0,VVG_Ss_max/1000D0,VVG_Ss_min/1000D0,VV_P_PF_max,VV_Sf_PF_max,VV_Ss_PF_max,&
-                VV_P_PF_min,VV_Sf_PF_min,VV_Ss_PF_min 
+                VV_P_PF_min,VV_Sf_PF_min,VV_Ss_PF_min,km_max,km_min
     close(37)
  ! ENDIF
   open(36,file='.MaMiout')
@@ -1285,7 +1509,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVP_P_max,VVP_P_min, Ax(1))
 	  CALL SYSTEM('tput setaf 21;tput bold; echo " ==================================================> Phase P-Mode";tput sgr0')
     CALL SYSTEM('tput setaf 21;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
-    WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVP_P_max/1000D0,"            ",VVP_P_min/1000D0," ",Ax(1)
+    WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_P_max/1000D0,"            ",VVP_P_min/1000D0," ",Ax(1)
     CALL angl2cart(VVP_P_max_theta,VVP_P_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_P_min_theta,VVP_P_min_phi,vec1(1),vec1(2),vec1(3))
     WRITE(*,*)"------------------------------------------"
@@ -1302,7 +1526,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVP_Sf_max,VVP_Sf_min, Ax(1))
     CALL SYSTEM('tput setaf 33;tput bold; echo " ==================================================> Phase Fast-Mode";tput sgr0')
     CALL SYSTEM('tput setaf 33;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
-    WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVP_Sf_max/1000D0,"            ",VVP_Sf_min/1000D0," ",Ax(1)
+    WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_Sf_max/1000D0,"            ",VVP_Sf_min/1000D0," ",Ax(1)
     CALL angl2cart(VVP_Sf_max_theta,VVP_Sf_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_Sf_min_theta,VVP_Sf_min_phi,vec1(1),vec1(2),vec1(3))
     WRITE(*,*)"------------------------------------------"
@@ -1319,7 +1543,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVP_Ss_max,VVP_Ss_min, Ax(1))
     CALL SYSTEM('tput setaf 34;tput bold; echo " ==================================================> Phase Slow-Mode";tput sgr0')
     CALL SYSTEM('tput setaf 34;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
-    WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVP_Ss_max/1000D0,"            ",VVP_Ss_min/1000D0," ",Ax(1)
+    WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_Ss_max/1000D0,"            ",VVP_Ss_min/1000D0," ",Ax(1)
     CALL angl2cart(VVP_Ss_max_theta,VVP_Ss_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_Ss_min_theta,VVP_Ss_min_phi,vec1(1),vec1(2),vec1(3))
   	WRITE(*,*)"------------------------------------------"
@@ -1336,7 +1560,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVG_P_max,VVG_P_min, Ax(1))
 	  CALL SYSTEM('tput setaf 40;tput bold; echo " ==================================================> Group P-Mode";tput sgr0')
 	  CALL SYSTEM('tput setaf 40;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
-	  WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVG_P_max/1000D0,"            ",VVG_P_min/1000D0," ",Ax(1)
+	  WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_P_max/1000D0,"            ",VVG_P_min/1000D0," ",Ax(1)
 	  CALL angl2cart(VVG_P_max_theta,VVG_P_max_phi, vec(1),vec(2),vec(3))
 	  CALL angl2cart(VVG_P_min_theta,VVG_P_min_phi,vec1(1),vec1(2),vec1(3))
 	  WRITE(*,*)"------------------------------------------"
@@ -1353,7 +1577,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVG_Sf_max,VVG_Sf_min, Ax(1))
 	  CALL SYSTEM('tput setaf 226;tput bold; echo " ==================================================> Group Fast-Mode";tput sgr0')
 	  CALL SYSTEM('tput setaf 226;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
-	  WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVG_Sf_max/1000D0,"            ",VVG_Sf_min/1000D0," ",Ax(1)
+	  WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_Sf_max/1000D0,"            ",VVG_Sf_min/1000D0," ",Ax(1)
 	  CALL angl2cart(VVG_Sf_max_theta,VVG_Sf_max_phi, vec(1),vec(2),vec(3))
 	  CALL angl2cart(VVG_Sf_min_theta,VVG_Sf_min_phi,vec1(1),vec1(2),vec1(3))
 	  WRITE(*,*)"------------------------------------------"
@@ -1370,7 +1594,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVG_Ss_max,VVG_Ss_min, Ax(1))
 	  CALL SYSTEM('tput setaf 22;tput bold; echo " ==================================================> Group Slow-Mode";tput sgr0')
 	  CALL SYSTEM('tput setaf 22;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
-  	WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVG_Ss_max/1000D0,"            ",VVG_Ss_min/1000D0," ",Ax(1)
+  	WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_Ss_max/1000D0,"            ",VVG_Ss_min/1000D0," ",Ax(1)
 	  CALL angl2cart(VVG_Ss_max_theta,VVG_Ss_max_phi, vec(1),vec(2),vec(3))
   	CALL angl2cart(VVG_Ss_min_theta,VVG_Ss_min_phi,vec1(1),vec1(2),vec1(3))
 	  WRITE(*,*)"------------------------------------------"
@@ -1381,6 +1605,25 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   	WRITE (*,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
 	  WRITE (*,*) "=================================================="
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+      CALL SYSTEM('sleep 0.5')
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  If (yn_km=='Y' .or. yn_km=='y') then
+    WRITE(*,*)''
+     Call anisotropy(km_max,km_min, Ax(1))
+	  CALL SYSTEM('tput setaf 12;tput bold; echo " ==================================================> Min. thermal conductivity";tput sgr0')
+    CALL SYSTEM('tput setaf 12;tput bold; echo "   Max(W/K.m)              Min(W/K.m)        Anisotropy"')
+    WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') km_max,"            ",km_min ,"           ",Ax(1) 
+    CALL angl2cart(km_max_theta,km_max_phi, vec(1),vec(2),vec(3))
+    CALL angl2cart(km_min_theta,km_min_phi,vec1(1),vec1(2),vec1(3))
+    WRITE(*,*)"------------------------------------------"
+    WRITE (*,*) "  Theta   Phi","          Theta   Phi"
+    WRITE (*,'(1x2F6.1,11x2F6.1)')  km_max_theta , km_max_phi , km_min_theta , km_min_phi 
+    WRITE(*,*)"------------------------------------------"
+    WRITE (*,*) "   x     y     z","        x     y     z"
+    WRITE (*,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
+   	  WRITE (*,*) "=================================================="   
+  ENDIF
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     CALL SYSTEM('sleep 0.5')
   END if
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -1404,7 +1647,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
        !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	CALL SYSTEM('tput setaf 91;tput bold; echo " ==================================================> Pugh Ratio";tput sgr0')
 	CALL SYSTEM('tput setaf 91;tput bold; echo "     Max                  Min  Anisotropy"')
-	WRITE (*,'(3xF6.2,a,2xF6.2,a,2xF6.2)') pugh_max2*1000D0,"             ",pugh_min2*1000D0," ",Ax(1)
+	WRITE (*,'(3xF6.3,a,2xF6.3,a,2xF6.2)') pugh_max2*1000D0,"             ",pugh_min2*1000D0," ",Ax(1)
 	CALL angl2cart(pugh_max2_theta,pugh_max2_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(pugh_min2_theta,pugh_min2_phi,vec1(1),vec1(2),vec1(3))
 	WRITE(*,*)"------------------------------------------"
@@ -1421,7 +1664,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   call anisotropy(Maxbulk,Minbulk, Ax(1))
 	CALL SYSTEM('tput setaf 55;tput bold; echo " ==================================================> Hardness";tput sgr0')
 	CALL SYSTEM('tput setaf 55;tput bold; echo "         Max                     Min  Anisotropy"')
-	WRITE (*,'(2xF10.2,a,1xF10.2,a,2xF6.2)') Ha_max2,"            ",Ha_min2," ",Ax(1)
+	WRITE (*,'(2xF10.3,a,1xF10.3,a,2xF6.2)') Ha_max2,"            ",Ha_min2," ",Ax(1)
 	CALL angl2cart(Ha_max2_theta,Ha_max2_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(Ha_min2_theta,Ha_min2_phi,vec1(1),vec1(2),vec1(3))
 	WRITE(*,*)"------------------------------------------"
@@ -1517,7 +1760,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVP_P_max,VVP_P_min, Ax(1))
 	  WRITE(99,*) " ==================================================> Phase P-Mode" 
 	  WRITE(99,*) "   Max(km/s)              Min(km/s)           Anisotropy"
-	  WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVP_P_max/1000D0,"            ",VVP_P_min/1000D0,"           ",Ax(1)
+	  WRITE (99,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_P_max/1000D0,"            ",VVP_P_min/1000D0,"           ",Ax(1)
 	  CALL angl2cart(VVP_P_max_theta,VVP_P_max_phi, vec(1),vec(2),vec(3))
 	  CALL angl2cart(VVP_P_min_theta,VVP_P_min_phi,vec1(1),vec1(2),vec1(3))
   	WRITE(99,*)"------------------------------------------"
@@ -1533,7 +1776,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVP_Sf_max,VVP_Sf_min, Ax(1))
 	  WRITE(99,*) " ==================================================> Phase Fast-Mode" 
     WRITE(99,*) "   Max(km/s)              Min(km/s)           Anisotropy"
-    WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVP_Sf_max/1000D0,"            ",VVP_Sf_min/1000D0,"           ",Ax(1)
+    WRITE (99,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_Sf_max/1000D0,"            ",VVP_Sf_min/1000D0,"           ",Ax(1)
     CALL angl2cart(VVP_Sf_max_theta,VVP_Sf_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_Sf_min_theta,VVP_Sf_min_phi,vec1(1),vec1(2),vec1(3))
     WRITE(99,*)"------------------------------------------"
@@ -1549,7 +1792,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVP_Ss_max,VVP_Ss_min, Ax(1))
     WRITE(99,*) " ==================================================> Phase Slow-Mode" 
     WRITE(99,*) "   Max(km/s)              Min(km/s)           Anisotropy"
-    WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVP_Ss_max/1000D0,"            ",VVP_Ss_min/1000D0,"           ",Ax(1)
+    WRITE (99,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_Ss_max/1000D0,"            ",VVP_Ss_min/1000D0,"           ",Ax(1)
     CALL angl2cart(VVP_Ss_max_theta,VVP_Ss_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_Ss_min_theta,VVP_Ss_min_phi,vec1(1),vec1(2),vec1(3))
     WRITE(99,*)"------------------------------------------"
@@ -1565,7 +1808,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVG_P_max,VVG_P_min, Ax(1))
     WRITE(99,*) " ==================================================> Group P-Mode" 
     WRITE(99,*) "   Max(km/s)              Min(km/s)           Anisotropy"
-    WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVG_P_max/1000D0,"            ",VVG_P_min/1000D0,"           ",Ax(1) 
+    WRITE (99,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_P_max/1000D0,"            ",VVG_P_min/1000D0,"           ",Ax(1) 
     CALL angl2cart(VVG_P_max_theta,VVG_P_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVG_P_min_theta,VVG_P_min_phi,vec1(1),vec1(2),vec1(3))
     WRITE(99,*)"------------------------------------------"
@@ -1581,7 +1824,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVG_Sf_max,VVG_Sf_min, Ax(1))
     WRITE(99,*) " ==================================================> Group Fast-Mode" 
     WRITE(99,*) "   Max(km/s)              Min(km/s)           Anisotropy"
-    WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVG_Sf_max/1000D0,"            ",VVG_Sf_min/1000D0,"           ",Ax(1) 
+    WRITE (99,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_Sf_max/1000D0,"            ",VVG_Sf_min/1000D0,"           ",Ax(1) 
     CALL angl2cart(VVG_Sf_max_theta,VVG_Sf_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVG_Sf_min_theta,VVG_Sf_min_phi,vec1(1),vec1(2),vec1(3))
     WRITE(99,*)"------------------------------------------"
@@ -1597,7 +1840,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     call anisotropy(VVG_Ss_max,VVG_Ss_min, Ax(1))
     WRITE(99,*) " ==================================================> Group Slow-Mode" 
     WRITE(99,*) "   Max(km/s)              Min(km/s)           Anisotropy"
-    WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') VVG_Ss_max/1000D0,"            ",VVG_Ss_min/1000D0,"           ",Ax(1) 
+    WRITE (99,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_Ss_max/1000D0,"            ",VVG_Ss_min/1000D0,"           ",Ax(1) 
     CALL angl2cart(VVG_Ss_max_theta,VVG_Ss_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVG_Ss_min_theta,VVG_Ss_min_phi,vec1(1),vec1(2),vec1(3))
     WRITE(99,*)"------------------------------------------"
@@ -1609,6 +1852,25 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     WRITE (99,*) "=================================================="
   ENDIF
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  If (yn_km=='Y' .or. yn_km=='y') then
+    WRITE(*,*)''
+     Call anisotropy(km_max,km_min, Ax(1))
+    WRITE(99,*) " ==================================================> Min. thermal conductivity" 
+    WRITE(99,*) "   Max(W/K.m)              Min(W/K.m)        Anisotropy"
+    WRITE (99,'(2xF11.3,a,1xF11.3,a,2xF6.2)') km_max,"            ",km_min ,"           ",Ax(1) 
+    CALL angl2cart(km_max_theta,km_max_phi, vec(1),vec(2),vec(3))
+    CALL angl2cart(km_min_theta,km_min_phi,vec1(1),vec1(2),vec1(3))
+    WRITE(99,*)"------------------------------------------"
+    WRITE (99,*) "  Theta   Phi","          Theta   Phi"
+    WRITE (99,'(1x2F6.1,11x2F6.1)')  km_max_theta , km_max_phi , km_min_theta , km_min_phi 
+    WRITE(99,*)"------------------------------------------"
+    WRITE (99,*) "   x     y     z","        x     y     z"
+    WRITE (99,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
+      
+  ENDIF
+  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
   WRITE(99,*)''
   call anisotropy(Pratio_max,Pratio_min, Ax(1))
 	WRITE(99,*) " ==================================================> Poisson's Ratio"
@@ -1623,7 +1885,21 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
 	WRITE(99,*) "   x     y     z","        x     y     z"
 	WRITE(99,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
 	WRITE(99,*) "=================================================="
-	WRITE(99,*)''
+ WRITE(99,*)''
+  call anisotropy(Maxbulk,Minbulk, Ax(1))
+	WRITE(99,*) " ==================================================> Hardness"
+	WRITE(99,*) "       Max                     Min  Anisotropy" 
+	WRITE (99,'(2xF10.3,a,1xF10.3,a,2xF6.2)') Ha_max2,"            ",Ha_min2," ",Ax(1)
+	CALL angl2cart(Ha_max2_theta,Ha_max2_phi, vec(1),vec(2),vec(3))
+	CALL angl2cart(Ha_min2_theta,Ha_min2_phi,vec1(1),vec1(2),vec1(3))
+	WRITE(99,*)"------------------------------------------"
+	WRITE (99,*) "  Theta   Phi","          Theta   Phi"
+	WRITE (99,'(1x2F6.1,11x2F6.1)') (Ha_max2_theta*180.0D0)/PI,(Ha_max2_phi*180.0D0)/PI,(Ha_min2_theta*180.0D0)/PI,(Ha_min2_phi*180.0D0)/PI
+	WRITE(99,*)"------------------------------------------"
+	WRITE (99,*) "   x     y     z","        x     y     z"
+	WRITE (99,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
+  WRITE (99,*) "=================================================="
+  WRITE(99,*)''
 	WRITE(99,*) " ==================================================> Sound"
 	WRITE(99,*) "  Transverse high  Longitudinal   Transverse low "
 	WRITE(99,'(3xF6.2,a,2xF6.2,a,2xF6.2)') maxEVaTMf,"         ",maxEVaLM,"         ",minEVaTMf
@@ -1709,15 +1985,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
         Minbulk       = BINver                       
         bulkMin2d(num) = Maxbulk 
       ENDIF
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      CALL CHardness(BINver,SINver,hardvar)  
- 
-      IF (hardvar.NE.0.0) THEN
-        hard2dmax(num) = hardvar   
-      ELSE  
-        hard2dmax(num) = 0D0
-      ENDIF        
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
       ave=0D0
       v=0
       Nmesh_gamma=180
@@ -1782,11 +2050,29 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
       poisson2dmax(num) = NPratio_max
       IF (NPratio_min.GE.0D0) poisson2dminp(num) = NPratio_min
       IF (NPratio_min.LE.0D0) poisson2dminn(num) = NPratio_min 
-
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      CALL CHardness(BINver,SINver,sheainvar,hardvar)  
+ 
+      IF (hardvar.NE.0.0) THEN
+        hard2dmax(num) = hardvar   
+      ELSE  
+        hard2dmax(num) = 0D0
+      ENDIF        
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     IF (yn_km=='Y' .OR. yn_km=='y') THEN
+      Call Ckm_cal(density, SINver, ma_avrag, km )
+      IF (km.NE.0) THEN
+        km2dmax(num)=km
+      ELSE
+        km2dmax(num)=0D0
+      ENDIF
+     ENDIF
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       num=num+1
     ENDDO
+!!!!!!!!!!!!!!#######################################!!!!!!!!!!!!!!!!!!!!    
     If (yn_veloc=='Y' .OR. yn_veloc=='y') THEN
-!!!!!!!!!!!!!!#######################################!!!!!!!!!!!!!!!!!!!!
+
        vec  = 0D0
        theta = 0.0d0
        DO i=0,180
@@ -1806,16 +2092,16 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
                                                          VV_Ss_PF    )
           if (i==0)VVG_P_2D(j)   = VVG_P   /1000D0
           if (i==0)VVP_P_2D(j)   = VVP_P   /1000D0
-          if (i==0)VV_P_PF_2D(j) = VV_P_PF /1000D0
+          if (i==0)VV_P_PF_2D(j) = VV_P_PF !/1000D0
           if (i==0)VVG_Sf_2D(j)  = VVG_Sf  /1000D0
           if (i==0)VVP_Sf_2D(j)  = VVP_Sf  /1000D0
-          if (i==0)VV_Sf_PF_2D(j)= VV_Sf_PF/1000D0
+          if (i==0)VV_Sf_PF_2D(j)= VV_Sf_PF!/1000D0
           if (i==0)VVG_Ss_2D(j)  = VVG_Ss  /1000D0
           if (i==0)VVP_Ss_2D(j)  = VVP_Ss  /1000D0
-          if (i==0)VV_Ss_PF_2D(j)= VV_Ss_PF/1000D0
+          if (i==0)VV_Ss_PF_2D(j)= VV_Ss_PF!/1000D0
 
-
- !WRITE(*,*)i,j  
+         
+  !WRITE(*,*)VV_Sf_PF  
           phi=phi+0.5d0
         ENDDO 
         theta=theta+0.5d0
@@ -1841,13 +2127,19 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     OPEN(  71,FILE="2dcut_pugh.dat"   )
     OPEN(  72,FILE="2dcut_hardness.dat")
    ! OPEN(  73,FILE="2dpughMinn.dat"  )
+   
+
     If (yn_veloc=='Y' .or. yn_veloc=='y')   then !-----------------------------------------------------
   
       OPEN(500,FILE='2dcut_gveloc.dat')
       OPEN(501,FILE='2dcut_pveloc.dat')
-      OPEN(502,FILE='2dcut_pfaveloc.dat')
-
-    ENDIF
+      OPEN(502,FILE='2dcut_pfaveloc.dat')     
+    ENDIF                                       !-----------------------------------------------------
+    
+    If (yn_km=='Y' .or. yn_km=='y')   then   !!-----------------------------------------------------
+      OPEN(499,FILE='2dcut_km.dat')
+    ENDIF                                    !!-----------------------------------------------------
+    
     num=0
     DO num=0,360
       t2d=DBLE(num)/360D0*2D0*PI
@@ -1891,9 +2183,15 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
 
         WRITE(502,'(I3,3F30.15)')num,SQRT( (VV_P_PF_2D(num)*COS(t2d)   )**2D0 + (VV_P_PF_2D(num)*SIN(t2d)  )**2D0),&
                                      SQRT( (VV_Sf_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Sf_PF_2D(num)*SIN(t2d))**2D0),&
-                                     SQRT( (VV_Ss_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Ss_PF_2D(num)*SIN(t2d))**2D0)
+                                     SQRT( (VV_Ss_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Ss_PF_2D(num)*SIN(t2d))**2D0)                                     
       ENDIF
+      
+    If (yn_km=='Y' .or. yn_km=='y') then        
+      WRITE(499,"(I3,4F30.20)")num,SQRT( (km2dmax(num)*COS(t2d)   )**2D0 + (km2dmax(num)*SIN(t2d)   )**2D0)  
+    endif  
+        
     ENDDO
+    
     CLOSE(50)
    ! CLOSE(51)
     CLOSE(52)
@@ -1915,7 +2213,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     CLOSE(500)
     CLOSE(501)
     CLOSE(502)
-    !CLOSE(503)
+     CLOSE(499)
    ! CLOSE(504)
    ! CLOSE(505)
    ! CLOSE(506)
@@ -1957,15 +2255,15 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
       CALL SYSTEM('mv *.ps PicFile')
       CALL SYSTEM('mv *.png PicFile')
       CALL SYSTEM('if [ -e 2DPugh.ps ]; then mv 2DPugh.ps PicFile; fi') 
-      CALL SYSTEM('cat PicFile/2Dbox.ps            | epstopdf --filter > PicFile/2Dbox.pdf'                    )
-      CALL SYSTEM('cat PicFile/2DBulk.ps           | epstopdf --filter > PicFile/2DBulk.pdf'                    )
-      CALL SYSTEM('cat PicFile/2DCompressibiliy.ps | epstopdf --filter > PicFile/2DCompressibiliy.pdf')
-      CALL SYSTEM('cat PicFile/2DYoung.ps          | epstopdf --filter > PicFile/2DYoung.pdf'                  )
-      CALL SYSTEM('cat PicFile/2DShear.ps          | epstopdf --filter > PicFile/2DShear.pdf'                  )
-      CALL SYSTEM('cat PicFile/2DPoissons.ps       | epstopdf --filter > PicFile/2DPoissons.pdf'            )
+      !CALL SYSTEM('cat PicFile/2Dbox.ps            | epstopdf --filter > PicFile/2Dbox.pdf'                    )
+      !CALL SYSTEM('cat PicFile/2DBulk.ps           | epstopdf --filter > PicFile/2DBulk.pdf'                    )
+      !CALL SYSTEM('cat PicFile/2DCompressibiliy.ps | epstopdf --filter > PicFile/2DCompressibiliy.pdf')
+      !CALL SYSTEM('cat PicFile/2DYoung.ps          | epstopdf --filter > PicFile/2DYoung.pdf'                  )
+      !CALL SYSTEM('cat PicFile/2DShear.ps          | epstopdf --filter > PicFile/2DShear.pdf'                  )
+      !CALL SYSTEM('cat PicFile/2DPoissons.ps       | epstopdf --filter > PicFile/2DPoissons.pdf'            )
       !CALL SYSTEM('cat PicFile/2DSound.ps         | epstopdf --filter > PicFile/2DSound.pdf'                )
-      CALL SYSTEM('cat PicFile/2DPugh.ps           | epstopdf --filter > PicFile/2DPugh.pdf'                  )
-      CALL SYSTEM('rm PicFile/2Dbox.ps PicFile/2DBulk.ps PicFile/2DCompressibiliy.ps PicFile/2DYoung.ps PicFile/2DShear.ps PicFile/2DPoissons.ps PicFile/2DPugh.ps')
+      !CALL SYSTEM('cat PicFile/2DPugh.ps           | epstopdf --filter > PicFile/2DPugh.pdf'                  )
+      !CALL SYSTEM('rm PicFile/2Dbox.ps PicFile/2DBulk.ps PicFile/2DCompressibiliy.ps PicFile/2DYoung.ps PicFile/2DShear.ps PicFile/2DPoissons.ps PicFile/2DPugh.ps')
       CALL SYSTEM('cp               DatFile/Cij.dat .')
       CALL SYSTEM('cp               DatFile/Sij.dat .')
 
@@ -1995,7 +2293,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     CALL SYSTEM('rm -rf *.gnu')
   ELSE
     IF(d2d3 == 2) then      !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start  
-      CALL analiz_2D_sys(adv)
+      CALL analiz_2D_sys(adv,npoint)
     
  
       WRITE(*,*)"#==================================#"
@@ -2015,13 +2313,15 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
         CALL plot2df_gnuplot52_2d('she')
         CALL SYSTEM(' mv 2D_sys_Poissons.ps 2D_sys_Shear.ps 2D_sys_Young.ps PicFile  ')
         CALL SYSTEM(' mv *.dat DatFile ')
+        CALL SYSTEM('cp DatFile/Cij-2D.dat . ')
         !CALL SYSTEM(' mv MAX1 DatFile ')
         CALL SYSTEM('mv .MaMiout DatFile')
         !call system("dat2gnu_lapw D2")
-      else
+      Else
         PRINT*," > Data FILEs generated:"
         CALL SYSTEM('mkdir DatFile')
         CALL SYSTEM('mv *.dat DatFile ')
+        CALL SYSTEM('cp DatFile/Cij-2D.dat . ')
         CALL SYSTEM('ls  DatFile/*.dat ')
         !CALL SYSTEM(' mv MAX1 DatFile ')
         CALL SYSTEM(' mv .MaMiout DatFile ')
@@ -2029,17 +2329,29 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     END IF
   END IF   !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system END 
   CLOSE(99)
-  
-  WRITE(*,*)"===================================================" 
-  PRINT*,   "        Nothing happens until something moves.     "
-  PRINT*,   "                >> Albert Einstion <<              "
-  WRITE(*,*)"---------------------------------------------------"
-  PRINT*,   ">            | Have A Beautiful Day |             <"
-  PRINT*,   ">            |       Goodbye.       |             <"
-  WRITE(*,*)"===================================================" 
+
+ call checkfolder_old(1,0,d2d3)
+ IF (YN.EQ."Y".OR. YN.EQ."y") then ; call checkfolder_old(0,1,d2d3); endif
+     
+	CALL SYSTEM('tput setaf 55;tput bold; echo " ======================================= Visualization Tools =======================================";tput sgr0')  
+	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2gnu.x  | To visualize data in polar, spherical coordinates and heat-maps diagrams: 2D sys., 2D projecton and 3D sys. ";tput sgr0') 
+ CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2agr.x  | To visualize data in polar, Cartesian coordinates                       : 2D projecton";tput sgr0') 
+	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2wrl.x  | To visualize data in spherical coordinates                              : 3D sys. ";tput sgr0') 
+	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2html.x | To visualize data in spherical coordinates                              : 3D sys. ";tput sgr0')
+	CALL SYSTEM('tput setaf 55;tput bold; echo " ===================================================================================================";tput sgr0')  
+	 
+  WRITE(*,*)"                           ===================================================" 
+  PRINT*,   "                                   Nothing happens until something moves.     "
+  PRINT*,   "                                           >> Albert Einstion <<              "
+  WRITE(*,*)"                           ---------------------------------------------------"
+  PRINT*,   "                           >            | Have A Beautiful Day |             <"
+  PRINT*,   "                           >            |       Goodbye.       |             <"
+  WRITE(*,*)"                           ===================================================" 
   WRITE(*,*)"" 
+
   call creadfolder(1, 0,mmx1,kky1,llz1)
-  IF (YN.EQ."Y".OR. YN.EQ."y") call creadfolder(0, 1,mmx1,kky1,llz1)
+
+  IF (YN.EQ."Y".OR. YN.EQ."y") then ; call creadfolder(0, 1,mmx1,kky1,llz1); endif
   STOP       
 
   1369 WRITE(*,*)  " > NOT FOUNDE    Cij.dat    FILE"             ; STOP

@@ -9,7 +9,7 @@ SUBROUTINE yound_2D(vv11,vv22,vv33,phi,phi_young,l)!
  implicit none
 
  DOUBLE PRECISION                  :: vv11,vv22,vv33,Y1,Y2,A,B,T,phi,E,Pe
- DOUBLE PRECISION, DIMENSION(201)  :: phi_young,phi_young_test
+ DOUBLE PRECISION, DIMENSION(2010)  :: phi_young,phi_young_test
  DOUBLE PRECISION, DIMENSION(3,3)  :: C,S
  Integer::n,i,j,l
  n=3

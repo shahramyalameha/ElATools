@@ -21,12 +21,36 @@ subroutine setreset()
    WRITE(2,'(a)')'set angle degrees'
   end subroutine unset1  
   
- subroutine set1()
+  subroutine setphm(val) 
+   ChARACTER(len=10) :: val  
+    WRITE(2,'(a)')'#set multiplot  ' 
+    If (val=="phmall") then
+    WRITE(2,'(a)')'set multiplot layout 2,2'    
+    else
+    WRITE(2,'(a)')'set multiplot layout 1,2'
+    endif
+    WRITE(2,'(a)')'set grid polar 30. lt -1 dt 0 lw 2'
+    WRITE(2,'(a)')'set polar'
+    WRITE(2,'(a)')'set angle degrees'
+    WRITE(2,'(a)')' set size ratio 1'
+  end subroutine setphm     
+
+  subroutine unset2()   
+    WRITE(2,'(a)')'unset key'
+    WRITE(2,'(a)')'unset raxis'
+    WRITE(2,'(a)')'unset rrange'
+    WRITE(2,'(a)')'unset rtics '
+    WRITE(2,'(a)')'unset border'
+    WRITE(2,'(a)')'unset xtics '
+    WRITE(2,'(a)')'unset ytics  '
+   end subroutine unset2  
+
+   subroutine set1()
   ChARACTER(len=2) :: e1,e2
   Real(8)          :: h,k,l
    call plan(e1,e2,h,k,l)  
    WRITE(2,'(a)')' print maxi'
-   WRITE(2,'(a)')'unset key'
+   WRITE(2,'(a)')'#unset key'
    WRITE(2,'(a)')'print ARG1'
    WRITE(2,'(a)')'set polar'
    WRITE(2,'(a)')'set grid polar'
@@ -47,7 +71,7 @@ subroutine setreset()
     e1=""
     e2=""
    WRITE(2,'(a)')' print ARG2'
-   WRITE(2,'(a)')'unset key'
+   WRITE(2,'(a)')'#unset key'
    WRITE(2,'(a)')'print ARG1'
    WRITE(2,'(a)')'set polar'
    WRITE(2,'(a)')'set grid polar'
@@ -58,12 +82,19 @@ subroutine setreset()
    WRITE(2,'(a)')'set arrow 2 from first 0,0 to first ARG2 filled'
    WRITE(2,'(a,A1,A)')" set label 2 '",e2,"' at first ARG2*1,0 offset -2.25,1"
  end subroutine set1_2d 
+
  subroutine setterm()  
    WRITE(2,'(a)')'  reset'
    WRITE(2,'(a)')'unset output '
    WRITE(2,'(a)')'set term postscript eps enhanced color "Times-Roman, 15"'
  end subroutine setterm  
 
+ subroutine setterm_phm()  
+  WRITE(2,'(a)')'reset'
+  WRITE(2,'(a)')'unset output '
+  WRITE(2,'(a)')'set term postscript eps enhanced color "Times-roman, 14"'
+  WRITE(2,'(a)')' #set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
+end subroutine setterm_phm  
 
   subroutine setoutput(val0)
    ChARACTER(len=10) :: val0
@@ -83,9 +114,18 @@ subroutine setreset()
                               if (val0=='gp') then; WRITE(2,'(a)')'set output "Group-P.ps"';          endif
                                 if (val0=='gs') then; WRITE(2,'(a)')'set output "Group-Slow.ps"';      endif
                                   if (val0=='gf') then; WRITE(2,'(a)')'set output "Group-Fast.ps"';     endif
-                                   if (val0=='pall') then; WRITE(2,'(a)')'set output "Phase.ps"';        endif
-                                    if (val0=='gall') then; WRITE(2,'(a)')'set output "Group.ps"';        endif
-                                      if (val0=='pfall') then; WRITE(2,'(a)')'set output "Power-flow.ps"'; endif
+                                    if (val0=='pfp') then; WRITE(2,'(a)')'set output "Power-flow-p.ps"'; endif
+                                      if (val0=='pff') then; WRITE(2,'(a)')'set output "Power-flow-fast.ps"'; endif
+                                        if (val0=='pfs') then; WRITE(2,'(a)')'set output "Power-flow-slow.ps"'; endif
+                                          if (val0=='pall') then; WRITE(2,'(a)')'set output "Phase.ps"';         endif
+                                            if (val0=='gall') then; WRITE(2,'(a)')'set output "Group.ps"';        endif
+                                              if (val0=='pfall') then; WRITE(2,'(a)')'set output "Power-flow.ps"'; endif
+
+                                      if (val0=='phmpoi') then; WRITE(2,'(a)')'set output "Poissons_2Dphm.ps"'; endif
+                                      if (val0=='phmyon') then; WRITE(2,'(a)')'set output "Young_2Dphm.ps"'; endif
+                                      if (val0=='phmshe') then; WRITE(2,'(a)')'set output "Shear_2Dphm.ps"'; endif
+                                      if (val0=='phmall') then; WRITE(2,'(a)')'set output "All_2Dphm.ps"'; endif
+                                      if (val0=='km') then; WRITE(2,'(a)')'set output "mthconductivity.ps';         endif    
     end subroutine setoutput
    
    subroutine settit(val0)  
@@ -111,7 +151,16 @@ subroutine setreset()
                                        if (val0=='gf') then; WRITE(2,'(a,3I1,a)')'set title "Group-Fast (km/s) \n (', h,k,l,')-plane"';                  endif
                                          if (val0=='pall') then; WRITE(2,'(a,3I1,a)')'set title "Phase velocity (km/s)\n (', h,k,l,')-plane"';          endif
                                            if (val0=='gall') then; WRITE(2,'(a,3I1,a)')'set title "Group velocity (km/s) \n (', h,k,l,')-plane"';      endif
+                                           if (val0=='pfp') then; WRITE(2,'(a,3I1,a)')'set title "Power flow angle P (Deg) \n (', h,k,l,')-plane"'; endif
+                                           if (val0=='pff') then; WRITE(2,'(a,3I1,a)')'set title "Power flow angle fast (Deg) \n (', h,k,l,')-plane"'; endif
+                                           if (val0=='pfs') then; WRITE(2,'(a,3I1,a)')'set title "Power flow angle slow (Deg) \n (', h,k,l,')-plane"'; endif
+
                                              if (val0=='pfall') then; WRITE(2,'(a,3I1,a)')'set title "Power flow angle (Deg) \n (', h,k,l,')-plane"'; endif
+                                           if (val0=='phmpoi') then; WRITE(2,'(a,3I1,a)')'set title "Poissons Ratio \n (', h,k,l,')-plane"';   endif 
+                                         if (val0=='phmyou') then; WRITE(2,'(a,3I1,a)')'set title "Young Modulus (N/m) \n (', h,k,l,')-plane"';      endif
+                                       if (val0=='phmshe') then; WRITE(2,'(a,3I1,a)')'set title "Shear Modulus (N/m) \n (', h,k,l,')-plane"';         endif 
+                                     if (val0=='km') then; WRITE(2,'(a,3I1,a)')'set title "Min. thermal conductivity (W/K.m) \n (', h,k,l,')-plane"';         endif    
+ 
 	   end subroutine settit
 
      subroutine plan(e1,e2,h,k,l)

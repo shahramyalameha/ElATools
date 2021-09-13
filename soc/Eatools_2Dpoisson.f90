@@ -7,7 +7,7 @@
  SUBROUTINE poisson_2D(vv11,vv22,vv33,phi,phi_poisson,MaxPratio,MinPratio,l)
   implicit none
   DOUBLE PRECISION                    :: vv11,vv22,vv33,Y1,Y2,A,B,T,Y3,MaxPratio,MinPratio,phi,Pe,E
-  DOUBLE PRECISION, DIMENSION(201)    :: phi_poisson,Pratio_max_phi
+  DOUBLE PRECISION, DIMENSION(2010)    :: phi_poisson,Pratio_max_phi
   DOUBLE PRECISION, DIMENSION(3,3)    :: C,S
   Integer                             :: n,i,j,l
   

@@ -4,7 +4,7 @@
 !                                                                                          `
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: fOR 2D MATERIAL , CALCULATE Youngs Modulus, Shear Modulus AND Poissons Ratio
-SUBROUTINE analiz_2D_sys(method)
+SUBROUTINE analiz_2D_sys(method,npoit)
 implicit none
 
  DOUBLE PRECISION, PARAMETER     :: pi=3.141592653589793238462D0
@@ -24,17 +24,21 @@ implicit none
  CHARACTER(len=5)                    :: pro   ! 1 = o 2 = r 3 = q
  ChARACTER(LEN=3)                    :: adv,method
  DOUBLE PRECISION                    ::   val_pro, sai_G, r_G, o_G, G0, G_inver, E_inver, E
- DOUBLE PRECISION, DIMENSION(201)    :: phi_pro,pro_max_phi   
+ DOUBLE PRECISION, DIMENSION(2010)    :: phi_pro,pro_max_phi   
 
  DOUBLE PRECISION, DIMENSION(6000)   :: phi_young,phi_poisson=0.d0, poisson2dmax, poisson2dminn, poisson2dminp,phii,phi_shear,&
                                         shear2dmax, shear2dmin
  DOUBLE PRECISION, DIMENSION(3)      :: vec=0d0
  DOUBLE PRECISION, DIMENSION(3,3)    :: c
- INTEGER                             :: Nmesh_phi,j, Nmesh_phiF  ,num,i
+ INTEGER                             :: Nmesh_phi,j, Nmesh_phiF  ,num,i,npoit
  !========================================================
    
- Nmesh_phi    = 200 ! mesh
- Nmesh_phiF   = 100
+ Nmesh_phi    = 400 ! mesh
+ Nmesh_phiF   = 200
+
+ Nmesh_phi    = npoit ! mesh
+ Nmesh_phiF   = npoit/2
+
  IF (MOD(Nmesh_phi,Nmesh_phIF).NE.0) THEN
    Nmesh_phi=(Nmesh_phi/Nmesh_phiF)*Nmesh_phiF
 ENDIF
@@ -104,7 +108,7 @@ WRITE(*,*)''
 OPEN(32,file='.MaMiout')  
 WRITE (99,*) "==================================================> Youngs Modulus"
 CALL SYSTEM('tput setaf 32;tput bold; echo " ==================================================> Youngs Modulus"')
-CALL  MAX_Min_val(2,Maximum,Minimum,2)
+CALL  MAX_Min_val(2,Maximum,Minimum,npoit,2)
 WRITE(32,*)Maximum
 CALL SYSTEM('tput setaf 32;tput bold; echo " ==================================================";tput sgr0')
 WRITE (99,*) "==================================================<"
@@ -112,7 +116,7 @@ CALL SYSTEM('sleep 0.5')
 WRITE(*,*)''
 WRITE (99,*) "==================================================> Shear Modulus"
 CALL SYSTEM('tput setaf 23;tput bold; echo " ==================================================> Shear Modulus"')
-CALL  MAX_Min_val(3,Maximum,Minimum,2)
+CALL  MAX_Min_val(3,Maximum,Minimum,npoit,2)
 WRITE(32,*)Maximum
 CALL SYSTEM('tput setaf 23;tput bold; echo " ==================================================> ";tput sgr0')
 WRITE (99,*) "==================================================<"
@@ -120,7 +124,7 @@ CALL SYSTEM('sleep 0.5')
 WRITE(*,*)''
 WRITE (99,*) "==================================================> Poissons Ratio"
 CALL SYSTEM('tput setaf 6;tput bold; echo " ==================================================> Poissons Ratio"')
-CALL  MAX_Min_val(1,Maximum,Minimum,2)
+CALL  MAX_Min_val(1,Maximum,Minimum,npoit,2)
 WRITE(32,*)Maximum
 CALL SYSTEM('tput setaf 6;tput bold; echo " ==================================================> ";tput sgr0')
 WRITE (99,*) "==================================================<"

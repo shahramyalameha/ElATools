@@ -72,7 +72,7 @@
 !C%%%%%       systems[J]. Physical Review B, 2014, 90(22).      %%%%
 !C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- subroutine stability2d( Stable, Celas )
+ subroutine stability2d( Stable, Celas ,Eig2d)
         integer i, j, Stable
         dimension Celas(3,3)
         dimension Eig2d(3,3), Vector(3,3)

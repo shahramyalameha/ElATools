@@ -9,11 +9,51 @@
 SUBROUTINE set_colors(val, num_color,color_val_out,color_val_out2)
 implicit none
   ChARACTER(len=10)               :: val
-  DOUBLE PRECISION, DIMENSION(4)  :: color_val_out,color_val_out2,color_val_out3
-  integer                         :: i,num_color
+  DOUBLE PRECISION, DIMENSION(4)  :: color_val_out,color_val_out2,color_val_out3,color_out
+  integer                         :: i, num_color
   IF (val=='young' .or. val=='Young' .or. val=='yon') THEN
     WRITE(*,*)"___________________________________________________"
     WRITE(*,*)"Set the color of the Young’s modulus,"
+    WRITE(*,*)"by [Red, Green, Blue, Transparency] between 0 to 1"
+    WRITE(*,*)""
+  if(num_color==1)then
+    Do i=1,4
+      if (i==1) write(*,*) "> set diffuse red   color :"
+      if (i==2) write(*,*) "> set diffuse green color :"
+      if (i==3) write(*,*) "> set diffuse blue  color :"
+      if (i==4) write(*,*) "> set transp.             :"
+      read(*,*)color_val_out(i)
+    END do
+    WRITE(*,"(A,4F8.5)")"Set:",color_val_out
+    WRITE(*,*)""
+    call check_color(color_val_out)
+  endif
+    WRITE(*,*)"___________________________________________________"
+  endif
+!============================================================================================  
+    IF (val=='km' .or. val=='Km' .or. val=='KM') THEN
+    WRITE(*,*)"___________________________________________________"
+    WRITE(*,*)"Set the color of the Min. thermal conductivity,"
+    WRITE(*,*)"by [Red, Green, Blue, Transparency] between 0 to 1"
+    WRITE(*,*)""
+  if(num_color==1)then
+    Do i=1,4
+      if (i==1) write(*,*) "> set diffuse red   color :"
+      if (i==2) write(*,*) "> set diffuse green color :"
+      if (i==3) write(*,*) "> set diffuse blue  color :"
+      if (i==4) write(*,*) "> set transp.             :"
+      read(*,*)color_val_out(i)
+    END do
+    WRITE(*,"(A,4F8.5)")"Set:",color_val_out
+    WRITE(*,*)""
+    call check_color(color_val_out)
+  endif
+    WRITE(*,*)"___________________________________________________"
+  endif
+  !============================================================================================  
+    IF (val=='herd' .or. val=='hardness' .or. val=='Hardness') THEN
+    WRITE(*,*)"___________________________________________________"
+    WRITE(*,*)"Set the color of the Hardness,"
     WRITE(*,*)"by [Red, Green, Blue, Transparency] between 0 to 1"
     WRITE(*,*)""
   if(num_color==1)then
@@ -398,12 +438,12 @@ endif
 
 
  !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
-subroutine check_color(color_val_out)
-  DOUBLE PRECISION, DIMENSION(4)  ::color_val_out
-  if (color_val_out(1)>color_val_out(2).and.color_val_out(1)>color_val_out(3).and. color_val_out(2)==0.0.and.color_val_out(3)==0.0) WRITE(*,*)"---> Reddish"
-  if (color_val_out(2)>color_val_out(1).and.color_val_out(2)>color_val_out(3).and. color_val_out(1)==0.0.and.color_val_out(3)==0.0) WRITE(*,*)"---> Greenish"
-  if (color_val_out(3)>color_val_out(1).and.color_val_out(3)>color_val_out(2).and. color_val_out(1)==0.0.and.color_val_out(2)==0.0) WRITE(*,*)"---> Blueish"
-  if (color_val_out(1)>color_val_out(2).and.color_val_out(3)>color_val_out(2)) WRITE(*,*)"---> Towards the Purple"
-  if (color_val_out(2)>color_val_out(1).and.color_val_out(3)>color_val_out(1)) WRITE(*,*)"---> Towards the Cyan"
-  if (color_val_out(1)>color_val_out(3).and.color_val_out(2)>color_val_out(3)) WRITE(*,*)"---> Towards the Yellow" 
+subroutine check_color(color_out)
+  DOUBLE PRECISION, DIMENSION(4)  ::color_out
+  if (color_out(1)>color_out(2).and.color_out(1)>color_out(3).and. color_out(2)==0.0.and.color_out(3)==0.0) WRITE(*,*)"---> Reddish"
+  if (color_out(2)>color_out(1).and.color_out(2)>color_out(3).and. color_out(1)==0.0.and.color_out(3)==0.0) WRITE(*,*)"---> Greenish"
+  if (color_out(3)>color_out(1).and.color_out(3)>color_out(2).and. color_out(1)==0.0.and.color_out(2)==0.0) WRITE(*,*)"---> Blueish"
+  if (color_out(1)>color_out(2).and.color_out(3)>color_out(2)) WRITE(*,*)"---> Towards the Purple"
+  if (color_out(2)>color_out(1).and.color_out(3)>color_out(1)) WRITE(*,*)"---> Towards the Cyan"
+  if (color_out(1)>color_out(3).and.color_out(2)>color_out(3)) WRITE(*,*)"---> Towards the Yellow" 
   end subroutine
