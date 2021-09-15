@@ -13,20 +13,20 @@
 
 #---------------- compiler -----------------
 
-FC = ifort
-# FC = gfortran
+# FC = ifort
+FC = gfortran
 #------------- compiler options ------------
 
- FOPT     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback -assume buffered_io  -pthread -I$(MKLROOT)/include   # for ifort 
- FGEN     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback                                                      # for ifort 
+# FOPT     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback -assume buffered_io  -pthread -I$(MKLROOT)/include   # for ifort 
+# FGEN     = -O2 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback                                                      # for ifort 
 
-#  FOPT     = -ffree-form -O2 -ffree-line-length-none     # for gfortran
-#  FGEN     = -ffree-form -O2 -ffree-line-length-none     # for gfortran
+  FOPT     = -ffree-form -O2 -ffree-line-length-none     # for gfortran
+  FGEN     = -ffree-form -O2 -ffree-line-length-none     # for gfortran
 
 #-------------- loader options -------------
 
-#  LDFLAGS  = $(FOPT)  -lblas -llapack -lpthread           # for gfortran
- LDFLAGS  = $(FOPT) -L$(MKLROOT)/lib/$(MKL_TARGET_ARCH) -pthread -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -qopenmp -lpthread  # for ifort 
+  LDFLAGS  = $(FOPT)  -lblas -llapack -lpthread           # for gfortran
+# LDFLAGS  = $(FOPT) -L$(MKLROOT)/lib/$(MKL_TARGET_ARCH) -pthread -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -qopenmp -lpthread  # for ifort 
 
 
 ###############################################################################

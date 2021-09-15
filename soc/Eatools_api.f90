@@ -3,7 +3,7 @@ implicit none
 character (len=175), dimension(17) :: char3
 character (len=16)                 :: key,mpid
 INTEGER                            :: i
-key='00000000'
+key=''
 open(13, file="aip.py")
  write(13,"(A)") '#!/usr/bin/env python3'
  write(13,"(3A)")"id_com='",trim(mpid),"'"

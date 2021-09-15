@@ -479,7 +479,7 @@ ENDIF
     !call sleep(5)
   ENDIF
 
-  10 format(6F10.4)
+  10 format(6F11.1)
   IF (Ncod.EQ.4) THEN
     write(*,*)"> The program does not support 3rd order of the elastic constant!"
     write(*,*)"Do you continue? (Y/n)"
@@ -591,14 +591,14 @@ IF (Stable==1) THEN
   CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
   CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
   WRITE(99,"(a)")" > Elastic Stability Conditions:  Unstable; STOP"
- 
+ STOP
 END IF
 IF (Stable==0) THEN
    CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
    CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
    CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
    WRITE(99,"(a)")" > Elastic Stability Conditions:  Stable"
-
+STOP
 END IF
   WRITE(*,'(A,36f10.2)') " > Eigenvalues (GPa):",Eig3d(1,1),Eig3d(2,2),Eig3d(3,3) ,Eig3d(4,4) ,Eig3d(5,5) ,Eig3d(6,6)
   WRITE(99,'(A,36f10.2)') " > Eigenvalues (GPa):",Eig3d(1,1),Eig3d(2,2),Eig3d(3,3) ,Eig3d(4,4) ,Eig3d(5,5) ,Eig3d(6,6)
@@ -664,6 +664,19 @@ ELSE
     IF(Ncod .EQ. 0) then; Goto 225; endif
 
     IF (Ncod .EQ. 1) then
+          call system('clear')
+      WRITE(*,*)" > Select the type of two-dimensional system:"    
+      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
+      WRITE(*,*) " Default  option (Hex., Squ., and Rec. systems) => 1  "
+      WRITE(*,*) " Advanced option (       Oblique systems      ) => 2  "
+      WRITE(*,*) " Back ------------------------------------------=> 0  "      
+      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
+      read(*,*)adv_mubner
+
+      IF (adv_mubner == 2 ) adv = "adv"
+      IF (adv_mubner == 1 ) adv = "ndv"
+      IF (adv_mubner == 0 ) goto 226
+    
       call system("sed '1,2d' ELADAT > ELADAT_temp")
       OPEN(79,FILE="Cij-2D.dat")
       OPEN(53,FILE="ELADAT_temp",status='old',err=1361)
@@ -683,7 +696,8 @@ ELSE
         CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
         Write(99,*)" ========================================" 
         Write(99,*) " > Elastic Stability Conditions:  Unstable" 
-        Write(99,*)" ========================================"         
+        Write(99,*)" ========================================"  
+               
         STOP
       END IF
       IF (Stable == 0) THEN
@@ -693,6 +707,7 @@ ELSE
         Write(99,*)" ========================================" 
         Write(99,*) " > Elastic Stability Conditions:  Unstable" 
         Write(99,*)" ========================================" 
+        STOP
       END IF
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
@@ -702,8 +717,26 @@ ELSE
       CALL C_Inv_M2D(3)
       CALL proelast_2D ()
       CALL sleep(2)
+      write(*,*)""
+      CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
+      !WRITE(*,*)" > Enter phi-mesh. Be divisible by 100.(e.g. 100, 200, 300, etc):"
+      read(*,*)npoint
     ENDIF
     IF (Ncod .eq. 2) then                                   !> IRelast2D
+    
+      call system('clear')
+      WRITE(*,*)" > Select the type of two-dimensional system:"    
+      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
+      WRITE(*,*) " Default  option (Hex., Squ., and Rec. systems) => 1  "
+      WRITE(*,*) " Advanced option (       Oblique systems      ) => 2  "
+      WRITE(*,*) " Back ------------------------------------------=> 0  "      
+      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
+      read(*,*)adv_mubner
+
+      IF (adv_mubner == 2 ) adv = "adv"
+      IF (adv_mubner == 1 ) adv = "ndv"
+      IF (adv_mubner == 0 ) goto 226
+    
       OPEN(11,FILE="ELC-matrix",status='old', err=13692)        
       READ(11,*) C2D(1,1)
       READ(11,*) C2D(1,2)
@@ -748,6 +781,10 @@ ELSE
      CALL C_Inv_M2D(3)
       CALL proelast_2D ()
       CALL sleep(2)
+      write(*,*)""
+      CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
+      !WRITE(*,*)" > Enter phi-mesh. Be divisible by 100.(e.g. 100, 200, 300, etc):"
+      read(*,*)npoint
     END IF    
     IF (Ncod .eq. 3) then
       call system('clear')

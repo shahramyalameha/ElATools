@@ -1761,9 +1761,9 @@ endif
    CALL set1_2d()
    CALL settit(val0)
   IF (cval1=="n" ) then
-   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2'
+   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2 title "Young Modulus"'
   ELSE
-      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2'
+      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Young Modulus"'
   ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1771,9 +1771,9 @@ endif
    CALL set1_2d()
    CALL settit(val0)  
   IF (cval1=="n" ) then
-   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2'
+   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2 title "Young Modulus"'
   ELSE
-      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2'
+      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Young Modulus"'
   ENDIF
    write(*,"(A,F6.2,A,F6.2,A)")" > Using: go to gnuplot, call '2Dyoung.gpi' '",MAXyo/4d0,"' '",MAXyo+2d0,"' (or other scale)  "
  endif
@@ -1786,9 +1786,9 @@ endif
       CALL set1_2d()
       CALL settit(val0)
   IF (cval1=="n" ) then       
-      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2'
+      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2 title "Shear Modulus"'   
    ELSE
-      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2'   
+      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Shear Modulus"'   
    ENDIF
       CALL setterm() 
       CALL setoutput(val0)
@@ -1796,9 +1796,9 @@ endif
       CALL set1_2d()
       CALL settit(val0)  
   IF (cval1=="n" ) then       
-      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2'
+      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2 title "Shear Modulus"'   
    ELSE
-      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2'   
+      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Shear Modulus"'   
    ENDIF
       write(*,"(A,F6.2,A,F6.2,A)")" > Using: go to gnuplot, call '2Dshear.gpi' '",MAXsh/4d0,"' '",MAXsh+2d0,"' (or other scale)  "
  endif
