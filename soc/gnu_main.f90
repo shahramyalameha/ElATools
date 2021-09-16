@@ -490,13 +490,13 @@ endif
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n" .or. cval2=="n") then
-    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2,\'
-    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:4 w l lc "red" lw 2'
+    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear",\'
+    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear"'
+   ! WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(3a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2,\'
-    WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:4 w l lc "',cval2,'" lw 2'    
+    WRITE(2,'(3a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear",\'
+    WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear"'
+    !WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:4 w l lc "',cval2,'" lw 2'    
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -510,13 +510,13 @@ endif
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n" .or. cval2=="n") then
-    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2,\'
-    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:4 w l lc "red" lw 2'
+    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear",\'
+    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear"'
+   ! WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(3a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2,\'
-    WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:4 w l lc "',cval2,'" lw 2'    
+    WRITE(2,'(3a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear",\'
+    WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear"'
+    !WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:4 w l lc "',cval2,'" lw 2'    
    ENDIF
         write(*,"(A,F5.2,A,F6.2,A)")" > Using: go to gnuplot, call 'shear.gpi' '",(G_max2)/4d0,"' '",G_max2+1d0,"' (or other scale)  "
  endif
@@ -719,11 +719,11 @@ endif
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n" ) then  
-    WRITE(2,'(a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 '
+    !WRITE(2,'(a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "red" lw 2 ,\'
+    WRITE(2,'(a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 title "Bulk modulus "'
     ELSE
-     WRITE(2,'(2a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-     WRITE(2,'(2a)')'   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 '   
+    ! WRITE(2,'(2a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
+     WRITE(2,'(2a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 title "Bulk modulus "'  
     ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -737,11 +737,11 @@ endif
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n") then  
-    WRITE(2,'(a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 '
+   ! WRITE(2,'(a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "red" lw 2 ,\'
+    WRITE(2,'(a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 title "Bulk modulus "'
    ELSE
-     WRITE(2,'(2a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-     WRITE(2,'(2a)')'   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 '   
+     WRITE(2,'(2a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 title "Bulk modulus "' 
+ 
    ENDIF
    write(*,"(A,F7.2,A,F9.2,A)")" > Using: go to gnuplot, call 'bulk.gpi' '",Maxbulk*100d0/4,"' '",(Maxbulk*100d0)+1.d0,"' (or other scale)  "
  endif
@@ -803,11 +803,11 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0) 
    IF (cval1=="n") then  
-WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2\'
-WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "blue" lw 2'
+WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2 title "Hardness"'
+!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "blue" lw 2'
 ELsE
-WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2\'
-WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval1,'" lw 2'
+WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Hardness"'
+!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval1,'" lw 2'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -821,11 +821,11 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)  
    IF (cval1=="n") then  
-WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2\'
-WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "blue" lw 2'
+WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2 title "Hardness"'
+!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "blue" lw 2'
 ELsE
-WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2\'
-WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval1,'" lw 2'
+WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Hardness"'
+!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval1,'" lw 2'
 ENDIF
 write(*,"(A,F7.2,A,F8.2,A)")" > Using: go to gnuplot, call 'hardness.gpi' '",Ha_max2/2,"' '",Ha_max2+1d0,"'(or other scale)  "
  
@@ -888,11 +888,11 @@ endif
    CALL set1()
    CALL settit(val0)
    IF (cval1=="n" ) then   
-    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
+    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 title "Young modulus"'
+   ! WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
    ELSE
-    WRITE(2,'(2a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'   "2dcut_young.dat" u 1:3 w l lc "',cval1,'" lw 2'
+    WRITE(2,'(2a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Young modulus"'
+   ! WRITE(2,'(2a)')'   "2dcut_young.dat" u 1:3 w l lc "',cval1,'" lw 2'
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -906,11 +906,11 @@ endif
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n" ) then   
-    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
+    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 title "Young modulus"'
+    !WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
    ELSE
-    WRITE(2,'(2a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'   "2dcut_young.dat" u 1:3 w l lc "',cval1,'" lw 2'
+    WRITE(2,'(2a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Young modulus"'
+   ! WRITE(2,'(2a)')'   "2dcut_young.dat" u 1:3 w l lc "',cval1,'" lw 2'
    ENDIF
    write(*,"(A,F7.2,A,F8.2,A)")" > Using: go to gnuplot, call 'young.gpi' '",Maxyoung/2,"' '",Maxyoung+1d0,"'(or other scale)  "
    !write(*,*)Maxyoung
@@ -1073,10 +1073,10 @@ endif
    CALL settit(val0)
    IF (cval1=="n") then    
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 title "Phase velocity: P-mode"'
    else
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2'
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Phase velocity: P-mode"'
    endif
    CALL setterm() 
    CALL setoutput(val0)
@@ -1091,10 +1091,10 @@ endif
   CALL settit(val0)  
    IF (cval1=="n" ) then    
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 title "Phase velocity: P-mode"'
    else
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2'
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Phase velocity: P-mode"'
    endif
    write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'phase-p.gpi' '",(VVP_P_max/4d0),"' '",VVP_P_max+1d0,"' (or other scale)  "
  endif 
@@ -1116,10 +1116,10 @@ endif
    CALL settit(val0)
    IF (cval1=="n") then   
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Phase velocity: Fast-mode"'
    else
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2'
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Phase velocity: Fast-mode"'
    endif
    CALL setterm() 
    CALL setoutput(val0)
@@ -1134,10 +1134,10 @@ endif
   CALL settit(val0)  
    IF (cval1=="n" ) then   
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Phase velocity: Fast-mode"'
    else
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2'
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Phase velocity: Fast-mode"'
    endif
    write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'phase-fast.gpi' '",(VVP_Sf_max/4d0),"' '",VVP_Sf_max+1.d0,"' (or other scale)  "
  endif 
@@ -1159,10 +1159,10 @@ endif
    CALL settit(val0) 
    IF (cval1=="n") then 
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 title "Phase velocity: Slow-mode"'
    ELSE
   !  WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval2,'" lw 2'    
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval2,'" lw 2 title "Phase velocity: Slow-mode"'    
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1177,10 +1177,10 @@ endif
   CALL settit(val0)  
    IF (cval1=="n") then 
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 title "Phase velocity: Slow-mode"'
    ELSE
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2'    
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Phase velocity: Slow-mode"'    
    ENDIF
    write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'phase-slow.gpi' '",VVP_Ss_max/4.0d0,"' '",VVP_Ss_max+1d0,"' (or other scale)  "
  endif 
@@ -1202,10 +1202,10 @@ endif
    CALL settit(val0)
    IF (cval1=="n") then  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 title "Group velocity: P-mode"'
    ELsE
    ! (2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "cval1" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2'    
+    WRITE(2,'(2a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Group velocity: P-mode"'    
    ENDif
    CALL setterm() 
    CALL setoutput(val0)
@@ -1220,10 +1220,10 @@ endif
   CALL settit(val0)  
    IF (cval1=="n") then  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 title "Group velocity: P-mode"'
    ELsE
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "cval1" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2'    
+    WRITE(2,'(2a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Group velocity: P-mode"'    
    ENDif
    write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'group-p.gpi' '",VVG_P_max/4d0,"' '",VVG_P_max+1d0,"' (or other scale)  "
  endif 
@@ -1244,10 +1244,10 @@ endif
    CALL settit(val0) 
    IF (cval1=="n") then  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2'
+    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 title "Group velocity: Fast-mode"'
     ELsE
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-     WRITE(2,'(2a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2'    
+     WRITE(2,'(2a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Group velocity: Fast-mode"'    
     ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1262,10 +1262,10 @@ endif
   CALL settit(val0)  
    IF (cval1=="n") then  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2'
+    WRITE(2,'(a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 title "Group velocity: Fast-mode"'
     ELsE
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-     WRITE(2,'(2a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2'    
+     WRITE(2,'(2a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Group velocity: Fast-mode"'    
     ENDIF
    write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'group-fast.gpi' '",VVG_Sf_max/4d0,"' '",VVG_Sf_max+1d0,"' (or other scale)  "
  endif 
@@ -1286,10 +1286,10 @@ endif
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n") then  
-    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 '
+    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 title "Group velocity: Slow-mode"'
     !WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(2a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 '
+    WRITE(2,'(2a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Group velocity: Slow-mode"'
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1303,10 +1303,10 @@ endif
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n") then  
-    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 '
+    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 title "Group velocity: Slow-mode"'
     !WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(2a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 '
+    WRITE(2,'(2a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Group velocity: Slow-mode"'
    ENDIF
    write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'group-slow.gpi' '",VVG_Ss_max/4d0,"' '",VVG_Ss_max+1d0,"' (or other scale)  "
  endif 
@@ -1326,10 +1326,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)
 IF (cval1=="n") then   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 ,\'
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 title "Power flow angle: P-mode"'
  !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2'
 ELsE
- WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
+ WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Power flow angle: P-mode"'
 EnDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1343,10 +1343,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)  
 IF (cval1=="n") then   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 ,\'
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 title "Power flow angle: P-mode"'
  !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2'
 ELsE
- WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
+ WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Power flow angle: P-mode"'
 EnDIF
 write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'power-flow-p.gpi' '",1.0+(VV_P_PF_max/4d0),"' '",VV_P_PF_max+1d0,"' (or other scale)  "
 endif 
@@ -1366,10 +1366,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0) 
 IF (cval1=="n") then   
-WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 '
+WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 title "Power flow angle: Fast-mode"'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2'
 ELsE
-WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 '
+WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Power flow angle: Fast-mode"'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1383,10 +1383,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)  
 IF (cval1=="n") then   
-WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 '
+WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 title "Power flow angle: Fast-mode"'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2'
 ELsE
-WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 '
+WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Power flow angle: Fast-mode"'
 ENDIF
 write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'power-flow-fast.gpi' '",0.5+(VV_Sf_PF_max/4d0),"' '",VV_Sf_PF_max+1d0,"' (or other scale)  "
 endif 
@@ -1406,10 +1406,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0) 
 IF (cval1=="n") then   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 '
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 title "Power flow angle: Slow-mode"'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2'
 ELSE
- WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 '
+ WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Power flow angle: Slow-mode"'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1423,10 +1423,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)  
 IF (cval1=="n") then   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 '
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 title "Power flow angle: Slow-mode"'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2'
 ELSE
- WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 '
+ WRITE(2,'(2a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Power flow angle: Slow-mode"'
 ENDIF
 write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'power-flow-slow.gpi' '",0.5+(VV_Sf_PF_max/4d0),"' '",VV_Sf_PF_max+1d0,"' (or other scale)  "
 endif 
@@ -1643,9 +1643,9 @@ open(2,file='mthconductivity.gpi'); val0='km'
    CALL set1()
    CALL settit(val0)
    IF (cval1=="n") then 
-    WRITE(2,'(a)')'pl "2dcut_km.dat" u 1:2 w l lc "violet" lw 2 '
+    WRITE(2,'(a)')'pl "2dcut_km.dat" u 1:2 w l lc "violet" lw 2 title "Min. thermal conductivity"'
    ELSE
-     WRITE(2,'(3a)')'pl "2dcut_km.dat" u 1:2 w l lc "',cval1,'" lw 2 '
+     WRITE(2,'(3a)')'pl "2dcut_km.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Min. thermal conductivity"'
    ENDIF
  
    CALL setterm() 
@@ -1660,9 +1660,9 @@ open(2,file='mthconductivity.gpi'); val0='km'
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n") then 
-    WRITE(2,'(a)')'pl "2dcut_km.dat" u 1:2 w l lc "violet" lw 2 '
+    WRITE(2,'(a)')'pl "2dcut_km.dat" u 1:2 w l lc "violet" lw 2 title "Min. thermal conductivity"'
    ELSE
-     WRITE(2,'(3a)')'pl "2dcut_km.dat" u 1:2 w l lc "',cval1,'" lw 2 '
+     WRITE(2,'(3a)')'pl "2dcut_km.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Min. thermal conductivity"'
    ENDIF
    write(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'mthconductivity.gpi' '",0.5+(km_max/4d0),"' '",km_max+1.5d0,"' (or other scale)  "
 endif
