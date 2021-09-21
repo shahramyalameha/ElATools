@@ -590,14 +590,18 @@ IF (Stable==1) THEN
   CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
   CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
   CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
+  Write(99,*)" ========================================" 
   WRITE(99,"(a)")" > Elastic Stability Conditions:  Unstable; STOP"
+  Write(99,*)" ========================================" 
  STOP
 END IF
 IF (Stable==0) THEN
    CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
    CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
    CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
+   Write(99,*)" ========================================" 
    WRITE(99,"(a)")" > Elastic Stability Conditions:  Stable"
+   Write(99,*)" ========================================" 
 
 END IF
   WRITE(*,'(A,36f10.2)') " > Eigenvalues (GPa):",Eig3d(1,1),Eig3d(2,2),Eig3d(3,3) ,Eig3d(4,4) ,Eig3d(5,5) ,Eig3d(6,6)
@@ -705,7 +709,7 @@ ELSE
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         Write(99,*)" ========================================" 
-        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*) " > Elastic Stability Conditions:  Stable" 
         Write(99,*)" ========================================" 
         
       END IF
@@ -772,7 +776,7 @@ ELSE
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         Write(99,*)" ========================================" 
-        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*) " > Elastic Stability Conditions:  Stable" 
         Write(99,*)" ========================================" 
       END IF
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
