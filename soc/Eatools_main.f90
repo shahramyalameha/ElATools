@@ -319,15 +319,15 @@ Ha_min2_phi   = 0D0,        &
 
 !>>>>>>>>>>>>>>>>>>>>>>>>END<<<<<<<<<<<<<<<<<<<<<<<<< 
 
-
+ OPEN(99,FILE="DATA.out") !> final static data 
  CALL SYSTEM('clear')
  WRITE(*,*) ' '
  CALL WELCOME()
 
  WRITE(*,*) ' '
- CALL SYSTEM('sleep 1.5')
+ CALL SYSTEM('sleep 1.2')
  
- OPEN(99,FILE="DATA.out") !> final static data 
+
 225 CALL SYSTEM('clear')
  WRITE(*,*)" > Select system dimension:"  !> go to type of system
  CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
@@ -705,7 +705,7 @@ ELSE
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         Write(99,*)" ========================================" 
-        Write(99,*) " > Elastic Stability Conditions:  Stable" 
+        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
         Write(99,*)" ========================================" 
         
       END IF
@@ -772,7 +772,7 @@ ELSE
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         Write(99,*)" ========================================" 
-        Write(99,*) " > Elastic Stability Conditions:  Stable" 
+        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
         Write(99,*)" ========================================" 
       END IF
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
