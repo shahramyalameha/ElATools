@@ -781,6 +781,7 @@ ELSE
       END IF
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
+      WRITE(99,*)" "
 !<
      CALL C_Inv_M2D(3)
       CALL proelast_2D ()
@@ -832,6 +833,7 @@ ELSE
       END IF
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
+      WRITE(99,*)" "
 !<
       CALL C_Inv_M2D(3)
       CALL proelast_2D()
