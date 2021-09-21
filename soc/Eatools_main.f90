@@ -705,7 +705,7 @@ ELSE
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         Write(99,*)" ========================================" 
-        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*) " > Elastic Stability Conditions:  Stable" 
         Write(99,*)" ========================================" 
         
       END IF
@@ -772,7 +772,7 @@ ELSE
         CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
         CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
         Write(99,*)" ========================================" 
-        Write(99,*) " > Elastic Stability Conditions:  Unstable" 
+        Write(99,*) " > Elastic Stability Conditions:  Stable" 
         Write(99,*)" ========================================" 
       END IF
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
