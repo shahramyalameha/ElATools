@@ -69,7 +69,8 @@ SUBROUTINE proelast()
 					                Pc_orth_a,&
 					                Pc_orth_b,&
 					                Pc_orth_c
- CHARACTER(LEN=10) :: bdout1,bdout2
+ CHARACTER(LEN=10) :: bdout1_out1,bdout1_out2,bdout1_out3,&
+                      bdout2_out1,bdout2_out2,bdout2_out3
  CHARACTER(LEN=31) :: st_ben
  CHARACTER(LEN=5)  ::	Cov_met,Cov_met_aa,Cov_met_c,Cov_met_oa,Cov_met_ob,Cov_met_oc
  DOUBLE PRECISION, DIMENSION(6,6) ::C=0D0,S=0D0				 
@@ -155,7 +156,7 @@ SUBROUTINE proelast()
     mr = kr + (4d0*gr/3d0)
     mh = (mv + mr)/2d0
     ! 
-    Pc        = C(1,1) - C(4,4)
+    Pc        = C(1,2) - C(4,4)
     Pc_hex_a  = C(1,3) - C(4,4)
     Pc_hex_c  = C(1,2) - C(6,6)
     Pc_orth_a = C(2,3) - C(4,4)
@@ -182,8 +183,14 @@ SUBROUTINE proelast()
     H_5_v  = ( 2d0 * (( gv * inv_kgv**2d0 )**0.585) ) - 3d0
     H_5_h  = ( 2d0 * (( gh * inv_kgh**2d0 )**0.585) ) - 3d0
     
-    CALL ductiletester_KG(kgh,bdout1)
-    CALL ductiletester_PR(nuh,bdout2)
+    CALL ductiletester_KG(kgv,bdout1_out1)
+    CALL ductiletester_KG(kgr,bdout1_out2)
+    CALL ductiletester_KG(kgh,bdout1_out3)
+    
+    CALL ductiletester_PR(nuv,bdout2_out1)
+    CALL ductiletester_PR(nur,bdout2_out2)
+    CALL ductiletester_PR(nuh,bdout2_out3)
+    
     CALL bond_stretching_bending (kel, st_ben)
     
     WRITE(*,*)'============================================================='
@@ -195,8 +202,8 @@ SUBROUTINE proelast()
     WRITE(*,'(a,3F10.4,a)')' = P-wave modulus(GPa)     | ', mv,mr,mh    ,'  ='
     WRITE(*,'(a,3F10.4,a)')' = Lame’s first parameter  | ', La1v,La1r,La1h,'  ='
     WRITE(*,'(a,3F10.4,a)')' = Lame’s second parameter | ', La2v,La2r,La2h,'  ='
-    WRITE(*,'(a,3F10.4,a,3a)')' = Poisson ratio           | ', nuv,nur,nuh ,'  = ','<--(  ',bdout1,'regime      )' !| WRITE(*,'(a,3F10.4,a,3a)')' = Pugh ratio           | ', kgv,kgr,kgh ,'   = ','<--(  ',bdout2,'regime   )' !|==>article:http://dx.doi.org/10.1080/09500839.2016.1243264
-    WRITE(*,'(a,3F10.4,a,3a)')' = Pugh ratio              | ', kgv,kgr,kgh ,'  = ','<--(  ',bdout2,'regime      )' !|==> article:http://dx.doi.org/10.1080/09500839.2016.1243264
+    WRITE(*,'(a,3F10.4,6a)')' = Poisson ratio           | ', nuv,nur,nuh ,'  = ','<--(', bdout1_out1,bdout2_out2,bdout2_out3,'regime )' !| WRITE(*,'(a,3F10.4,a,3a)')' = Pugh ratio           | ', kgv,kgr,kgh ,'   = ','<--(  ',bdout2,'regime   )' !|==>article:http://dx.doi.org/10.1080/09500839.2016.1243264
+    WRITE(*,'(a,3F10.4,6a)')' = Pugh ratio              | ', kgv,kgr,kgh ,'  = ','<--(', bdout2_out1,bdout2_out2,bdout2_out3,'regime )' !|==> article:http://dx.doi.org/10.1080/09500839.2016.1243264
     WRITE(*,*)'============================================================='
     WRITE(*,*)''
     WRITE(*,*)'============================================================='
@@ -227,8 +234,8 @@ SUBROUTINE proelast()
     WRITE(99,'(a,3F10.4,a)')' = P-wave modulus(GPa)| ', mv,mr,mh    ,'   ='
     WRITE(99,'(a,3F10.4,a)')' = Lame’s first parameter  | ', La1v,La1r,La1h,'  ='
     WRITE(99,'(a,3F10.4,a)')' = Lame’s second parameter | ', La2v,La2r,La2h,'  ='    
-    WRITE(99,'(a,3F10.4,a,3a)')' = Poisson ratio      | ', nuv,nur,nuh ,'   = ','<--(  ',bdout1,'regime      )' !|
-    WRITE(99,'(a,3F10.4,a,3a)')' = Pugh ratio         | ', kgv,kgr,kgh ,'   = ','<--(  ',bdout2,'regime      )' !|==> article:http://dx.doi.org/10.1080/09500839.2016.1243264
+    WRITE(99,'(a,3F10.4,6a)')' = Poisson ratio           | ', nuv,nur,nuh ,'  = ','<--(', bdout1_out1,bdout2_out2,bdout2_out3,'regime )' !|
+    WRITE(99,'(a,3F10.4,6a)')' = Pugh ratio              | ', kgv,kgr,kgh ,'  = ','<--(', bdout2_out1,bdout2_out2,bdout2_out3,'regime )' !|==> article:http://dx.doi.org/10.1080/09500839.2016.1243264
     WRITE(99,*)'=========================================================='
     !Universal anisotropy index (Ranganathan and Ostoja-Starzewski method; PRL 101, 055504 (2008)) 
     !Log-Euclidean anisotropy parameter by Christopher M. Kube, AIP Advances 6, 095209 (2016)

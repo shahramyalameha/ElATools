@@ -3,13 +3,13 @@
 !               Please report bugs or suggestions to:  yalameha93@gmail.com                `
 !                                                                                          `
 !```````````````````````````````````````````````````````````````````````````````````````````
-! SUBROUTINE: fOR 3D MATERIAL, Detection of Ductile/Brittle and Covalent-like bonding/Metallic-like bonding and bond_stretching_bending in materials.
+! SUBROUTINE: FOR 3D MATERIAL, Detection of Ductile/Brittle and Covalent-like bonding/Metallic-like bonding and bond_stretching_bending in materials.
 
 SUBROUTINE ductiletester_KG(kgh,bdout)
  IMPLICIT NONE
-  CHARACTER(LEN=10) :: bdout
+  CHARACTER(LEN=10) :: bdout ! Brittle and Ductile output! 
   DOUBLE PRECISION  :: kgh
-	IF(kgh > 1.75d0)then
+	IF(abs(kgh) > 1.75d0)then
 		bdout= "Ductile"
   !	WRITE(*,*)bdout
   ELSE
