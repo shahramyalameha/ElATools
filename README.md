@@ -7,6 +7,7 @@
   <img src="pic/1.png" width="150" title="hover text">
   <img src="pic/2.png" width="150" title="hover text">
   <img src="pic/3.png" width="150" title="hover text">
+  <img src="pic/log_ElAtools.png" width="150" title="hover text">
 </p>  
 
 ## _A tool for analyzing anisotropic elastic properties of the 2D and 3D materials_
