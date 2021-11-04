@@ -24,7 +24,7 @@
 The paper of this tool is under review. If you use this tool, please cite the following work:
 
 ```
-      @article{yalameha2021elatools,
+ @article{yalameha2021elatools,
                 title = {ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
                 journal = {Computer Physics Communications},
                 pages = {108195},
@@ -34,7 +34,7 @@ The paper of this tool is under review. If you use this tool, please cite the fo
                 url = {https://www.sciencedirect.com/science/article/pii/S0010465521003076},
                 author = {Shahram Yalameha and Zahra Nourbakhsh and Daryoosh Vashaee},
                 keywords = {Anisotropic elastic property, Elastic constants, Auxetic material, Visualization}
-      }
+  }
 ```
 
 ```
