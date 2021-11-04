@@ -21,7 +21,21 @@
 [![GitHub stars](https://img.shields.io/github/stars/shahramyalameha/ElATools)](https://github.com/shahramyalameha/ElATools/stargazers)
 > We introduce a computational method and a user-friendly code with a terminal-based graphical user interface (GUI), named ElATools, developed to analyze anisotropic elastic properties. ElATools enables facile analysis of the second-order elastic stiffness tensor of two-dimensional (2D) and three-dimensional (3D) crystal systems. It computes and displays the main mechanical properties including the bulk modulus, Young’s modulus, shear modulus, hardness, p-wave modulus, universal anisotropy index, Chung-Buessem anisotropy index, log-Euclidean anisotropy parameter, Cauchy pressures, Poisson's ratio, and Pugh's ratio, using three averaging schemes of Voigt, Reuss, and Hill. It includes an online and offline database from the Materials Project with more than 13,000 elastic stiffness constants for 3D materials. The program supports output files of the well-known computational codes IRelast, IRelast2D, ElaStic, and AELAS. Four types of plotting and visualization tools are integrated to conveniently interface with GNUPLOT, XMGRACE, view3dscene and plotly libraries, offering immediate post-processing of the results. ElATools provides reliable means to investigate the mechanical stability based on the calculation of six (three) eigenvalues of the elastic tensor in 3D (2D) materials. It can efficiently identify anomalous mechanical properties, such as negative linear compressibility, negative Poisson’s ratio, and highly-anisotropic elastic modulus in 2D and 3D materials, which are central properties to design and develop high-performance nanoscale electromechanical devices. Moreover, ElATools can predict the behavior of the sound velocities and their anisotropic properties, such as acoustic phase/group velocities and power flow angles in materials, by solving the Christoffel equation.
 
-The paper of this tool is under review. If you use this tool, please cite the following work in arXiv (form temporarily):
+The paper of this tool is under review. If you use this tool, please cite the following work:
+
+```
+      @article{yalameha2021elatools,
+                title = {ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
+                journal = {Computer Physics Communications},
+                pages = {108195},
+                year = {2021},
+                issn = {0010-4655},
+                doi = {https://doi.org/10.1016/j.cpc.2021.108195},
+                url = {https://www.sciencedirect.com/science/article/pii/S0010465521003076},
+                author = {Shahram Yalameha and Zahra Nourbakhsh and Daryoosh Vashaee},
+                keywords = {Anisotropic elastic property, Elastic constants, Auxetic material, Visualization}
+      }
+```
 
 ```
 @article{yalameha2021elatools,
