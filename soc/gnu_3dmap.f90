@@ -11,20 +11,20 @@ subroutine threeDdmap()
     DOUBLE PRECISION, DIMENSION(1930000)  :: G_max,shminp,shminn,shavep,SINver,CO,comminp,pugh_max,pughminp,pughminn,pughavep,&
                                              comminn,NPratio_max,pminp,pminn,pavep,paven, BINver,maxEVaLM1,maxEVaTM1,minEVaTM1,&
                                              VVG_P,VVP_P,VV_P_PF,VVG_Sf,VVP_Sf,VV_Sf_PF,VVG_Ss,VVP_Ss,VV_Ss_PF, theta, phi, Minbulk,Maxbulk, hardvar,km
-    INTEGER                               :: h_ex,k_ex,l_ex, i, ii,iii,cutmesh,n_phif, n_thetaf,j
-    ChARACTER(LEN=6)                      :: e1,e2
-    ChARACTER(LEN=2)                      :: ynveloc
+    INTEGER                               :: h_ex0,k_ex0,l_ex0, i, ii,iii,cutmesh,n_phif, n_thetaf,j
+    ChARACTER(LEN=6)                      :: e10,e20
+    ChARACTER(LEN=2)                      :: ynveloc0
     character(len=10)                     :: val=' '
 
     OPEN(123, FILE='HKL')
-     read(123,*) e1
-     read(123,*) e2
-     read(123,*) h_ex
-     read(123,*) k_ex
-     read(123,*) l_ex
-     read(123,*) ynveloc
+     read(123,*) e10
+     read(123,*) e20
+     read(123,*) h_ex0
+     read(123,*) k_ex0
+     read(123,*) l_ex0
+     read(123,*) ynveloc0
     CLOSE(123)
-     !write(*,*)ynveloc
+     !write(*,*)ynveloc0
     OPEN(69, file="MESH")
     read(69,*)n_phif,n_thetaf,cutmesh
     close(69)
@@ -37,7 +37,7 @@ subroutine threeDdmap()
      read(1,*) G_max(ii),shminp(ii),shminn(ii),shavep(ii),SINver(ii),CO(ii),comminp(ii),&
                comminn(ii),NPratio_max(ii),pminp(ii),pminn(ii),pavep(ii),paven(ii),BINver(ii),&
                maxEVaLM1(ii),maxEVaTM1(ii),minEVaTM1(ii),pugh_max(ii),pughminp(ii),pughminn(ii),pughavep(ii),hardvar(ii)
-    IF (ynveloc=='Y' .OR. ynveloc=='y'.or. ynveloc=='yy')THEN
+    IF (ynveloc0=='Y' .OR. ynveloc0=='y'.or. ynveloc0=='yy')THEN
      read(5,*) VVP_P(ii),VVG_P(ii),VVP_Sf(ii),VVG_Sf(ii),VVP_Ss(ii),VVG_Ss(ii),VV_P_PF(ii),VV_Sf_PF(ii),VV_Ss_PF(ii),km(ii)
           
       
@@ -56,7 +56,7 @@ subroutine threeDdmap()
      open(13, file=".SDdat")
     do j=1, n_phif*n_thetaf
 
-     IF (ynveloc=='Y' .OR. ynveloc=='y')THEN
+     IF (ynveloc0=='Y' .OR. ynveloc0=='y')THEN
         if (phi(j) == 0.or. theta(j)==3.14159265358979 .or. theta(j)==0.0d0)   Write(13,*)"  "
         Write(13,"(37F25.15)") theta(j), phi(j),G_max(j),shminp(j),shminn(j),shavep(j),SINver(j),CO(j),comminp(j),&                  !9
                                comminn(j),NPratio_max(j),pminp(j),pminn(j),pavep(j),paven(j),BINver(j),&                             !16

@@ -15,11 +15,11 @@
                                                 theta,phi
     DOUBLE PRECISION, DIMENSION(3)               :: vec
     DOUBLE PRECISION,PARAMETER                   :: pi=3.1415926535897932384626433832795D0,ee=0.00001D0
-    INTEGER                                      :: i,j
+    INTEGER                                      :: i,j,theta_point
 
 
-    twoDTheta=DBLE(j)/360D0*2D0*pi
-
+     twoDTheta=DBLE(j)/360D0*2D0*pi
+     !twoDTheta=DBLE(j)*2D0*pi/theta_point
     IF ((ABS(mmx).LE.ee).AND.(ABS(llz).LE.ee)) THEN  
       vec(1) = COS(twoDTheta)
       vec(2) = 0D0

@@ -20,7 +20,7 @@
   INTEGER                               :: CLaS,phi_meah,theta_meah,cutmesh,npoint,ewp
   DOUBLE PRECISION, PARAMETER        :: pi=3.14159265358979323846264338327950D0,ee=0.0001D0
   DOUBLE PRECISION, DIMENSION(6,6)   :: C1p=0D0,S1=0D0,C=0D0,S=0D0,CP=0D0,C3=0D0,CCo=0d0,Eig3d
-  DOUBLE PRECISION, DIMENSION(10100) :: shear2dmax,  Ax,&
+  DOUBLE PRECISION, DIMENSION(80100) :: shear2dmax,  Ax,&
                                         shear2dminp,  &
                                         shear2dminn,  &
                                         comMIN2d,     &
@@ -53,7 +53,7 @@
  ChARACTER(LEN=3)                  :: adv
  DOUBLE PRECISION, DIMENSION(3,3)  :: EVe=0D0, C2D,Eig2d
 
- DOUBLE PRECISION, DIMENSION(3)    :: vec=0d0,&
+ DOUBLE PRECISION, DIMENSION(3)    :: vec=0d0,vec_3dslic=0,&
  v=0d0,                                       &
  vec1=0d0,                                    &
  EVa,                                         &
@@ -83,7 +83,7 @@
  minEVaTM  = 10d6,             &
  maxEVaLMf = 0D0,              &
  maxEVaTMf = 0D0,              &
- minEVaTMf = 10d6
+ minEVaTMf = 10d6,test_n, new_num
  
  DOUBLE PRECISION ::v11=0d0,&
  t2d=0D0,                   &
@@ -620,9 +620,9 @@ CALL system ('tput setaf 122;tput bold; echo " > Enter phi-meah and theta-meah b
 !WRITE(*,*)" > Enter phi-meah and theta-meah between 50 and 250 (Recommended: 150):"
 OPEN(59,file='MESH')
 READ(*,*)phi_meah,theta_meah
-cutmesh=(phi_meah*theta_meah)+1
-WRITE(59,*)phi_meah,theta_meah,cutmesh
-close(59)
+ cutmesh=(phi_meah*theta_meah)+1
+ WRITE(59,*)phi_meah,theta_meah,cutmesh
+ close(59)
 
 WRITE (*,*) " "
 CALL system ('tput setaf 142;tput bold; echo " > Select the (hkl) Miller indices for 2D cut:";tput sgr0')
@@ -858,6 +858,7 @@ IF(d2d3 == 3) then !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
 !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Preparing 3D data...
 !open(78,file='uuu')
   OPEN(111, file="3d_SD.dat")
+  OPEN(115, file="3d_vec.dat")
   OPEN(14,FILE="3d_comp.dat"    )
   OPEN(28,FILE="3d_hardness.dat" )
  ! OPEN(29,FILE="CompN_Min.dat"    )
@@ -1013,14 +1014,17 @@ endif
   OPEN(10,file="Cij.dat")
   DO i=0,Nmesh_thata
     theta=DBLE(i)/DBLE(Nmesh_thata)*PI
+    
     Nmesh_phi2=Nmesh_phi
     IF (i.EQ.0 .OR. i.EQ.Nmesh_thata) Nmesh_phi2=0D0 
     if ( i==Nmesh_thata/4d0 ) then  ; CALL system( ' clear ' ) ;PRINT*, '|====%25====>-------------|'; ENDIF
     if ( i==Nmesh_thata/3d0 ) then  ; CALL system( ' clear ' ) ;PRINT*, '|======%50======>---------|'; ENDIF
     if ( i==Nmesh_thata/2d0 ) then  ; CALL system( ' clear ' ) ;PRINT*, '|========%75========>-----|'; ENDIF
     if ( i==Nmesh_thata/1d0 ) then  ; CALL system( ' clear ' ) ;PRINT*, '|==========%100==========>|'; ENDIF
+    
     DO j=0, Nmesh_phi2
       phi=DBLE(j)/DBLE(Nmesh_phi)*2D0*PI
+      
       vec(1)=SIN(theta)*COS(phi)
       vec(2)=SIN(theta)*SIN(phi)
       vec(3)=COS(theta)
@@ -1360,6 +1364,7 @@ endif
       
       
       WRITE(111,*) theta, phi
+      write(115,"(3F30.15)")vec(1),vec(2),vec(3)
       WRITE(28,"(4F30.15)")  vec(1)*ABS(   hardvar   ),    vec(2)*ABS(   hardvar   ),    vec(3)*ABS(   hardvar   )                     !>> hardness
       !WRITE(18,*) vec(1)*ABS( G_Ave*1000D0 ),    vec(2)*ABS( G_Ave*1000D0 ),    vec(3)*ABS( G_Ave*1000D0 )   !>> shear
       WRITE(16,"(12F30.15)") vec(1)*ABS( G_max*1000D0 ),    vec(2)*ABS( G_max*1000D0 ),    vec(3)*ABS( G_max*1000D0 ),&    !>> shear
@@ -1957,17 +1962,18 @@ endif
   smkl=SQRT(mmx**2D0 +kky**2D0 +llz**2D0)
   mmx = mmx/smkl; kky = kky/smkl; llz = llz/smkl   
   vec=0D0
-  DO i=0,360
-!                  out   out  out out  out  out  in  in  in  in  in in  in   in
-    CALL twoD_calc(vv11,vv12,vv13,vv22,vv23,vv33,mmx,kky,llz,smkl,i,phi,theta,vec)
-
+  DO i=0,Nmesh_thata
+  
+!                  out   out  out out  out  out  in  in  in  in  in out  out   in         out
+    CALL twoD_calc(vv11,vv12,vv13,vv22,vv23,vv33,mmx,kky,llz,smkl,i,phi,theta,Nmesh_thata,vec)
+   !WRITE(*,*)i,phi,theta
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      CALL Csound(vec,vv11,vv12,vv22,vv13,vv23,vv33,EVa,Lm,MaxTm,MinTm)
      LM2d(num)   = Eva(LM)
      TMmax2d(num)= EVa(MaxTm)
      TMmin2d(num)= EVa(MinTm)
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     SS=1D0*vv11*vv11*S(1,1)               &
+     SS=1D0*vv11*vv11*S(1,1)                 &
        +2D0*vv12*vv12*S(1,2)                 &
        +2D0*vv13*vv13*S(1,3)                 &
        +2D0*vv12*vv13*S(1,4)                 &
@@ -1989,7 +1995,7 @@ endif
       ELSE
         young2dmax(num)=0D0
       ENDIF
-
+ 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !
       CO=      ( S(1,1)+S(1,2)+S(1,3) )*vv11 &
@@ -2087,8 +2093,8 @@ endif
       NPratio_max=0D0
       NPratio_min=1D0
       CALL CPratio(SS,NPratio_min,NPratio_max,NPratio_ave,&
-      v1min,v2min,v3min,v1max,v2max,v3max,   &
-      theta,phi,vv11,vv12,vv13,vv22,vv23,vv33,Pratio)
+                   v1min,v2min,v3min,v1max,v2max,v3max   ,&
+                   theta,phi,vv11,vv12,vv13,vv22,vv23,vv33,Pratio)
  
       poisson2dmax(num) = NPratio_max
       IF (NPratio_min.GE.0D0) poisson2dminp(num) = NPratio_min
@@ -2144,8 +2150,8 @@ endif
           if (i==0)VV_Ss_PF_2D(j)= VV_Ss_PF!/1000D0
 
          
-  !WRITE(*,*)VV_Sf_PF  
-          phi=phi+0.5d0
+  ! WRITE(*,*)VV_Sf_PF  
+          phi=phi+ 0.5d0
         ENDDO 
         theta=theta+0.5d0
       ENDDO
@@ -2184,38 +2190,54 @@ endif
     ENDIF                                    !!-----------------------------------------------------
     
     num=0
-    DO num=0,360
-      t2d=DBLE(num)/360D0*2D0*PI
+    test_n=0.0
+    DO num=0,Nmesh_thata
+    
+      t2d=DBLE(num)*2D0*pi/Nmesh_thata
+      new_num =  (360.0d0/Nmesh_thata)*num
+       call slic3D_calc(mmx,kky,llz,smkl,num, Nmesh_thata, vec_3dslic)
+      
+      WRITE(50,"(7F30.20)")new_num,SQRT( (young2dmax(num)*COS(t2d)   )**2D0 + (young2dmax(num)*SIN(t2d)   )**2D0),& 
+                                   SQRT( (young2dmin(num)*COS(t2d)   )**2D0 + (young2dmin(num)*SIN(t2d)   )**2D0), &
+                                   vec_3dslic(1)*young2dmax(num), vec_3dslic(2)*young2dmax(num) ,vec_3dslic(3)*young2dmax(num) 
 
-      WRITE(50,"(I3,4F30.20)")num,SQRT( (young2dmax(num)*COS(t2d)   )**2D0 + (young2dmax(num)*SIN(t2d)   )**2D0),& 
-                                  SQRT( (young2dmin(num)*COS(t2d)   )**2D0 + (young2dmin(num)*SIN(t2d)   )**2D0)
-
-      WRITE(52,"(I3,4F30.20)")num,SQRT( (shear2dmax(num)*COS(t2d)   )**2D0 + (shear2dmax(num)*SIN(t2d)   )**2D0),&
+      WRITE(52,"(5F30.20)")new_num,SQRT( (shear2dmax(num)*COS(t2d)   )**2D0 + (shear2dmax(num)*SIN(t2d)   )**2D0),&
 	                              SQRT( (shear2dminp(num)*COS(t2d)  )**2D0 + (shear2dminp(num)*SIN(t2d)  )**2D0),&
                                   SQRT( (shear2dminn(num)*COS(t2d)  )**2D0 + (shear2dminn(num)*SIN(t2d)  )**2D0)
                      
-	    WRITE(55,"(I3,4F25.14)")num,SQRT( (comMAX2d(num)*COS(t2d)     )**2D0 + (comMAX2d(num)*SIN(t2d)     )**2D0),&
+	    WRITE(55,"(5F25.14)")new_num,SQRT( (comMAX2d(num)*COS(t2d)     )**2D0 + (comMAX2d(num)*SIN(t2d)     )**2D0),&
                                   SQRT( (comMIN2d(num)*COS(t2d)     )**2D0 + (comMIN2d(num)*SIN(t2d)     )**2D0)
 
-      WRITE(57,"(I3,4F30.20)")num,SQRT( (poisson2dmax(num)*COS(t2d) )**2D0 + (poisson2dmax(num)*SIN(t2d) )**2D0),&
+      WRITE(57,"(5F30.20)")new_num,SQRT( (poisson2dmax(num)*COS(t2d) )**2D0 + (poisson2dmax(num)*SIN(t2d) )**2D0),&
                                   SQRT( (poisson2dminp(num)*COS(t2d))**2D0 + (poisson2dminp(num)*SIN(t2d))**2D0),&
                                   SQRT( (poisson2dminn(num)*COS(t2d))**2D0 + (poisson2dminn(num)*SIN(t2d))**2D0)
 
-      WRITE(60,"(I3,4F30.11)")num,SQRT( (bulkmin2d(num)*COS(t2d)    )**2D0 + (bulkmin2d(num)*SIN(t2d)    )**2D0),&
+      WRITE(60,"(5F30.11)")new_num,SQRT( (bulkmin2d(num)*COS(t2d)    )**2D0 + (bulkmin2d(num)*SIN(t2d)    )**2D0),&
                                   SQRT( (bulkMax2d(num)*COS(t2d)    )**2D0 + (bulkmax2d(num)*SIN(t2d)    )**2D0)
 
-      WRITE(62,"(I3,4F30.20)")num,SQRT( (LM2d(num)*COS(t2d)         )**2D0 + (LM2d(num) *SIN(t2d)        )**2D0),&
+      WRITE(62,"(5F30.20)")new_num,SQRT( (LM2d(num)*COS(t2d)         )**2D0 + (LM2d(num) *SIN(t2d)        )**2D0),&
                                   SQRT( (TMmax2d(num)*COS(t2d)      )**2D0 + (TMmax2d(num)*SIN(t2d)      )**2D0),&
                                   SQRT( (TMmin2d(num)*COS(t2d)      )**2D0 + (TMmin2d(num)*SIN(t2d)      )**2D0)
 
-      WRITE(71,"(I3,4F30.20)")num,SQRT( (pugh2dmax(num)*COS(t2d)   )**2D0 + (pugh2dmax(num)*SIN(t2d)     )**2D0),&
+      WRITE(71,"(5F30.20)")new_num,SQRT( (pugh2dmax(num)*COS(t2d)   )**2D0 + (pugh2dmax(num)*SIN(t2d)     )**2D0),&
                                   SQRT( (pugh2dminp(num)*COS(t2d)  )**2D0 + (pugh2dminp(num)*SIN(t2d)    )**2D0),&
                                   SQRT( (pugh2dminn(num)*COS(t2d)  )**2D0 + (pugh2dminn(num)*SIN(t2d)    )**2D0) 
 
-      WRITE(72,"(I3,4F30.20)")num,SQRT( (hard2dmax(num)*COS(t2d)   )**2D0 + (hard2dmax(num)*SIN(t2d)   )**2D0),& 
+      WRITE(72,"(5F30.20)")new_num,SQRT( (hard2dmax(num)*COS(t2d)   )**2D0 + (hard2dmax(num)*SIN(t2d)   )**2D0),& 
                                   SQRT( (hard2dmin(num)*COS(t2d)   )**2D0 + (hard2dmin(num)*SIN(t2d)   )**2D0)
 
+
+      
+    If (yn_km=='Y' .or. yn_km=='y') then        
+      WRITE(499,"(5F30.20)")new_num,SQRT( (km2dmax(num)*COS(t2d)   )**2D0 + (km2dmax(num)*SIN(t2d)   )**2D0)  
+    endif  
+        
+    ENDDO
       IF (yn_veloc=='Y' .or. yn_veloc=='y') then
+      
+       DO num=0,360
+        t2d=DBLE(num)/360D0*2D0*PI
+        !WRITE(*,*)t2d
         WRITE(500,'(I3,3F30.15)')num,SQRT( (VVG_P_2D(num)*COS(t2d)   )**2D0 + (VVG_P_2D(num)*SIN(t2d)      )**2D0),&
                                      SQRT( (VVG_Sf_2D(num)*COS(t2d)   )**2D0 + (VVG_Sf_2D(num)*SIN(t2d)    )**2D0),&
                                      SQRT( (VVG_Ss_2D(num)*COS(t2d)   )**2D0 + (VVG_Ss_2D(num)*SIN(t2d)    )**2D0)
@@ -2226,15 +2248,10 @@ endif
 
         WRITE(502,'(I3,3F30.15)')num,SQRT( (VV_P_PF_2D(num)*COS(t2d)   )**2D0 + (VV_P_PF_2D(num)*SIN(t2d)  )**2D0),&
                                      SQRT( (VV_Sf_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Sf_PF_2D(num)*SIN(t2d))**2D0),&
-                                     SQRT( (VV_Ss_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Ss_PF_2D(num)*SIN(t2d))**2D0)                                     
-      ENDIF
+                                     SQRT( (VV_Ss_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Ss_PF_2D(num)*SIN(t2d))**2D0)   
+       enddo                                  
+      ENDIF    
       
-    If (yn_km=='Y' .or. yn_km=='y') then        
-      WRITE(499,"(I3,4F30.20)")num,SQRT( (km2dmax(num)*COS(t2d)   )**2D0 + (km2dmax(num)*SIN(t2d)   )**2D0)  
-    endif  
-        
-    ENDDO
-    
     CLOSE(50)
    ! CLOSE(51)
     CLOSE(52)

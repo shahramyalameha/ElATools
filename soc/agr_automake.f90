@@ -4,14 +4,16 @@
    DOUBLE PRECISION           ::   tmajor_yy  ,Maximum_tot   ,Minimum_tot              ! max and min
    ChARACTER(len=10) :: val  
    DOUBLE PRECISION, dimension(364)  :: theta=0,x1=0,x2=0,x3=0, t1=0,t2=0
-   integer           :: io1,io2,Count,i,j
+   integer           :: io1,io2,Count,i,j,n_phif,n_thetaf,cutmesh
 
-  
+	open(875, file="MESH")
+	 read(875, *) phi_meah, theta_meah, cutmesh
+	close(875)
     val=nameinp
  !------------------------------------  
    IF ( val=="poisson") then
     open(11, file="2dcut_poisson.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
       
       read(11,* ) theta(Count),x1(Count),x2(Count),x3(Count)
  
@@ -66,7 +68,7 @@ endif
 !------------------------------------
    IF ( val=="young") then
     open(12, file="2dcut_young.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
  
       read(12,* ) theta(Count),x1(Count),x2(Count)
  
@@ -115,7 +117,7 @@ endif
  !------------------------------------
    IF ( val=="bulk") then
     open(12, file="2dcut_bulk.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
  
       read(12,* ) theta(Count),x1(Count),x2(Count)
  
@@ -164,7 +166,7 @@ endif
  !------------------------------------ 
    IF ( val=="shear") then
     open(11, file="2dcut_shear.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
       
       read(11,* ) theta(Count),x1(Count),x2(Count),x3(Count)
  
@@ -218,7 +220,7 @@ endif
 !------------------------------------ 
    IF ( val=="comp") then
     open(11, file="2dcut_comp.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
       
       read(11,* ) theta(Count),x1(Count),x2(Count) 
  
@@ -267,7 +269,7 @@ endif
 !------------------------------------  
    IF ( val=="pugh") then
     open(11, file="2dcut_pugh.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
       
       read(11,* ) theta(Count),x1(Count),x2(Count),x3(Count)
  
@@ -320,7 +322,7 @@ endif
 !------------------------------------
    IF ( val=="hard") then
     open(12, file="2dcut_hardness.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
  
       read(12,* ) theta(Count),x1(Count),x2(Count)
  
@@ -370,7 +372,7 @@ endif
 !------------------------------------
    IF ( val=="km") then
     open(12, file="2dcut_km.dat")
-     Do Count=0,360
+     Do Count=0,n_phif
  
       read(12,* ) theta(Count),x1(Count) 
  

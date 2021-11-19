@@ -97,13 +97,13 @@ IF(pl==2) THEN
       END DO
       CLOSE(45)
        
-      WRITE(*,"(A,F10.4,A,F10.4,A)")   '  Maximum value of Youngs Modulus = ', Maximum, "       Phi=",     phi_max," degree"
-      WRITE(*,"(A,F10.4,A,F10.4,A)")   '  MINimum value of Youngs Modulus = ', Minimum, "       Phi=",     phi_min," degree"
-      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Youngs Modulus = ', Maximum, "       Phi=",     phi_max," degree"
-      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  MINimum value of Youngs Modulus = ', Minimum, "       Phi=",     phi_min," degree"
-     
-   END IF
-
+      WRITE(*,"(A,F10.4,A,F10.4,A)")   '  Maximum value of Youngs Modulus     = ', Maximum, "       Phi=",     phi_max," degree"
+      WRITE(*,"(A,F10.4,A,F10.4,A)")   '  MINimum value of Youngs Modulus     = ', Minimum, "       Phi=",     phi_min," degree"
+      WRITE(*,"(A,F10.4           )")  '  Anisotropic ratio of Youngs Modulus = ',   abs(Maximum)/abs(Minimum)
+      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Youngs Modulus     = ', Maximum, "       Phi=",     phi_max," degree"
+      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  MINimum value of Youngs Modulus     = ', Minimum, "       Phi=",     phi_min," degree"
+       WRITE(99,"(A,F10.4           )")  '  Anisotropic ratio of Youngs Modulus = ',   abs(Maximum)/abs(Minimum)
+  endif
    If(datinput==1)then
       OPEN(45,file="poisson_2d_sys.dat")   
       DO i=1,npoit
@@ -124,11 +124,12 @@ IF(pl==2) THEN
       END DO
       CLOSE(45)
       
-      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Poissons Ratio = ', Maximum,  "       Phi=",     phi_max," degree"
-      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Poissons Ratio = ', Minimum,  "       Phi=",     phi_min," degree"
-      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Poissons Ratio = ', Maximum,  "       Phi=",     phi_max," degree"
-      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Poissons Ratio = ', Minimum,  "       Phi=",     phi_min," degree"   
-      
+      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Poissons Ratio      = ', Maximum,  "       Phi=",     phi_max," degree"
+      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Poissons Ratio      = ', Minimum,  "       Phi=",     phi_min," degree"
+      WRITE(*,"(A,F10.4           )")  '  Anisotropic ratio of Poissons Ratio  = ',  abs(Maximum)/abs(Minimum)
+      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Poissons Ratio     = ', Maximum,  "       Phi=",     phi_max," degree"
+      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Poissons Ratio     = ', Minimum,  "       Phi=",     phi_min," degree"   
+      WRITE(99,"(A,F10.4           )") '  Anisotropic ratio of Poissons Ratio  = ',  abs(Maximum)/abs(Minimum)
    END IF         
   
    If(datinput==3)then
@@ -151,11 +152,12 @@ IF(pl==2) THEN
       END DO
       CLOSE(45)
        
-      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Shear Modulus = ', Maximum,  "       Phi=",     phi_max," degree"
-      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Shear Modulus = ', Minimum,  "       Phi=",     phi_min," degree"
-      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Shear Modulus = ', Maximum,  "       Phi=",     phi_max," degree"
-      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Shear Modulus = ', Minimum,  "       Phi=",     phi_min," degree"   
-      
+      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Shear Modulus      = ', Maximum,  "       Phi=",     phi_max," degree"
+      WRITE(*,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Shear Modulus      = ', Minimum,  "       Phi=",     phi_min," degree"
+      WRITE(*,"(A,F10.4           )") '  Anisotropic ratio of Shear Modulus  = ',   abs(Maximum)/abs(Minimum)
+      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Maximum value of Shear Modulus     = ', Maximum,  "       Phi=",     phi_max," degree"
+      WRITE(99,"(A,F10.4,A,F10.4,A)")  '  Minimum value of Shear Modulus     = ', Minimum,  "       Phi=",     phi_min," degree"   
+      WRITE(99,"(A,F10.4           )") '  Anisotropic ratio of Shear Modulus  = ',   abs(Maximum)/abs(Minimum)     
    END IF         
 
 END IF           

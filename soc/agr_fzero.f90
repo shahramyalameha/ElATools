@@ -8,9 +8,14 @@
 SUBROUTINE zerofile()
 implicit none
 DOUBLE PRECISION                             :: x=0.0,y=0.0,z=0.0,k=0.0
-integer                                      :: i,j,l=0,o=0,p=0
+integer                                      :: i,j,l=0,o=0,p=0,phi_meah,theta_meah,cutmesh
 integer, DIMENSION(18)                       :: zero=0,chek
 
+OPEN(59,file='MESH')
+	open(875, file="MESH")
+	 read(875, *) phi_meah, theta_meah, cutmesh
+  close(59)
+ 
 open(20,file='checkzfile4co')
 do i=1,4
 
@@ -35,7 +40,7 @@ do i=1,4
 
         chek=4
         open(26,file='.2din4co')
-        do j=1,361
+        do j=1,phi_meah +1
             read(26,*)x,y,z,k
             !y=y+1
             if (y==0.0) then
@@ -52,19 +57,19 @@ do i=1,4
         enddo
         close(26)
         !write(*,*)l,o,p
-        if (l==361 .and. o==361 .and. p==361)then
+        if (l==phi_meah +1 .and. o==phi_meah +1 .and. p==phi_meah +1)then
             write(20,*) 1,1,1,i
-        else if (l/=361 .and. o==361 .and. p==361)then
+        else if (l/=phi_meah +1 .and. o==phi_meah +1 .and. p==phi_meah +1)then
             write(20,*) 0,1,1,i
-        else if (l==361 .and. o/=361 .and. p==361)then
+        else if (l==phi_meah +1 .and. o/=phi_meah +1 .and. p==phi_meah +1)then
             write(20,*) 1,0,1,i
-        else if (l==361 .and. o==361 .and. p/=361)then
+        else if (l==phi_meah +1 .and. o==phi_meah +1 .and. p/=phi_meah +1)then
             write(20,*) 1,1,0,i
-        else if (l/=361 .and. o/=361 .and. p==361)then
+        else if (l/=phi_meah +1 .and. o/=phi_meah +1 .and. p==phi_meah +1)then
             write(20,*) 0,0,1,i
-        else if (l/=361 .and. o==361 .and. p/=361)then
+        else if (l/=phi_meah +1 .and. o==phi_meah +1 .and. p/=phi_meah +1)then
             write(20,*) 0,1,0,i
-        else if (l==361 .and. o/=361 .and. p/=361)then
+        else if (l==phi_meah +1 .and. o/=phi_meah +1 .and. p/=phi_meah +1)then
             write(20,*) 1,0,0,i
         else 
             write(20,*) 0,0,0,i
@@ -91,7 +96,7 @@ do i=1,3
 
     chek=3
     open(3,file='.2din3co')
-    do j=1,361
+    do j=1,phi_meah +1
         read(3,*)x,y,z
         !y=y+1
         if (y==0.0) then
@@ -102,11 +107,11 @@ do i=1,3
         endif
     enddo
     close(3)
-    if (l==361 .and. o==361)then
+    if (l==phi_meah +1 .and. o==phi_meah +1)then
         write(21,*) 1,1,i
-    else if (l/=361 .and. o==361)then
+    else if (l/=phi_meah +1 .and. o==phi_meah +1)then
         write(21,*) 0,1,i
-    else if (l==361 .and. o/=361)then
+    else if (l==phi_meah +1 .and. o/=phi_meah +1)then
         write(21,*) 1,0,i
     else
         write(21,*) 0,0,i

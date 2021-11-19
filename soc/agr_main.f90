@@ -8,7 +8,7 @@
 
 PROGRAM data2D_to_agr
    
- INTEGER :: argl,i,N_frame=0,Nploter,Ng,Ns
+ INTEGER :: argl,i,N_frame=0,Nploter,Ng,Ns,phi_meah,theta_meah,cutmesh
  ChARACTER(len=10) :: val='',namepro=' '
  ChARACTER(len=:), allocatable :: a
  DOUBLE PRECISION :: rho1,rho2,rho3,rho4,rho5,x, y,theta1,theta2
@@ -23,6 +23,9 @@ PROGRAM data2D_to_agr
  ChARACTER(4) :: onoff
  REAL(8), DIMENSION(400) :: sh,shtheta, com,comtheta, poi,poitheta, bu,butheta, yo,yotheta, so,sotheta,temp	
 	
+	open(875, file="MESH")
+	 read(875, *) phi_meah, theta_meah, cutmesh
+	close(875)
 	
      ! Get command line args (Fortran 2003 standard)
   if (command_argument_count() > 0) then
@@ -144,7 +147,7 @@ if (val=='polarpoi' .OR. val=='Polarpoi' .OR. val=='popoi')   onoff ="off"
 	  CALL set_nplot_agr(Nploter,colora,label_dat)	
 	  !====
   	   open(4,file='2dcut_poisson.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3,rho4
 	          if (val=='Boxpoi' .OR. val=='boxpoi' .OR. val=='bopoi')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho4 
 	          if (val=='polarpoi' .OR. val=='Polarpoi' .OR. val=='popoi') then; CALL polar2xy(theta2,rho4,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif         
@@ -158,7 +161,7 @@ if (val=='polarpoi' .OR. val=='Polarpoi' .OR. val=='popoi')   onoff ="off"
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_poisson.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
            READ(4,*) theta2,rho2,rho3,rho4
            if (val=='Boxpoi' .OR. val=='boxpoi' .OR. val=='bopoi')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3 
            if (val=='polarpoi' .OR. val=='Polarpoi' .OR. val=='popoi') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif         
@@ -172,7 +175,7 @@ if (val=='polarpoi' .OR. val=='Polarpoi' .OR. val=='popoi')   onoff ="off"
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_poisson.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3,rho4
            if (val=='Boxpoi' .OR. val=='boxpoi' .OR. val=='bopoi')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2 
            if (val=='polarpoi' .OR. val=='Polarpoi' .OR. val=='popoi') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif         
@@ -236,7 +239,7 @@ if (val=='polarshear' .OR. val=='Polarshear' .OR. val=='poshear' )   onoff ="off
 	  CALL Win_start_agr(Ng,Ns)
 !====box
   	   open(4,file='2dcut_shear.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
         READ(4,*) theta2,rho2,rho3,rho4
          if (val=='Boxshear'   .OR. val=='boxshear'   .OR. val=='boshear') WRITE(2,'(F11.6,2X,F11.6)')theta2,rho4 
          if (val=='polarshear' .OR. val=='Polarshear' .OR. val=='poshear') then; CALL polar2xy(theta2,rho4,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif         
@@ -251,7 +254,7 @@ if (val=='polarshear' .OR. val=='Polarshear' .OR. val=='poshear' )   onoff ="off
 	  CALL Win_start_agr(Ng,Ns)	  
 !====
   	   open(3,file='2dcut_shear.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(3,*) theta2,rho2,rho3,rho4
              if (val=='Boxshear'   .OR. val=='boxshear'   .OR. val=='boshear') WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2 
              if (val=='polarshear' .OR. val=='Polarshear' .OR. val=='poshear') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif 
@@ -266,7 +269,7 @@ if (val=='polarshear' .OR. val=='Polarshear' .OR. val=='poshear' )   onoff ="off
 	  CALL Win_start_agr(Ng,Ns)	  
 !====
   	   open(3,file='2dcut_shear.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(3,*) theta2,rho2,rho3,rho4
              if (val=='Boxshear'   .OR. val=='boxshear'   .OR. val=='boshear')  WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3
              if (val=='polarshear' .OR. val=='Polarshear' .OR. val=='poshear') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -326,7 +329,7 @@ if (val=='polaryoung' .OR. val=='Polaryoung' .OR. val=='poyoung')   onoff ="off"
 	  
  !====
   	   open(4,file='2dcut_young.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
         if (val=='Boxyoung' .OR. val=='boxyoung' .OR. val=='boyoung')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2 
         if (val=='polaryoung' .OR. val=='Polaryoung' .OR. val=='poyoung') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -387,7 +390,7 @@ if (val=='polarhard' .OR. val=='Polarhard' .OR. val=='pohard')   onoff ="off"
 	  
  !====
   	   open(4,file='2dcut_hardness.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
             if (val=='Boxhard' .OR. val=='boxhard' .OR. val=='bohard')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2 
             if (val=='polarhard' .OR. val=='Polarhard' .OR. val=='pohard') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -447,7 +450,7 @@ if (val=='polarbulk' .OR. val=='Polarbulk' .OR. val=='pobulk' )   onoff ="off"
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_bulk.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3 
             if (val=='Boxbulk' .OR. val=='boxbulk' .OR. val=='bobulk')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3 
             if (val=='polarbulk' .OR. val=='Polarbulk' .OR. val=='pobulk') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -462,7 +465,7 @@ if (val=='polarbulk' .OR. val=='Polarbulk' .OR. val=='pobulk' )   onoff ="off"
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_bulk.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
              if (val=='Boxbulk' .OR. val=='boxbulk' .OR. val=='bobulk')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2 
             if (val=='polarbulk' .OR. val=='Polarbulk' .OR. val=='pbulk') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif 
@@ -524,7 +527,7 @@ if (val=='polarcomp' .OR. val=='Polarcomp' .OR. val=='pocomp')   onoff ="off"
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_comp.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
             if (val=='Boxcomp' .OR. val=='boxcomp' .OR. val=='bocomp')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2 
             if (val=='polarcomp' .OR. val=='Polarcomp' .OR. val=='pocomp') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -538,7 +541,7 @@ if (val=='polarcomp' .OR. val=='Polarcomp' .OR. val=='pocomp')   onoff ="off"
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_comp.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
             if (val=='Boxcomp' .OR. val=='boxcomp' .OR. val=='bocomp')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3 
             if (val=='polarcomp' .OR. val=='Polarcomp' .OR. val=='pocomp') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -852,7 +855,7 @@ if (val=='polarkm' .OR. val=='Polarkm' .OR. val=='pokm')   onoff ="off"
 	  
  !====
   	   open(4,file='2dcut_km.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2 
             if (val=='Boxkm' .OR. val=='boxkm' .OR. val=='bokm')    WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2 
             if (val=='polarkm' .OR. val=='Polarkm' .OR. val=='pokm') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -905,7 +908,7 @@ if (val=='Box' .OR. val=='box' .OR. val=='bo') then;onoff="off"; endif
 	  CALL Win_start_agr(Ng,Ns)
 !====box
   	   open(4,file='2dcut_shear.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
         READ(4,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho4; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho4,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -920,7 +923,7 @@ if (val=='Box' .OR. val=='box' .OR. val=='bo') then;onoff="off"; endif
 	  CALL Win_start_agr(Ng,Ns)	  
 !====
   	   open(3,file='2dcut_shear.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(3,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -935,7 +938,7 @@ if (val=='Box' .OR. val=='box' .OR. val=='bo') then;onoff="off"; endif
 	  CALL Win_start_agr(Ng,Ns)	  
 !====
   	   open(3,file='2dcut_shear.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(3,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -973,7 +976,7 @@ if (val=='Box' .OR. val=='box' .OR. val=='bo') then;onoff="off"; endif
 	  
  !====
   	   open(4,file='2dcut_young.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1011,7 +1014,7 @@ if (val=='Box' .OR. val=='box' .OR. val=='bo') then;onoff="off"; endif
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_comp.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1025,7 +1028,7 @@ if (val=='Box' .OR. val=='box' .OR. val=='bo') then;onoff="off"; endif
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_comp.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1063,7 +1066,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_bulk.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3 
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F12.6,2X,F12.6)')x,y; endif
@@ -1077,7 +1080,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_bulk.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F12.6,2X,F12.6)')x,y; endif
@@ -1113,7 +1116,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_poisson.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3,rho4
 	        if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho4; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho4,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1127,7 +1130,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_poisson.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1141,7 +1144,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)
 !====
   	   open(4,file='2dcut_poisson.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(4,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1242,7 +1245,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)
 !====box
   	   open(4,file='2dcut_pugh.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
         READ(4,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho4; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho4,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1257,7 +1260,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)	  
 !====
   	   open(3,file='2dcut_pugh.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(3,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho2; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho2,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif
@@ -1272,7 +1275,7 @@ if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; onoff="on" ;Xlabel=' ';
 	  CALL Win_start_agr(Ng,Ns)	  
 !====
   	   open(3,file='2dcut_pugh.dat',err=44)
-          do i=1,361
+          do i=1,phi_meah+1
              READ(3,*) theta2,rho2,rho3,rho4
         if (val=='Box' .OR. val=='box' .OR. val=='bo') then;   WRITE(2,'(F11.6,2X,F11.6)')theta2,rho3; endif
         if (val=='Polar' .OR. val=='polar' .OR. val=='po') then; CALL polar2xy(theta2,rho3,x,y); WRITE(2,'(F11.6,2X,F11.6)')x,y; endif

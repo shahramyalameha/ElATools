@@ -8,7 +8,7 @@ SUBROUTINE get_dataplotly( namepro,xyz,n_phif,n_thetaf,cutmesh, type_pro)
   implicit NONE
 
 
-  DOUBLE PRECISION, DIMENSION(1820000)  :: young_x,young_y,young_z,young0_x,young0_y,young0_z,younge_x,younge_y,younge_z,&
+  DOUBLE PRECISION, DIMENSION(1800000)  :: young_x,young_y,young_z,young0_x,young0_y,young0_z,younge_x,younge_y,younge_z,&
                                            hard_x,hard_y,hard_z,hard0_x,hard0_y,hard0_z,harde_x,harde_y,harde_z,&
                                            bulk_x,bulk_y,bulk_z,bulk0_x,bulk0_y,bulk0_z,bulke_x,bulke_y,bulke_z,&
                                            shear_max_x ,shear_max_y ,shear_max_z,      &
@@ -38,8 +38,16 @@ SUBROUTINE get_dataplotly( namepro,xyz,n_phif,n_thetaf,cutmesh, type_pro)
                                            poie_neg_x  ,poie_neg_y  ,poie_neg_z  ,&
                                            poi_neg_x  ,poi_neg_y  ,poi_neg_z  ,&
                                            poi_max_avg_x  ,poi_max_avg_y  ,poi_max_avg_z  ,&
-                                           poi_min_avg_x  ,poi_min_avg_y  ,poi_min_avg_z  
-
+                                           poi_min_avg_x  ,poi_min_avg_y  ,poi_min_avg_z  ,&
+                                           pugh_max_x ,pugh_max_y ,pugh_max_z,      &
+                                           pugh0_max_x ,pugh0_max_y ,pugh0_max_z,   &
+                                           pughe_max_x ,pughe_max_y ,pughe_max_z,   &
+                                           pugh_min_x ,pugh_min_y ,pugh_min_z,      &
+                                           pugh0_min_x ,pugh0_min_y ,pugh0_min_z,   &
+                                           pughe_min_x ,pughe_min_y ,pughe_min_z,   &
+                                           pugh_neg_x ,pugh_neg_y ,pugh_neg_z,      &
+                                           pugh_avg_x ,pugh_avg_y ,pugh_avg_z,      &
+                                           km_x, km_y, km_z  
                                           
                                          
   INTEGER,          DIMENSION(190300,4) :: mesh=0
@@ -565,6 +573,265 @@ Endif
 !==========================<<<<<<<< min shear end 
 
 !$#######################################################################################
+
+!$#######################################################################################
+IF (namepro=="pugh") THEN
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! loop-reader
+  Do ii=1,cutmesh
+    open(10, file="3d_pugh.dat")
+    read(10,*) pugh_max_x(ii),pugh_max_y(ii),pugh_max_z(ii),&
+               pugh_min_x(ii),pugh_min_y(ii),pugh_min_z(ii),&
+               pugh_neg_x(ii),pugh_neg_y(ii),pugh_neg_z(ii),&
+               pugh_avg_x(ii),pugh_avg_y(ii),pugh_avg_z(ii)
+  enddo
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end loop
+  !>> first and end point 
+  pugh0_max_x(1)=pugh_max_x(1) ;pugh0_max_y(1)=pugh_max_y(1);pugh0_max_z(1)= pugh_max_z(1)
+  pughe_max_x(1)=pugh_max_x(cutmesh) ;pughe_max_y(1)=pugh_max_y(cutmesh);pughe_max_z(1)= pugh_max_z(cutmesh)
+
+  pugh0_min_x(1)=pugh_min_x(1) ;pugh0_min_y(1)=pugh_min_y(1);pugh0_min_z(1)= pugh_min_z(1)
+  pughe_min_x(1)=pugh_min_x(cutmesh) ;pughe_min_y(1)=pugh_min_y(cutmesh);pughe_min_z(1)= pugh_min_z(cutmesh)
+  !<< 
+  !============================================================= start x-points
+  !============================================================= start x-points
+  if(type_pro=='max') then
+  If(xyz==1) then
+    !!!!!!!!!!!!!!!!!!!!!!!!! first points 
+    do i=1,n_phif+1
+      if (i==n_phif+1) then
+        write(66,"(F23.15)") pugh0_max_x(1)
+      else
+        write(66,"(F23.15,A)") pugh0_max_x(1),","
+      endif
+    enddo
+    call middle_cord_web()
+    !!!!!!!!!!!!!!!!!!!!!!!!! end first points
+    start_new_reng = 2
+    do k=1,n_thetaf -1
+      end_new_reng = (k*(n_thetaf+1)) + 1
+      !write(*,*) start_new_reng,end_new_reng
+      do i=start_new_reng, end_new_reng
+        if (i==end_new_reng) then
+          write(66,"(F23.15)") pugh_max_x(i)  
+        else
+          write(66,"(F23.15,A)") pugh_max_x(i),"," 
+        endif
+      enddo
+      call middle_cord_web()
+      start_new_reng = end_new_reng    + 1 
+    enddo
+    !!!!!!!!!!!!!!!!!!!!!!!!! end points 
+    do i=1,n_phif+1
+      if (i==n_phif+1) then
+        write(66,"(F23.15)") pughe_max_x(1)
+      else
+        write(66,"(F23.15,A)") pughe_max_x(1),","
+      endif
+    enddo
+    !!!!!!!!!!!!!!!!!!!!!!!! finish
+  endif 
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end x-point
+  !!!!!!!!!!!!!!!!!!!!!!!!!! start y-points
+  if(xyz==2) then
+    !!!!!!!!!!!!!!!!!!!!!!!!! first points 
+    do i=1,n_phif+1
+      if (i==n_phif+1) then
+        write(66,"(F23.15)") pugh0_max_y(1)
+      else
+        write(66,"(F23.15,A)") pugh0_max_y(1),","
+      endif
+    enddo
+    call middle_cord_web()
+    !!!!!!!!!!!!!!!!!!!!!!!!!1 end first points
+    start_new_reng = 2
+    do k=1,n_thetaf -1
+      end_new_reng = (k*(n_thetaf+1)) + 1
+      !write(*,*) start_new_reng,end_new_reng
+      do i=start_new_reng, end_new_reng
+        if (i==end_new_reng) then
+          write(66,"(F23.15)") pugh_max_y(i)  
+        else
+          write(66,"(F23.15,A)") pugh_max_y(i),"," 
+        endif
+      enddo
+      call middle_cord_web()
+      start_new_reng = end_new_reng    + 1 
+    enddo
+    !!!!!!!!!!!!!!!!!!!!!!!!! end points 
+    do i=1,n_phif+1
+      if (i==n_phif+1) then
+        write(66,"(F23.15)") pughe_max_y(1)
+      else
+        write(66,"(F23.15,A)") pughe_max_y(1),","
+      endif
+    enddo
+    !!!!!!!!!!!!!!!!!!!!!!!!! finish
+  endif  
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end y-point
+  !!!!!!!!!!!!!!!!!!!!!!!!!! start z-points
+  if(xyz==3) then
+    !!!!!!!!!!!!!!!!!!!!!!!!! first points 
+    do i=1,n_phif+1
+      if (i==n_phif+1) then
+        write(66,"(F23.15)") pugh0_max_z(1)
+      else
+        write(66,"(F23.15,A)") pugh0_max_z(1),","
+      endif
+    enddo
+    call middle_cord_web()
+    !!!!!!!!!!!!!!!!!!!!!!!!!1 end first points
+    start_new_reng = 2
+    do k=1,n_thetaf -1
+      end_new_reng = (k*(n_thetaf+1)) + 1
+      !write(*,*) start_new_reng,end_new_reng
+      do i=start_new_reng, end_new_reng
+        if (i==end_new_reng) then
+          write(66,"(F23.15)") pugh_max_z(i)  
+        else
+          write(66,"(F23.15,A)") pugh_max_z(i),"," 
+        endif
+      enddo
+      call middle_cord_web()
+      start_new_reng = end_new_reng    + 1 
+    enddo
+    !!!!!!!!!!!!!!!!!!!!!!!!! end points 
+    do i=1,n_phif+1
+      if (i==n_phif+1) then
+        write(66,"(F23.15)") pughe_max_z(1)
+      else
+        write(66,"(F23.15,A)") pughe_max_z(1),","
+      endif
+    enddo
+    !!!!!!!!!!!!!!!!!!!!!!!!! finish
+  endif 
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end z-point
+endif
+ !==========================<<<<<<<< max pugh end 
+  !============================================================= start x-points
+  !============================================================= start x-points
+ if(type_pro=='min') then
+
+If(xyz==1) then
+  !!!!!!!!!!!!!!!!!!!!!!!!! first points 
+  do i=1,n_phif+1
+    if (i==n_phif+1) then
+      write(66,"(F23.15)") pugh0_min_x(1)
+    else
+      write(66,"(F23.15,A)") pugh0_min_x(1),","
+    endif
+  enddo
+  call middle_cord_web()
+  !!!!!!!!!!!!!!!!!!!!!!!!! end first points
+  start_new_reng = 2
+  do k=1,n_thetaf -1
+    end_new_reng = (k*(n_thetaf+1)) + 1
+    !write(*,*) start_new_reng,end_new_reng
+    do i=start_new_reng, end_new_reng
+      if (i==end_new_reng) then
+        write(66,"(F23.15)") pugh_min_x(i)  
+      else
+        write(66,"(F23.15,A)") pugh_min_x(i),"," 
+      endif
+    enddo
+    call middle_cord_web()
+    start_new_reng = end_new_reng    + 1 
+  enddo
+  !!!!!!!!!!!!!!!!!!!!!!!!! end points 
+  do i=1,n_phif+1
+    if (i==n_phif+1) then
+      write(66,"(F23.15)") pughe_min_x(1)
+    else
+      write(66,"(F23.15,A)") pughe_min_x(1),","
+    endif
+  enddo
+  !!!!!!!!!!!!!!!!!!!!!!!! finish
+endif 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end x-point
+!!!!!!!!!!!!!!!!!!!!!!!!!! start y-points
+if(xyz==2) then
+  !!!!!!!!!!!!!!!!!!!!!!!!! first points 
+  do i=1,n_phif+1
+    if (i==n_phif+1) then
+      write(66,"(F23.15)") pugh0_min_y(1)
+    else
+      write(66,"(F23.15,A)") pugh0_min_y(1),","
+    endif
+  enddo
+  call middle_cord_web()
+  !!!!!!!!!!!!!!!!!!!!!!!!!1 end first points
+  start_new_reng = 2
+  do k=1,n_thetaf -1
+    end_new_reng = (k*(n_thetaf+1)) + 1
+    !write(*,*) start_new_reng,end_new_reng
+    do i=start_new_reng, end_new_reng
+      if (i==end_new_reng) then
+        write(66,"(F23.15)") pugh_min_y(i)  
+      else
+        write(66,"(F23.15,A)") pugh_min_y(i),"," 
+      endif
+    enddo
+    call middle_cord_web()
+    start_new_reng = end_new_reng    + 1 
+  enddo
+  !!!!!!!!!!!!!!!!!!!!!!!!! end points 
+  do i=1,n_phif+1
+    if (i==n_phif+1) then
+      write(66,"(F23.15)") pughe_min_y(1)
+    else
+      write(66,"(F23.15,A)") pughe_min_y(1),","
+    endif
+  enddo
+  !!!!!!!!!!!!!!!!!!!!!!!!! finish
+endif  
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end y-point
+!!!!!!!!!!!!!!!!!!!!!!!!!! start z-points
+if(xyz==3) then
+  !!!!!!!!!!!!!!!!!!!!!!!!! first points 
+  do i=1,n_phif+1
+    if (i==n_phif+1) then
+      write(66,"(F23.15)") pugh0_min_z(1)
+    else
+      write(66,"(F23.15,A)") pugh0_min_z(1),","
+    endif
+  enddo
+  call middle_cord_web()
+  !!!!!!!!!!!!!!!!!!!!!!!!!1 end first points
+  start_new_reng = 2
+  do k=1,n_thetaf -1
+    end_new_reng = (k*(n_thetaf+1)) + 1
+    !write(*,*) start_new_reng,end_new_reng
+    do i=start_new_reng, end_new_reng
+      if (i==end_new_reng) then
+        write(66,"(F23.15)") pugh_min_z(i)  
+      else
+        write(66,"(F23.15,A)") pugh_min_z(i),"," 
+      endif
+    enddo
+    call middle_cord_web()
+    start_new_reng = end_new_reng    + 1 
+  enddo
+  !!!!!!!!!!!!!!!!!!!!!!!!! end points 
+  do i=1,n_phif+1
+    if (i==n_phif+1) then
+      write(66,"(F23.15)") pughe_min_z(1)
+    else
+      write(66,"(F23.15,A)") pughe_min_z(1),","
+    endif
+  enddo
+  !!!!!!!!!!!!!!!!!!!!!!!!! finish
+endif 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end z-point
+endif
+
+
+Endif
+!==========================<<<<<<<< min pugh end 
+
+!$#######################################################################################
+
+
+
 IF (namepro=="comp") THEN
 
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! loop-reader

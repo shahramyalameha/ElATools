@@ -174,6 +174,7 @@ end subroutine setterm_phm
       read(8,*) k
       read(8,*) l
       read(8,*)yn_veloc
+      close(8)
       !write(*,*)e1,e2
        if (e1.EQ."X" .or. e1.EQ."Y" .or. e1.EQ."Z") then
          !write(*,*)e1,e2 
@@ -182,6 +183,6 @@ end subroutine setterm_phm
         e1=""
         e2=""
        endif
-       close(8)
+       
 
     end subroutine plan

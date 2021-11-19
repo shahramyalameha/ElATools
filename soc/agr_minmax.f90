@@ -204,8 +204,14 @@ END SUBROUTINE MinMax
 SUBROUTINE  I_mixer(nameinp, co1,co2,co3,co4)
    IMPLICIT  NONE
    ChARACTER(20)  :: nameinp
-   INTEGER        :: co1,co2,co3,co4,i
-   DOUBLE PRECISION,DIMENSION(361)    :: n1,n2,n3,n4
+   INTEGER        :: co1,co2,co3,co4,i,phi_meah, theta_meah, cutmesh
+   DOUBLE PRECISION,DIMENSION(3601)    :: n1,n2,n3,n4
+   
+   
+	open(875, file="MESH")
+	 read(875, *) phi_meah, theta_meah, cutmesh
+	close(875)
+ 
 IF (CO4==4) THEN
          IF (nameinp=="poisson") THEN
             OPEN(85,FILE='2dcut_poisson.dat')
@@ -227,31 +233,31 @@ IF (CO4==4) THEN
             OPEN(40,FILE="2dsound")
          ENDIF
 
-         DO i=1,360
+         DO i=1,phi_meah
             READ(85,*) n1(I),n2(I),n3(I),n4(I)
          END DO
          CLOSE(85)
 
          if (co1==1 .and. co2==0 .and. co3==0) THEN
-             DO I=1, 360
+             DO I=1, phi_meah
                 WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n4(I)
                 WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n3(I)
              END DO
          END IF
          if (co1==0 .and. co2==1 .and. co3==0) THEN
-            DO I=1, 360
+            DO I=1, phi_meah
                WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n4(I)
                WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n2(I)
             END DO
         END IF
         if (co1==0 .and. co2==0 .and. co3==1) THEN
-         DO I=1, 360
+         DO I=1, phi_meah
             WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n2(I)
             WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n3(I)
          END DO
         END IF
         if (co1==0 .and. co2==0 .and. co3==0) THEN
-         DO I=1, 360
+         DO I=1, phi_meah
           WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n2(I)
           WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n3(I)
           WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n4(I)
@@ -276,24 +282,24 @@ IF (CO4==3) THEN
       OPEN(40,FILE="2dcomp")
    ENDIF      
 
-   DO i=1,360
+   DO i=1,phi_meah
       READ(85,*) n1(I),n2(I),n3(I) 
    END DO
    CLOSE(85)
 
    if (co1==1 .and. co2==0 ) THEN
-       DO I=1, 360
+       DO I=1, phi_meah
           WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n3(I)
           
        END DO
    END IF
    if (co1==0 .and. co2==1) THEN
-      DO I=1, 360
+      DO I=1, phi_meah
          WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n2(I)
       END DO
   END IF
   if (co1==0 .and. co2==0 ) THEN
-   DO I=1, 360
+   DO I=1, phi_meah
       WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n2(I)
       WRITE(40,"(I3,F35.25)")IDINT(N1(I)),n3(I)
    END DO
