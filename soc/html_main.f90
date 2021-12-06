@@ -121,7 +121,12 @@ DOUBLE PRECISION, DIMENSION(999999)  ::   VVP_P0_x, VVP_P0_y, VVP_P0_z, &
    VV_Sf_PF_min,&
    VV_Ss_PF_min,&
    Ha_max2,     &
-   Ha_min2, km_min,km_max                                                  
+   Ha_min2, km_min,km_max 
+    !=================v1.7.3=======================
+  INTEGER :: iargc
+  INTEGER :: argcount
+  CHARACTER(LEN=80) :: wq_char
+  !=================v1.7.3=======================                                                 
 !*********set data************    
   !namepro="poi"
   !naumbers=1
@@ -136,15 +141,22 @@ DOUBLE PRECISION, DIMENSION(999999)  ::   VVP_P0_x, VVP_P0_y, VVP_P0_z, &
   arg_mane(2)="n" 
   arg_mane(3)="n" 
   arg_mane(4)="n" 
-     ! Get command line args (Fortran 2003 standard)
-  N_arg = 0
-  DO
-    CALL get_command_argument(N_arg, a)
-    IF (LEN_TRIM(a) == 0) EXIT
-
-    arg_mane(N_arg)=TRIM(a)
-    N_arg = N_arg+1
+  !=================v1.7.3=======================  
+  argcount=iargc()
+  DO i=1,argcount
+   CALL GETARG(i,wq_char)
+   arg_mane(i)=wq_char
   END DO
+  !=================v1.7.3======================= 
+  
+!  N_arg = 0
+!  DO
+!    CALL get_command_argument(N_arg, a)
+!    IF (LEN_TRIM(a) == 0) EXIT
+
+!    arg_mane(N_arg)=TRIM(a)
+!    N_arg = N_arg+1
+!  END DO
 
  val      = arg_mane(1)	
  clor_val = arg_mane(2)	
@@ -231,7 +243,7 @@ DOUBLE PRECISION, DIMENSION(999999)  ::   VVP_P0_x, VVP_P0_y, VVP_P0_z, &
     stop
     ENDif
   endif  
-  
+  !$=====================================================================
       OPEN(32,file='.MaMiout',status='old')
      read(32,*) Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2,G_min2,Maxbulk,Minbulk,Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2,pugh_min2,Ha_max2,Ha_min2
      !WRITE(*,*)Maxyoung,Maxcomp,G_max2,Maxbulk,Pratio_max,pugh_max2,maxEVaTMf
@@ -241,7 +253,7 @@ DOUBLE PRECISION, DIMENSION(999999)  ::   VVP_P0_x, VVP_P0_y, VVP_P0_z, &
                VVG_P_min ,VVG_Sf_max ,VVG_Sf_min ,VVG_Ss_max ,VVG_Ss_min,                        & !12
                VV_P_PF_max,VV_Sf_PF_max,VV_Ss_PF_max,VV_P_PF_min,VV_Sf_PF_min,VV_Ss_PF_min,km_min,km_max
      close(30) 
-      
+    !$=====================================================================    
 If(namepro=="poi"  .or. namepro=="poisson" ) id_pro="Poisson"
 If(namepro=="pug"  .or. namepro=="pugh"    ) id_pro="Pugh"
 If(namepro=="you"  .or. namepro=="young"   ) id_pro="Young"
@@ -282,10 +294,48 @@ If(namepro=='PFactS2d'.or. namepro=='pfoups2d' .or. namepro=='pfs2d'      ) id_p
 
 If(namepro=='km2d'    .or. namepro=='Km2d'     .or. namepro=='KM2d'       ) id_pro="Conductivity-2Dcut"
 
+If(namepro=='2dyoung'   .or. namepro=='2dyou'     .or. namepro=='2dYoung' ) id_pro="Young-2D"
+If(namepro=="2dsh"   .or. namepro=="2dshear"                              ) id_pro="Shear-2D"
+If(namepro=="2dpoi"  .or. namepro=="2dpoisson"                            ) id_pro="Poisson-2D"
+
    filename=trim(id_pro)//".html"
   open(66, FILE=filename,STATUS='replace',ACTION='write')
     !========================================================================== 
+
+
+  !========================================================================== 
   
+if (namepro=="2dyoung") THEN
+  contours_line = 'true'
+  naumbers      = 1
+  type_pro      = 'max'
+  height        = 600
+  width         = 600
+  CALL swin_web(namepro)
+  CALL stitle_web2D()
+  CALL start_layout_web()
+  CALL start_trace_web(naumbers)
+  
+     cord_ename="t"
+   CALL start_polar_web(cord_ename)
+   CALL get_dataplotly_polar(namepro,1,n_phif,n_thetaf,cutmesh,type_pro)
+   CALL end_polar_web()
+ 
+    cord_ename="r"
+  CALL start_polar_web(cord_ename)
+  CALL get_dataplotly_polar(namepro,2,n_phif,n_thetaf,cutmesh,type_pro)
+  CALL end_polar_web()
+   
+  CALL color_settings_web(namepro,naumbers,cval1 ,cval2 ,cval3 )
+ 
+  CALL end_trace_web(naumbers)
+  CALL buttone_polar_web(Maxcomp)
+  CALL end_polarlayout_web(namepro,height,width)
+   
+  WRITE(*,*)"meash:",n_phif,n_thetaf,cutmesh
+  WRITE(*,*) "File *Young-2Dcut.html* was generated."
+endif
+!################################################2D----------------------  
 if (namepro=="km2d") THEN
   contours_line = 'true'
   naumbers      = 1

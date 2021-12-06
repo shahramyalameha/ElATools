@@ -18,21 +18,34 @@ PROGRAM gnu_conv
   ChARACTER(LEN=6)                 :: e1,e2
   ChARACTER(LEN=2)                 :: ynveloc
   INTEGER                          :: h_ex,k_ex,l_ex
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !=================v1.7.3=======================
+  INTEGER :: iargc
+  INTEGER :: argcount
+  CHARACTER(LEN=80) :: wq_char
+  !=================v1.7.3=======================
+  
   clor_val=" "
  
   arg_mane(2)="n" 
   arg_mane(3)="n" 
   arg_mane(4)="n" 
-     ! Get command line args (Fortran 2003 standard)
-  N_arg = 0
-  DO
-    CALL get_command_argument(N_arg, a)
-    IF (LEN_TRIM(a) == 0) EXIT
-
-    arg_mane(N_arg)=TRIM(a)
-    N_arg = N_arg+1
+  !=================v1.7.3=======================  
+  argcount=iargc()
+  DO i=1,argcount
+   CALL GETARG(i,wq_char)
+   arg_mane(i)=wq_char
   END DO
+  !=================v1.7.3=======================  
+  
+     ! Get command line args (Fortran 2003 standard)
+!  N_arg = 0
+!  DO
+!    CALL get_command_argument(N_arg, a)
+ !   IF (LEN_TRIM(a) == 0) EXIT
+
+ !   arg_mane(N_arg)=TRIM(a)
+ !   N_arg = N_arg+1
+!  END DO
 
  val      = arg_mane(1)	
  clor_val = arg_mane(2)

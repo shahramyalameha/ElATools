@@ -75,22 +75,32 @@ PROGRAM wrl_conv
   character(len=10)                     :: val='',namepro 
   character(len=1)                      :: clor_val=" "
   ChARACTER(len=7)                      :: a=' '
-  
+  !=================v1.7.3=======================
+  INTEGER :: iargc
+  INTEGER :: argcount
+  CHARACTER(LEN=80) :: wq_char
+  !=================v1.7.3=======================
     OPEN(69, file="MESH")
     read(69,*)n_phif,n_thetaf,cutmesh
     WRITE(*,*)"meash:",n_phif,n_thetaf,cutmesh
 
     close(69)
-
-     ! Get command line args (Fortran 2003 standard)
-  N_arg = 0
-  DO
-    CALL get_command_argument(N_arg, a)
-    IF (LEN_TRIM(a) == 0) EXIT
-
-    arg_mane(N_arg)=TRIM(a)
-    N_arg = N_arg+1
+ 
+  !=================v1.7.3=======================  
+  argcount=iargc()
+  DO i=1,argcount
+   CALL GETARG(i,wq_char)
+   arg_mane(i)=wq_char
   END DO
+  !=================v1.7.3======================= 
+!  N_arg = 0
+!  DO
+!    CALL get_command_argument(N_arg, a)
+!    IF (LEN_TRIM(a) == 0) EXIT
+
+!    arg_mane(N_arg)=TRIM(a)
+!    N_arg = N_arg+1
+!  END DO
 
  val      = arg_mane(1)	
  clor_val = arg_mane(2)	
