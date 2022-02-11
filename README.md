@@ -23,7 +23,7 @@
 
 Please cite the following articles if you use ElATools for your research:
 
-- [Shahram Yalameha, Zahra Nourbakhsh and Daryoosh Vashaee; Computer Physics Communications,108195.010-4655 (2021).](https://www.sciencedirect.com/science/article/pii/S0010465521003076)
+- [Shahram Yalameha, Zahra Nourbakhsh and Daryoosh Vashaee; Computer Physics Communications 271 (2022): 108195.](https://www.sciencedirect.com/science/article/pii/S0010465521003076)
 
 BibTeX:
 
