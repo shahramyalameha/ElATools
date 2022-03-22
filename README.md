@@ -30,18 +30,16 @@ BibTeX:
 
 ```
  @article{yalameha2021elatools,
-                title = {ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
-                journal = {Computer Physics Communications},
-                pages = {108195},
-                year = {2021},
-                issn = {0010-4655},
-                doi = {https://doi.org/10.1016/j.cpc.2021.108195},
-                url = {https://www.sciencedirect.com/science/article/pii/S0010465521003076},
-                author = {Shahram Yalameha and Zahra Nourbakhsh and Daryoosh Vashaee},
-                keywords = {Anisotropic elastic property, Elastic constants, Auxetic material, Visualization}
-  }
- 
-
+ title = {ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
+ journal = {Computer Physics Communications},
+ volume = {271},
+ pages = {108195},
+ year = {2022},
+ issn = {0010-4655},
+ doi = {https://doi.org/10.1016/j.cpc.2021.108195},
+ url = {https://www.sciencedirect.com/science/article/pii/S0010465521003076},
+ author = {Shahram Yalameha and Zahra Nourbakhsh and Daryoosh Vashaee}
+}
  
 @article{yalameha2021elatools,
   title={ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
