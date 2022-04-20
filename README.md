@@ -41,12 +41,6 @@ BibTeX:
  author = {Shahram Yalameha and Zahra Nourbakhsh and Daryoosh Vashaee}
 }
  
-@article{yalameha2021elatools,
-  title={ElATools: A tool for analyzing anisotropic elastic properties of the 2D and 3D materials},
-  author={Yalameha, Shahram and Nourbakhsh, Zahra and Vashaee, Daryoosh},
-  journal={arXiv preprint arXiv:2105.07279},
-  year={2021}
-}
 ```
 
 
