@@ -17,13 +17,44 @@ SUBROUTINE get_dataplotly_polar( namepro,rtheta, n_phif,n_thetaf,cutmesh,type_pr
                                            VVP_i_x, VVP_P_y, VVP_SF_z,VVP_SS_k,&
                                            VVG_i_x, VVG_P_y, VVG_SF_z,VVG_SS_k,&
                                            VVF_i_x, VVF_P_y, VVF_SF_z,VVF_SS_k,&
-                                           km_x, km_y 
+                                           km_x, km_y ,temp_x, temp_y
  
   INTEGER,          DIMENSION(190300,4) :: mesh=0
-  INTEGER                               :: n_phif, n_thetaf,cutmesh ,num_mesh,i,ii,argl,k,&
+  INTEGER                               :: n_phif, n_thetaf,cutmesh ,num_mesh,i,ii,argl,k,io,tem_i,&
                                            start_new_reng,end_new_reng,rtheta
   character(len=10)                     :: val='',namepro ,type_pro ! type_pro : max, min, neg
   
+  
+IF (namepro=="2dpoi" .OR. namepro=="2dshear" .OR. namepro=="2dyoung" .OR. namepro=="2dyou" .OR. namepro=="2dshe") THEN
+   tem_i=0
+       OPEN(12, file="young_2d_sys.dat")
+       DO
+        tem_i=tem_i + 1
+        READ(12,*, iostat = io ) temp_x, temp_y
+        if (io < 0) exit
+       ENDDO
+       Close(12)
+!---------------------------------------------------       
+ IF (namepro=="2dyoung") THEN
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! loop-READer
+  DO ii=1,tem_i+1
+    open(10, file="young_2d_sys.dat")
+    READ(10,*) young_x(ii),young_y(ii) 
+  ENDDO
+   CLOSE(10)
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end loop
+  If(type_pro=='max') THEN
+   If(rtheta==1) THEN
+    DO i=1,tem_i+1
+        WRITE(66,"(F23.15,A)") young_x(i),","
+    ENDDO
+   endif
+  Endif
+ ENDIF 
+!===========================================      
+       
+ENDIF
+ 
 !=============================================READ mesh
     OPEN(69, file="MESH")
     READ(69,*)n_phif,n_thetaf,cutmesh
@@ -517,4 +548,5 @@ IF (namepro=="km2d") THEN
   endif
  Endif
 ENDIF
+!$============================================================================================
  end SUBROUTINE

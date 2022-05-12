@@ -66,7 +66,7 @@ PROGRAM wrl_conv
                                          
   DOUBLE PRECISION, DIMENSION(1910000)  :: datapoints=0d0
   DOUBLE PRECISION, DIMENSION(1910000)  :: G_max,shminp,shminn,shavep,SINver,CO,comminp,pugh_max,pughminp,pughminn,pughavep,&
-		                                       comminn,NPratio_max,pminp,pminn,pavep,paven,&
+		                                         comminn,NPratio_max,pminp,pminn,pavep,paven,&
                                            BINver,maxEVaLM1,maxEVaTM1,minEVaTM1,VVG_P,VVP_P,VV_P_PF,VVG_Sf,VVP_Sf,VV_Sf_PF,hardvar ,&
                                            VVG_Ss,VVP_Ss,VV_Ss_PF,km
   ChARACTER(len=7), dimension(10)       :: arg_mane

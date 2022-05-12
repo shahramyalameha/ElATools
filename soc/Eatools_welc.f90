@@ -19,10 +19,10 @@ WRITE(*,'(a)')"  |______||_| \__,_||_| \___/  \___/ |_||___/  "
 WRITE(*,'(a)')"            45 6C 41 74 6F 6F 6C 73            "
 WRITE(*,*)'          Author : Shahram Yalameha           '                   
 WRITE(*,*)'         Email : yalameha93@gmail.com          ' 
-WRITE(*,'(a)')'                   v1.7.2                      '
+WRITE(*,'(a)')'                   v1.7.3                      '
 WRITE(*,'(a)')'                    From                       '
 WRITE(*,'(a)')'            Elastic Tools Project               '
-WRITE(*,'(a)')'=========          (c)2018          ==========='
+WRITE(*,'(a)')'=========        (c)2018-2022        =========='
 WRITE(*,*)'                                                   '
        
 !!!!
@@ -39,10 +39,10 @@ WRITE(99,'(a)')"  |______||_| \__,_||_| \___/  \___/ |_||___/  "
 WRITE(99,'(a)')"            45 6C 41 74 6F 6F 6C 73            "
 WRITE(99,*)'          Author : Shahram Yalameha                '                   
 WRITE(99,*)'         Email : yalameha93@gmail.com              '
-WRITE(99,'(a)')'                   v1.7.2                      '
+WRITE(99,'(a)')'                   v1.7.3                      '
 WRITE(99,'(a)')'                    From                       '
 WRITE(99,'(a)')'            Elastic Tools Project              '
-WRITE(99,'(a)')'=========          (c)2018          ==========='
+WRITE(99,'(a)')'=========        (c)2018-2022        =========='
 WRITE(99,*)'                                                   '
 WRITE(99,*)'                                                   '
 

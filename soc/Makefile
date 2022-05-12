@@ -13,20 +13,20 @@
 
 #---------------- compiler -----------------
 
-#FC = ifort
- FC = gfortran
+FC = ifort
+# FC = gfortran
 #------------- compiler options ------------
 
-#FOPT     = -O1 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback -assume buffered_io -I$(MKLROOT)/include   # for ifort 
-#FGEN = -O1 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback                                                  # for ifort 
+ FOPT     = -O1 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback -assume buffered_io -I$(MKLROOT)/include   # for ifort 
+ FGEN = -O1 -FR -mp1 -w -prec_div -pc80 -pad -ip -DINTEL_VML -traceback                                                  # for ifort 
 
-   FOPT = -ffree-form -O2 -ffree-line-length-none     # for gfortran
-   FGEN = -ffree-form -O2 -ffree-line-length-none     # for gfortran
+  # FOPT = -ffree-form -O2 -ffree-line-length-none     # for gfortran
+ #  FGEN = -ffree-form -O2 -ffree-line-length-none     # for gfortran
 
 #-------------- loader options -------------
 
-   LDFLAGS  = $(FOPT)  -lblas -llapack -lpthread           # for gfortran
-#LDFLAGS  = $(FOPT) -L$(MKLROOT)/lib/$(MKL_TARGET_ARCH) -pthread -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -qopenmp -lpthread  # for ifort 
+ #  LDFLAGS  = $(FOPT)  -lblas -llapack -lpthread           # for gfortran
+LDFLAGS  = $(FOPT) -L$(MKLROOT)/lib/$(MKL_TARGET_ARCH) -pthread -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -qopenmp -lpthread  # for ifort 
  
  
 
@@ -57,7 +57,7 @@ OBJS =  Eatools_main.o	 Eatools_2Dyoung.o Eatools_2Dpoisson.o  Eatools_2Dshear.o
         Eatools_3dPLcom.o Eatools_stability.o Eatools_db.o	Eatools_3dPLsh.o Eatools_ang2car.o Eatools_dsyec3.o \
         Eatools_dutester.o Eatools_proelast.o Eatools_sh.o Eatools_welc.o Eatools_pugh.o Eatools_3dPLpugh.o  Eatools_hardness.o \
         Eatools_km.o Eatools_wave_start.o Eatools_wave_vgvf.o Eatools_wave_rot.o Eatools_wave_cal.o Eatools_wave_main.o Eatools_2dcal_wave.o \
-        Eatools_pro_wave.o Eatools_2Dadv.o Eatools_api.o Eatools_3dslic.o
+        Eatools_pro_wave.o Eatools_2Dadv.o Eatools_api.o Eatools_3dslic.o Eatools_bulk.o help.o
 OBJS1 =	wrl_calylm.o wrl_colorsign.o wrl_end.o wrl_main.o \
 	       wrl_mesh.o wrl_shape.o wrl_spherappear.o wrl_spher.o wrl_start.o wrl_setcolor.o
 	       

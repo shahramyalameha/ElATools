@@ -7,7 +7,7 @@
 
 SUBROUTINE CPratio(a1111,MinPratio,MaxPratio,AvePratio,&
                        vec1min,vec2min,vec3min,vec1max,vec2max,vec3max,&
-		               theta,phi,k11,k12,k13,k22,k23,k33,Pratio)
+		                     theta,phi,k11,k12,k13,k22,k23,k33,Pratio)
 
 	  DOUBLE PRECISION, PARAMETER       ::  pi=3.1415926535897932384626433832795d0
 	  DOUBLE PRECISION, DIMENSION(6,6)  ::  S=0D0
@@ -72,19 +72,19 @@ SUBROUTINE CPratio(a1111,MinPratio,MaxPratio,AvePratio,&
                 + k33*v33*S(3,3)  
 	   
 
-    	a1122  =a1122                                     &
+    	a1122  =a1122                                        &
                  +(k11*v23+k23*v11)*S(1,4)                &
                  +(k11*v13+k13*v11)*S(1,5)                &
                  +(k11*v12+k12*v11)*S(1,6)                &
-		         +(k22*v23+k23*v22)*S(2,4)                &
+		               +(k22*v23+k23*v22)*S(2,4)                &
                  +(k22*v13+k13*v22)*S(2,5)                &
                  +(k22*v12+k12*v22)*S(2,6)                &
-		         +(k33*v23+k23*v33)*S(3,4)                &
+		               +(k33*v23+k23*v33)*S(3,4)                &
                  +(k33*v13+k13*v33)*S(3,5)                &
                  +(k33*v12+k12*v33)*S(3,6)+k23*v23*S(4,4) &
                  +(k23*v13+k13*v23)*S(4,5)                &
                  +(k23*v12+k12*v23)*S(4,6)+k13*v13*S(5,5) &
-				 +(k13*v12+k12*v13)*S(5,6)+k12*v12*S(6,6) 
+			            	 +(k13*v12+k12*v13)*S(5,6)+k12*v12*S(6,6) 
 		Pratio = -a1122/a1111
 	IF (kk.EQ.0) THEN 
 			MaxPratio=Pratio; MinPratio=Pratio;

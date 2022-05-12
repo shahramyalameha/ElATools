@@ -90,11 +90,11 @@ SUBROUTINE   end_polarlayout_web(namepro,width,height)
         ChARACTER(len=30)                :: title 
         ChARACTER(len=10)                :: namepro 
         DOUBLE PRECISION                 :: max_value            
-     if (namepro == "poi2d"  )    title="Poisson\'s ratio"
+     if (namepro == "poi2d" .or. namepro == "2dpoi" )    title="Poisson\'s ratio"
      if (namepro == "pugh2d"  )    title="Pugh\'s ratio"
-     if (namepro == "young2d")    title="Young\'s modulus"
+     if (namepro == "young2d" .or. namepro == "2dyoung")    title="Young\'s modulus"
      if (namepro == "bulk2d")    title="Bulk modulus"
-     if (namepro == "shear2d")    title="Shear modulus"
+     if (namepro == "shear2d" .or. namepro == "2dshear")    title="Shear modulus"
      if (namepro == "com2d" )    title="Linear compressibility"
      if (namepro == "hard2d" )    title="Hardness"
      if (namepro == "pp2d" )    title="P-mode of Phase velocity"

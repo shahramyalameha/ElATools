@@ -65,7 +65,7 @@ SUBROUTINE CShear(Minsheainvar,Maxsheainvar,sheainvar_ave,phi,theta,k11,k12,k13,
 			!Maxsheainvar=Maxsheainvar*100D0
 		ENDIF
 		IF (sheainvar.LE.Minsheainvar)THEN
-			Minsheainvar = (sheainvar)
+			Minsheainvar = sheainvar
 		ENDIF
 	ENDIF    
 	ave=ave+sheainvar   
