@@ -77,7 +77,7 @@ The following features of ElATools are highlighted:
    - Kube Elastic anisotropy index (A_Kube)
    
 - **Visualization of 3D materials:**
-   - 3D representation of Bulk modulus (tested)  
+   - 3D representation of Bulk modulus (testing)  
    - 3D representation of Shear modulus (tested) 
    - 3D representation of Linear Compressibiliy (tested) 
    - 3D representation of Young modulus  (tested) 
@@ -87,7 +87,7 @@ The following features of ElATools are highlighted:
    - 3D representation of Phase velocity_P, Fast and slow modes (tested) **New**
    - 3D representation of Group velocity_P, Fast and slow modes (tested)  **New**
    - 3D representation of Power flow angle_P, Fast and slow modes (tested) **New**  
-   - 2D Heat map of Bulk modulus (tested)  **New**
+   - 2D Heat map of Bulk modulus (testing)  **New**
    - 2D Heat map of Shear modulus (tested) **New**
    - 2D Heat map of Linear Compressibiliy (tested) **New**
    - 2D Heat map of Young modulus  (tested) **New**
