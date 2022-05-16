@@ -486,13 +486,14 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
     goto 5501
   ENDIF  
   IF(input_ewp == "N" .or. input_mtc == "N") THEN !=== !v1.7.3
-    WRITE(99,*) "Calculate elastic wave properties: On"  
+      
     IF (Ncod .eq. 1 .OR. Ncod .eq. 2 .OR. Ncod .eq. 3 .OR. Ncod .eq. 4 .OR. Ncod .eq. 5 .OR. Ncod .eq. 6 .OR. Ncod .eq. 7) THEN
       WRITE(*,*)" > Do you want to calculate elastic wave properties? (Y/n):" !> select code for calculate of phase and group velocities
       READ(*,*) yn_veloc
       CALL SYSTEM('clear') 
       
       IF (yn_veloc == 'Y' .or. yn_veloc == 'y') THEN
+        WRITE(99,*) " > Calculate elastic wave properties: On"
         WRITE(*,*)" > Select the desired option:"
         CALL SYSTEM('tput setaf 63;tput bold; echo "================================================================";tput sgr0')
         WRITE(*,"(a)")" Phase, group and PFA without Min. thermal conductivity-----=> 1"
@@ -502,7 +503,7 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
         Read(*,*) ewp
         !#######################################################################
         IF (ewp == 1) THEN
-          WRITE(99,*) "Calculate Min. thermal conductivity: Off"
+          WRITE(99,*) " > Calculate Min. thermal conductivity: On"
           WRITE(*,*)"Density of Compound (kg/m^3):"
           WRITE(*,*)"Note: IF you don't know, enter 0"
           READ(*,*) density
@@ -552,6 +553,8 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
         IF (ewp== 0) THEN
           Goto 665
         ENDIF
+      ELSE
+        WRITE(99,*) " > Calculate elastic wave properties: Off" 
       ENDIF
     ENDIF 
 
@@ -1167,35 +1170,57 @@ IF(d2d3 == 3) THEN !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
         v23=vec(2)*vec(3) ; v33=vec(3)*vec(3)
                 
         BB=( S(1,1)+S(1,2)+S(1,3) )*v11&
-        +( S(1,6)+S(2,6)+S(3,6) )*v12&
-        +( S(1,5)+S(2,5)+S(3,5) )*v13&
-        +( S(1,2)+S(2,2)+S(2,3) )*v22&
-        +( S(1,4)+S(2,4)+S(3,4) )*v23&
-        +( S(1,3)+S(2,3)+S(3,3) )*v33 
+          +( S(1,6)+S(2,6)+S(3,6) )*v12&
+          +( S(1,5)+S(2,5)+S(3,5) )*v13&
+          +( S(1,2)+S(2,2)+S(2,3) )*v22&
+          +( S(1,4)+S(2,4)+S(3,4) )*v23&
+          +( S(1,3)+S(2,3)+S(3,3) )*v33 
       BINver=1D0/BB
       Maxbulk = BINver
       Minbulk = BINver
       !!
-      SS=v11*v11*S(1,1)&
-      +2*v12*v12*S(1,2)&
-      +2*v13*v13*S(1,3)&
-      +2*v12*v13*S(1,4)&
-      +2*v11*v13*S(1,5)&
+      SS=v11*v11*S(1,1)                 &
+      +2*v12*v12*S(1,2)                 &
+      +2*v13*v13*S(1,3)                 &
+      +2*v12*v13*S(1,4)                 &
+      +2*v11*v13*S(1,5)                 &
       +2*v11*v12*S(1,6)+  v22*v22*S(2,2)&
-      +2*v23*v23*S(2,3)&
-      +2*v22*v23*S(2,4)&
-      +2*v12*v23*S(2,5)&
+      +2*v23*v23*S(2,3)                 &
+      +2*v22*v23*S(2,4)                 &
+      +2*v12*v23*S(2,5)                 &
       +2*v12*v22*S(2,6)+  v33*v33*S(3,3)&
-      +2*v23*v33*S(3,4)&
-      +2*v13*v33*S(3,5)&
+      +2*v23*v33*S(3,4)                 &
+      +2*v13*v33*S(3,5)                 &
       +2*v13*v23*S(3,6)+  v23*v23*S(4,4)&
-      +2*v13*v23*S(4,5)&
+      +2*v13*v23*S(4,5)                 &
       +2*v12*v23*S(4,6)+  v13*v13*S(5,5)&
       +2*v12*v13*S(5,6)+  v12*v12*S(6,6)
       SINver=1.0_dp/SS   !Young
       CALL CShear(G_min,G_max,G_Ave,phi,theta,v11,v12,v13,v22,v23,v33,a6666,sheainvar)
+      !==================================================== bulk method 3       v1.7.3        
+ CALL bulk_method(Pratio, sheainvar*1000D0, bulk_m2)
+     
+ ! Max_bulkm2 = bulk_m2
+		Min_bulkm2 = bulk_m2
+		
+		!WRITE(*,*) bulk_m2
+	IF (bulk_m2 .GE. Max_bulkm2)THEN
+     Max_bulkm2      = bulk_m2
+     Maxbulkm2_theta = theta
+     Maxbulkm2_phi   = phi
+    ! WRITE(*,*) Max_bulkm2
+  ENDIF
+ 
+	IF (bulk_m2 .LE. Min_bulkm2)THEN
+		Min_bulkm2      = bulk_m2
+    Minbulkm2_theta = theta
+    Minbulkm2_phi   = phi
+    !WRITE(*,*) Min_bulkm2
+	ENDIF
+     
+!==================================================== bulk method 3       v1.7.3 
       CALL CHardness(BINver,SINver,sheainvar,hardvar)
-      !WRITE(*,*)hardvar
+      ! WRITE(*,*)hardvar
         Ha_max2 = hardvar
         Ha_min2 = hardvar
         
@@ -1813,21 +1838,21 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   WRITE (*,*) "=================================================="
   CALL SYSTEM('sleep 0.5')
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-  !WRITE(*,*)''
- ! CALL anisotropy(Max_bulkm2,Min_bulkm2, Ax(1))
-!	CALL SYSTEM('tput setaf 126;tput bold; echo " ==================================================> Bulk Modulus method 2 (Experimental)";tput sgr0')
-!	CALL SYSTEM('tput setaf 126;tput bold; echo "   Max(GPa/100)              Min(GPa/100)  Anisotropy"')
-!	WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') Max_bulkm2/100.d0,"            ",Min_bulkm2/100.d0," ",Ax(1)
-!	CALL angl2cart(Maxbulkm2_theta,Maxbulkm2_phi, vec(1), vec(2),vec(3))
-!	CALL angl2cart(Minbulkm2_theta,Minbulkm2_phi, vec1(1),vec1(2),vec1(3))
-!	WRITE(*,*)"------------------------------------------"
-!	WRITE (*,*) "  Theta   Phi","          Theta   Phi"
-!	WRITE (*,'(1x2F6.1,11x2F6.1)') (Maxbulkm2_theta*180.0D0)/PI,(Maxbulkm2_phi*180.0D0)/PI,(Minbulkm2_theta*180.0D0)/PI,(Minbulkm2_phi*180.0D0)/PI
-!	WRITE(*,*)"------------------------------------------"
-!	WRITE (*,*) "   x     y     z","        x     y     z"
-!	WRITE (*,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
-!  WRITE (*,*) "=================================================="
-!  CALL SYSTEM('sleep 0.5')
+  WRITE(*,*)''
+  CALL anisotropy(Max_bulkm2,Min_bulkm2, Ax(1))
+	CALL SYSTEM('tput setaf 126;tput bold; echo " ==================================================> Bulk Modulus method 2 (Experimental)";tput sgr0')
+	CALL SYSTEM('tput setaf 126;tput bold; echo "   Max(GPa/100)              Min(GPa/100)  Anisotropy"')
+	WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') Max_bulkm2/100.d0,"            ",Min_bulkm2/100.d0," ",Ax(1)
+	CALL angl2cart(Maxbulkm2_theta,Maxbulkm2_phi, vec(1), vec(2),vec(3))
+	CALL angl2cart(Minbulkm2_theta,Minbulkm2_phi, vec1(1),vec1(2),vec1(3))
+	WRITE(*,*)"------------------------------------------"
+	WRITE (*,*) "  Theta   Phi","          Theta   Phi"
+	WRITE (*,'(1x2F6.1,11x2F6.1)') (Maxbulkm2_theta*180.0D0)/PI,(Maxbulkm2_phi*180.0D0)/PI,(Minbulkm2_theta*180.0D0)/PI,(Minbulkm2_phi*180.0D0)/PI
+	WRITE(*,*)"------------------------------------------"
+	WRITE (*,*) "   x     y     z","        x     y     z"
+	WRITE (*,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
+  WRITE (*,*) "=================================================="
+  CALL SYSTEM('sleep 0.5')
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   IF (yn_veloc=='Y' .or. yn_veloc=='y') THEN
     WRITE(*,*)''
