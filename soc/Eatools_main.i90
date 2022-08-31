@@ -843,7 +843,7 @@ ELSE
       CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
 !WRITE(*,*)"====================================================="
       WRITE(*,*)" AELAS                            (    VASP   ) => 1"
-      WRITE(*,*)" IRelast2D                        (   WIEN2K  ) => 2"    
+      WRITE(*,*)" IRelast                          (   WIEN2K  ) => 2"    
       WRITE(*,*)" Using Cij Tensor in Cij-2D.dat   (other codes) => 3"
       WRITE(*,*)" Back ----------------------------------------- => 0"    
 !WRITE(*,*)"====================================================="
