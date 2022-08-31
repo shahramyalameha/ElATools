@@ -9,5 +9,8 @@ Cij:
  run: EaTools.x 
  select:  > 2 > 2 
  
+ command-line:
+      EaTools.x -d 2 -m 2  
+ 
  
 

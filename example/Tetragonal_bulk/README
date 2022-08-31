@@ -10,5 +10,6 @@ Cij:
  run: EaTools.x
   select:  > 3 > 5 > N 
  
- 
+  command-line:
+      EaTools.x -d 3 -m 5 -ewp n
 

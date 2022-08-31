@@ -1,6 +1,8 @@
 MATERIAL: Cu2WS4 Materials Project id :   mp-557373
- run: EaTools_lapw
+ run: EaTools.x 
   select:  > 3 > 6 > N> mp-557373
- 
+  
+  command-line:
+      EaTools.x -d 3 -m 6 
  
 
