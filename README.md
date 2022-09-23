@@ -7,6 +7,7 @@
   <img src="pic/1.png" width="150" title="hover text">
   <img src="pic/2.png" width="150" title="hover text">
   <img src="pic/3.png" width="150" title="hover text">
+   <img src="pic/Poissons-3dsp.png" width="700" title="hover text">
 
 </p>  
 
