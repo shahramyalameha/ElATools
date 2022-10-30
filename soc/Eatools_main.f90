@@ -837,7 +837,7 @@ ELSE
     WRITE(140,*)'N'
     close(140)
     226 CALL system('clear')
-    IF (input_m == "N" .AND. input_d == "2")THEN
+    IF (input_m == "N")THEN
       WRITE(*,*)" > Select the desired method (code or file):"
       CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
       !WRITE(*,*)"====================================================="
