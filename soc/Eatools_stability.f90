@@ -124,6 +124,7 @@
         SUBROUTINE cjcbj(A,N,EPS,V)
         DIMENSION A(N,N),V(N,N)
         DOUBLE PRECISION A,V,FF,FM,CN,SN,OMEGA,X,Y
+        DOUBLE PRECISION EPS
         INTEGER P,Q
         DO 2020 I=1,N
           V(I,I)=1.0
