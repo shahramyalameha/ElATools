@@ -61,7 +61,7 @@ PROGRAM wrl_conv
                                            color_fast =(/.0,.8,.0,.0/),&
                                            color_slow =(/.7,.0,.0,.0/),& 
                                            color_set1                 ,&
-                                           color_ser2                 ,&
+                                           color_set2                 ,&
                                            color_set3             
                                          
   DOUBLE PRECISION, DIMENSION(1910000)  :: datapoints=0d0
@@ -313,7 +313,7 @@ if (val=='pugh'.or. val=='Pugh' .or. val=='pug') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
    ! for v1.6.3
    if (clor_val=="1") THEN
-    CALL set_colors(val, 2,color_set1,color_set2)
+    CALL set_colors(val, 2,color_set1,color_set2,color_set3)
     CALL color_sign_wrl(color_set2,color_minn,n_phif,n_thetaf,pughminp)  
  else
   CALL color_sign_wrl(color_minp,color_minn,n_phif,n_thetaf,pughminp)   
@@ -420,8 +420,8 @@ if (val=='compress'.or. val=='com' .or. val=='comp') then
    CALL spheroid_wrl(n_phif,n_thetaf,mesh)
    ! for v1.6.3
    if (clor_val=="1") THEN
-    CALL set_colors(val, 1,color_set1,color_set2)
-    CALL set_colors(val, 2,color_set1,color_set2)
+    CALL set_colors(val, 1,color_set1,color_set2,color_set3)
+   ! CALL set_colors(val, 2,color_set1,color_set2)
     CALL color_sign_wrl(color_set2,color_set2,n_phif,n_thetaf,co)  
    else
     CALL color_sign_wrl(color_pos,color_neg,n_phif,n_thetaf,co)  
