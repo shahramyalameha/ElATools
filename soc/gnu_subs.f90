@@ -47,7 +47,7 @@ subroutine setreset()
 
    subroutine set1()
   ChARACTER(len=2) :: e1,e2
-  Real(8)          :: h,k,l
+  integer          :: h,k,l
    call plan(e1,e2,h,k,l)  
    WRITE(2,'(a)')' print maxi'
    WRITE(2,'(a)')'#unset key'
