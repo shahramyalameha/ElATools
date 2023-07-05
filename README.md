@@ -4,9 +4,21 @@
  <img width=0 height=0 src="https://profile-counter.glitch.me/shahramyalameha/count.svg" alt="shahramyalameha:: Visitor's Count" />
 </p>
  
+<div align="center">
+  <a href="https://www.youtube.com/@shahramyalameha4330">
+    <img src="https://raw.githubusercontent.com/maurodesouza/profile-readme-generator/master/src/assets/icons/social/youtube/default.svg" width="52" height="40" alt="youtube logo"  />
+  </a>
+  <a href="mailto:yalameha93@gmail.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/maurodesouza/profile-readme-generator/master/src/assets/icons/social/gmail/default.svg" width="52" height="40" alt="gmail logo"  />
+  </a>
+
+</div>
+
+### 
  
 # ElATools [![Website](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=ElaTools&url=https%3A%2F%2Fyalameha.gitlab.io%2Felastictools%2Findex.html)](https://yalameha.gitlab.io/elastictools/index.html) [![Chat](https://img.shields.io/website?style=flat-square&up_color=gold&up_message=Chat&url=https%3A%2F%2Fgroups.google.com%2g%2elatools)](https://groups.google.com/g/elatools) ![GitHub all releases](https://img.shields.io/github/downloads/shahramyalameha/ElATools/total?logo=github)
-![Mail](https://img.shields.io/badge/Gmail-yalameha93@gmail.com-blue?logo=Gmail&logoColor=blue&labelColor=black)
+ 
+
 
 <p align="center">
    <img src="pic/log_ElAtools.png" width="450" title="hover text">
