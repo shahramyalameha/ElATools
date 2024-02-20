@@ -4,7 +4,7 @@
 !                                                                                          `
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: fOR 3D MATERIAL, the core of the phase and group vec. calculation.. v.2
-
+! see this ref. :  Computer Physics Communications 207 (2016): 445-451.
 !                        in in in   in  in  in  in       outs
         SUBROUTINE wave_main_AAEP(i,j,theta,phi,vec,CCo,density, VVG_P,    &
                                                                  VVP_P,    &
