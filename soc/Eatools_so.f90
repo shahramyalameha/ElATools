@@ -11,9 +11,26 @@ SUBROUTINE Csound(vec,v11,v12,v22,v13,v23,v33,EVa,Lm,MaxTm,MinTm)
 		DOUBLE PRECISION, DIMENSION(3)   :: EVa,longMod= 0,vec
 		DOUBLE PRECISION                 :: MaxlongMod = 0,v11,v12,v22,v13,v23,v33
 		INTEGER, DIMENSION(2)            :: tm
-		INTEGER                          :: lm,MinTm,MaxTm,i1=0,j1=0
+		INTEGER                          :: lm,MinTm,MaxTm,i1=0,j1=00
+		logical				 :: isOpen	
+		INTEGER				 :: ios		
+		INTEGER				 :: existingUnit
+	! Check if the file "Cij.dat" is already opened (by any unit)
+	
+	! Check if "Cij.dat" is already open by some unit
+	inquire(file="Cij.dat", opened=isOpen, number=existingUnit)
+	if (isOpen) then
+	    print *, "File Cij.dat is already open on unit", existingUnit, ". Closing..."
+	    close(unit=existingUnit)
+	end if
+	! Now open the file
+	open(unit=61, file="Cij.dat", status="old", action="read", iostat=ios)
+	if (ios /= 0) then
+	    print *, "Error opening file Cij.dat. IOSTAT =", ios
+	    stop 1
+	end if
 
-	OPEN(61,FILE="Cij.dat")
+	
 	READ(61,*) C(1,1),C(1,2),C(1,3),C(1,4),C(1,5),C(1,6)
 	READ(61,*) C(2,1),C(2,2),C(2,3),C(2,4),C(2,5),C(2,6)
 	READ(61,*) C(3,1),C(3,2),C(3,3),C(3,4),C(3,5),C(3,6)

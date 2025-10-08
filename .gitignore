@@ -1,0 +1,19 @@
+# Compiled object files
+*.o
+
+# Executables
+*.x
+
+# Output data
+*.dat
+*.out
+*.log
+
+# Build directories
+bin/
+example/*/DatFile*/
+example/*/PicFile*/
+example/*/.RepF
+example/*/HKL
+soc/Go
+
