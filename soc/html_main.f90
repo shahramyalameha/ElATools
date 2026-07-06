@@ -254,10 +254,10 @@ program web_conv
        WRITE (*, *) '  ' 
        
       WRITE (*, *) '[List of Colorscale for Heat-map ]:                        '
-      WRITE (*, *) 'Uniform    : Viridis | Cividis '
-      WRITE (*, *) 'Sequential : Blues | Greens | Greys | Reds | YlGnBu | YlOrRd '
-      WRITE (*, *) 'Diverging  : RdBu | Bluered | Picnic   '
-      WRITE (*, *) 'Other      : Blackbody | Earth | Hot| Jet| Portland,| Rainbow
+      WRITE (*, *) 'Uniform    : Viridis | Cividis                                '
+      WRITE (*, *) 'Sequential : Blues | Greens | Greys | Reds | YlGnBu | YlOrRd  '
+      WRITE (*, *) 'Diverging  : RdBu | Bluered | Picnic                          '
+      WRITE (*, *) 'Other      : Blackbody | Earth | Hot| Jet | Portland | Rainbow'
       
       
        WRITE (*, *) '  '       
