@@ -150,7 +150,7 @@ Compilation
 The db directory contains the elastic constant database file. The path of these files must be specified before installation. For this purpose, you can use run_path.sh script to path
 these files. This script is located in the soc directory and runs as follows:
 
-1. chmod +x run_path.sh ; chmod +x run_path.sh ./install_elatools
+1. chmod +x run_path.sh ; chmod +x ./install_elatools
 2. ./install_elatools
 
 Then you need the complete path (example: /home/.../soc/db/ ) of the elastic constant database files (Cijs.binery and All_2ID_cop.csv) in the db directory, which is different for
