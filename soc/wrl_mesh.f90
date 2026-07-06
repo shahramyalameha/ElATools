@@ -28,6 +28,7 @@ SUBROUTINE mesh_datapoints_wrl(n_phif,n_thetaf,datapoints)
          k(1)=SIN(theta)*COS(phi)*ABS(datapoints(looper))
          k(2)=SIN(theta)*SIN(phi)*ABS(datapoints(looper))
          k(3)=COS(theta)*ABS(datapoints(looper))
+         
          looper=looper+1
          WRITE(41,'(3F10.3,A1)',ADVANCE='NO') k(1),k(2),k(3),','
       ENDDO

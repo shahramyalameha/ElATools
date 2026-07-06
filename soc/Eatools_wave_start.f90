@@ -205,10 +205,12 @@
                END SUBROUTINE
          !* End of subroutine DSYEVJ3
          !
-               SUBROUTINE callCij(CCo)
+  SUBROUTINE callCij(CCo, yn_veloc2d, yn_veloc3d)
                   implicit NONE
                DOUBLE PRECISION, DIMENSION(6,6) :: CCo 
+                 CHARACTER(LEN=1)                   :: yn_veloc2d, yn_veloc3d
                CLOSE(UNIT=10)
+       ! IF (yn_veloc3d=="Y" .or. yn_veloc3d=="y") ThEN
                OPEN(40,file="Cij.dat")
                READ(40,*) CCo(1,1),CCo(1,2),CCo(1,3),CCo(1,4),CCo(1,5),CCo(1,6)
                READ(40,*) CCo(2,1),CCo(2,2),CCo(2,3),CCo(2,4),CCo(2,5),CCo(2,6)
@@ -216,7 +218,8 @@
                READ(40,*) CCo(4,1),CCo(4,2),CCo(4,3),CCo(4,4),CCo(4,5),CCo(4,6)
                READ(40,*) CCo(5,1),CCo(5,2),CCo(5,3),CCo(5,4),CCo(5,5),CCo(5,6)
                READ(40,*) CCo(6,1),CCo(6,2),CCo(6,3),CCo(6,4),CCo(6,5),CCo(6,6)
-           
-               CLOSE(UNIT=40)
-               END SUBROUTINE
-         !
+       ! ENDIF
+          Close(40)  
+          
+  END SUBROUTINE
+ 

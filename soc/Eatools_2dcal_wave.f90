@@ -5,7 +5,7 @@
 !```````````````````````````````````````````````````````````````````````````````````````````
 ! SUBROUTINE: fOR 3D MATERIAL , CALCULATE vectors on any custom plane
 
-    SUBROUTINE twoD_calc_wave(mmx,kky,llz,smkl,j,vec)
+    SUBROUTINE twoD_calc_wave(mmx, kky, llz, smkl, j, vec)
     IMPLICIT NONE
     DOUBLE PRECISION                        :: smkl,smkl2,&
                                                 twoDTheta=0D0,&

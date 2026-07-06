@@ -68,7 +68,16 @@ SUBROUTINE proelast()
 					                Pc_hex_c,&
 					                Pc_orth_a,&
 					                Pc_orth_b,&
-					                Pc_orth_c
+					                Pc_orth_c,&
+					                mum_v,&
+					                mum_r,&
+					                mum_h,&
+					                grn_v,&
+					                grn_r,&
+					                grn_h,&
+					                threx_v,&
+					                threx_r,&
+					                threx_h
  CHARACTER(LEN=10) :: bdout1_out1,bdout1_out2,bdout1_out3,&
                       bdout2_out1,bdout2_out2,bdout2_out3
  CHARACTER(LEN=31) :: st_ben
@@ -130,11 +139,19 @@ SUBROUTINE proelast()
     
     kv = (av+2d0*bv)/3d0
     kr = 1d0/(3d0*ar+6d0*br)
-    kh = 0.5d0*(kv+kr) 
+    kh = 0.5d0*(kv+kr)
+    !
+    mum_v = kv/ C(4,4)
+    mum_r = kr/ C(4,4)
+    mum_h = kh/ C(4,4)
     ! 
     gv = (av-bv+3d0*cv)/5d0
     gr = 5d0/(4d0*ar-4d0*br+3d0*cr)
     gh = 0.5d0*(gv+gr)
+    !
+    threx_v = (1.6d0*10E-6)/gv
+    threx_r = (1.6d0*10E-6)/gr
+    threx_h = (1.6d0*10E-6)/gh
     ! 
     Ev = 1d0/(1d0/(3d0*gv)+1d0/(9d0*kv))
     Er = 1d0/(1d0/(3d0*gr)+1d0/(9d0*kr))
@@ -143,6 +160,10 @@ SUBROUTINE proelast()
     nuv = 0.5d0*(1.0d0-(3.0d0*gv)/(3.0d0*kv +gv))
     nur = 0.5d0*(1.0d0-(3.0d0*gr)/(3.0d0*kr +gr))
     nuh = 0.5d0*(1.0d0-(3.0d0*gh)/(3.0d0*kh +gh))
+    !
+    grn_v = (3.d0/2.d0)*((1.d0+nuv)/(2.d0-3.d0*nuv))
+    grn_r = (3.d0/2.d0)*((1.d0+nur)/(2.d0-3.d0*nur))
+    grn_h = (3.d0/2.d0)*((1.d0+nuh)/(2.d0-3.d0*nuh))
     ! 
     Kgv = kv/gv
     Kgr = kr/gr
@@ -200,6 +221,9 @@ SUBROUTINE proelast()
     WRITE(*,'(a,3F10.3,a)')' = Shear modulus (GPa)     | ', gv,gr,gh    ,'  ='
     WRITE(*,'(a,3F10.3,a)')' = Young modulus (GPa)     | ', Ev,Er,Eh    ,'  ='
     WRITE(*,'(a,3F10.4,a)')' = P-wave modulus(GPa)     | ', mv,mr,mh    ,'  ='
+    WRITE(*,'(a,3F10.4,a)')' = Machinability index     | ', mum_v,mum_r,mum_h    ,'   ='   
+    WRITE(*,'(a,3F10.4,a)')' = Grüneisen constant      | ', grn_v,grn_r,grn_h    ,'   ='    ! see DOI: 10.1134/S1063771007050090  
+    WRITE(*,'(a,3E11.2,a)')' = Thermal expansion coeff.| ', threx_v,threx_r,threx_h    ,'   ='    ! see https​://doi.org/10.1016/b978-0-7506-8149-0.00006​-4      
     WRITE(*,'(a,3F10.4,a)')' = Lame’s first parameter  | ', La1v,La1r,La1h,'  ='
     WRITE(*,'(a,3F10.4,a)')' = Lame’s second parameter | ', La2v,La2r,La2h,'  ='
     WRITE(*,'(a,3F10.4,6a)')' = Poisson ratio           | ', nuv,nur,nuh ,'  = ','<--(', bdout1_out1,bdout2_out2,bdout2_out3,'regime )' !| WRITE(*,'(a,3F10.4,a,3a)')' = Pugh ratio           | ', kgv,kgr,kgh ,'   = ','<--(  ',bdout2,'regime   )' !|==>article:http://dx.doi.org/10.1080/09500839.2016.1243264
@@ -232,6 +256,9 @@ SUBROUTINE proelast()
     WRITE(99,'(a,3F10.3,a)')' = Shear modulus (GPa)| ', gv,gr,gh    ,'   ='
     WRITE(99,'(a,3F10.3,a)')' = Young modulus (GPa)| ', Ev,Er,Eh    ,'   ='
     WRITE(99,'(a,3F10.4,a)')' = P-wave modulus(GPa)| ', mv,mr,mh    ,'   ='
+    WRITE(99,'(a,3F10.4,a)')' = Machinability index| ', mum_v,mum_r,mum_h    ,'   ='   
+    WRITE(99,'(a,3F10.4,a)')' = Grüneisen constant | ', grn_v,grn_r,grn_h    ,'   ='    ! see DOI: 10.1134/S1063771007050090
+    WRITE(99,'(a,3E11.2,a)')' = Thermal expansion coeff.| ', threx_v,threx_r,threx_h    ,'   ='    ! see https​://doi.org/10.1016/b978-0-7506-8149-0.00006​-4      
     WRITE(99,'(a,3F10.4,a)')' = Lame’s first parameter  | ', La1v,La1r,La1h,'  ='
     WRITE(99,'(a,3F10.4,a)')' = Lame’s second parameter | ', La2v,La2r,La2h,'  ='    
     WRITE(99,'(a,3F10.4,6a)')' = Poisson ratio           | ', nuv,nur,nuh ,'  = ','<--(', bdout1_out1,bdout2_out2,bdout2_out3,'regime )' !|

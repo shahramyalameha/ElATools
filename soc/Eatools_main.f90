@@ -1,5 +1,5 @@
 
-!````````````````````````````````````````````````````````````````````````````````````````````
+!```````````````````````````````````````````````````````````````````````````````````````````
 ! Copyright (c) 2018 Shahram Yalameha <yalameha93@gmail.com> , <sh.yalameha@sci.ui.ac.ir>, `
 !               Please report bugs or suggestions to:  yalameha93@gmail.com                `
 !                                                                                          `
@@ -14,12 +14,12 @@
   INTEGER, PARAMETER                 :: dp = selected_real_kind(15, 307)
   CHARACTER(LEN=1)                   :: YN="Y" ,&                !> for plot 3d and 2d data is  "Y" 
                                         yesno,yesno2,&
-                                        yn_veloc,yn_ewp,&                
-                                        order,yn_km                                   
+                                        yn_veloc,yn_veloc2d,yn_ewp,&                
+                                        order,yn_km, method_hard                                 
   CHARACTER(LEN=25)                  :: myid                     !> for databank
   INTEGER                            :: CLaS,phi_meah,theta_meah,cutmesh,npoint,ewp
   DOUBLE PRECISION, PARAMETER        :: pi=3.14159265358979323846264338327950D0,ee=0.0001D0
-  DOUBLE PRECISION, DIMENSION(6,6)   :: C1p=0D0,S1=0D0,C=0D0,S=0D0,CP=0D0,C3=0D0,CCo=0d0,Eig3d
+  DOUBLE PRECISION, DIMENSION(6,6)   :: C1p=0D0,S1=0D0,C=0D0,S=0D0,CP=0D0,C3=0D0,CCo=0D0,Eig3d
   DOUBLE PRECISION, DIMENSION(80100) :: shear2dmax,  Ax,&
                                         shear2dminp,  &
                                         shear2dminn,  &
@@ -52,26 +52,28 @@
                                         VV_Ss_PF_2D
  ChARACTER(LEN=3)                    :: adv
  DOUBLE PRECISION, DIMENSION(3,3)    :: EVe=0D0, C2D,Eig2d
-
- DOUBLE PRECISION, DIMENSION(3)      :: vec=0d0,             &
+ DOUBLE PRECISION, DIMENSION(2,2)    :: C1D,S1D
+ DOUBLE PRECISION, DIMENSION(3)      :: vec=0D0,             &
                                         vec_3dslic=0,        &
-                                        v=0d0,               &
-                                        vec1=0d0,            &
+                                        v=0D0,               &
+                                        vec1=0D0,            &
                                         EVa,                 &
-                                        CElastcode=0d0
+                                        CElastcode=0D0
  INTEGER ::                            loop, d2d3 ,Stable,adv_mubner                !0> Stable, 1> unStable
  INTEGER ::                              i=0,             &
                                          num=1,           &
                                          lm,MinTm,        &
                                          MaxTm,           &
                                          Ncod,            &
+                                         Nbulk,           &
+                                         Nhards,          &
                                          i2,              &
                                          j=0,             &
                                          jj=0,            &
                                          ii,              &
-                                         Nmesh_thata=0d0, &
-                                         Nmesh_thataf=0d0,&
-                                         Nmesh_phi=0d0,   &
+                                         Nmesh_thata=0D0, &
+                                         Nmesh_thataf=0D0,&
+                                         Nmesh_phi=0D0,   &
                                          Nmesh_phIF=0D0,  &
                                          Nmesh_phi2=0D0,  &
                                          Nmesh_phIF2=0D0, &
@@ -86,13 +88,13 @@
                                          maxEVaTMf = 0D0,              &
                                          minEVaTMf = 10d6,test_n, new_num
  
- DOUBLE PRECISION ::                     v11=0d0,&
+ DOUBLE PRECISION ::                     v11=0D0,&
                                          t2d=0D0,                   &
-                                         v12=0d0,                   &
-                                         v13=0d0,                   &
-                                         v22=0d0,                   &
-                                         v23=0d0,                   &
-                                         v33=0d0,                   &
+                                         v12=0D0,                   &
+                                         v13=0D0,                   &
+                                         v22=0D0,                   &
+                                         v23=0D0,                   &
+                                         v33=0D0,                   &
                                          G_max=0D0,                 &
                                          G_min=0D0,                 &
                                          G_Ave=0D0,                 &
@@ -103,13 +105,29 @@
                                          G_min2_theta=0D0,          &
                                          G_min2_phi=0D0,            &
 
-                                        Ha_max2       = 0D0,        &
-                                        Ha_min2       = 0.0D0,      & 
-                                        Ha_max2_theta = 0D0,        & 
-                                        Ha_min2_theta = 0D0,        &
-                                        Ha_max2_phi   = 0D0,        &
-                                        Ha_min2_phi   = 0D0,        &
-
+                                         Ha_max2       = 0.0D0,     &
+                                         Ha_max1       = 0.0D0,     &
+                                         Ha_min2       = 0.0D0,     &
+                                         Ha_min1       = 0.0D0,     & 
+                                         
+                                         Ha_max2_theta = 0D0,       & 
+                                         Ha_min2_theta = 0D0,       &
+                                         Ha_max2_phi   = 0D0,       &
+                                         Ha_min2_phi   = 0D0,       &
+                                         
+                                         Ha_max1_theta = 0D0,       & 
+                                         Ha_min1_theta = 0D0,       &
+                                         Ha_max1_phi   = 0D0,       &
+                                         Ha_min1_phi   = 0D0,       &
+                                         
+                                         
+                                         Pwave_max2=0D0,            &
+                                         Pwave_min2=0.0D0,          &
+                                         Pwave_max2_theta=0D0,      &
+                                         Pwave_max2_phi=0D0,        &
+                                         Pwave_min2_theta=0D0,      &
+                                         Pwave_min2_phi=0D0,        &
+                                         
                                          Pugh_max=0D0,              &
                                          Pugh_min=0D0,              &
                                          Pugh_Ave=0D0,              &
@@ -117,6 +135,7 @@
                                          Pugh_min2=1D0,             &
                                          Pugh_max2_theta=0D0,       &
                                          Pugh_max2_phi=0D0,         &
+                                         
                                          Pugh_min2_theta=0D0,       &
                                          Pugh_min2_phi=0D0,         &
                                          Maxcomp_theta=0D0,         &
@@ -160,13 +179,16 @@
                                          pughmax=0.01D0,            &
                                          pughminp=0.01D0,           &
                                          pughminn=0.01D0,           &
+                                         pwaveminn=0.1D0,           &
+                                         pwaveminp=0.1D0,           &
                                          pughavep=0D0,              &
                                          pughaven=0D0,              &
                                          comminn=0.1D0,             &
                                          comminp=0.1D0                
- REAL(dp) ::SS=1.0_dp,SINver=0.0_dp
+ REAL(dp)         ::                     SS=1.0_dp,SINver=0.0_dp
  DOUBLE PRECISION ::                     inter_phi=0D0,                    &
                                          BB=1,                             &
+                                         BBB=1,                            &
                                          Maxyoung_phi=0D0,                 &
                                          Maxbulk_theta=0D0,                &
                                          Maxyoung_theta=0D0,               &
@@ -176,11 +198,14 @@
                                          inter_theta=0D0,                  &
                                          phi=0,                            &
                                          BINver=0D0,hardvar=0D0,           &
+                                         hardvar_max, hardvar_min,         &
                                          a1,a2,a3
  
  DOUBLE PRECISION ::                     Minyoung=10d8,                    &
-                                         Minbulk=0.0d0,                    &
+                                         Minbulk=0.0D0,                    &
                                          Maxyoung=0D0,                     &
+                                         Pw_max =0d0,                      &
+                                         Pw_min =0d0,                      & 
                                          Maxbulk=0D0,                      &
                                          Minyoung_theta=0D0,               &
                                          Minbulk_theta=0D0,                &
@@ -188,19 +213,23 @@
                                          Minbulkm2_theta=0D0,              &
                                          Maxbulkm2_phi=0D0,                &
                                          Minbulkm2_phi=0D0,                &
+                                         Maxbulkm3_theta=0D0,              &
+                                         Minbulkm3_theta=0D0,              &
+                                         Maxbulkm3_phi=0D0,                &
+                                         Minbulkm3_phi=0D0,                &
                                          Minyoung_phi=0D0,                 &
                                          Minbulk_phi=0D0,                  &
-                                         theta=0d0,                        &
+                                         theta=0D0,                        &
                                          smkl=0D0,smkl2=0D0,               &
                                          twoDTheta=0D0,                    &
                                          planetheta,                       &
                                          planephi,                         &
-                                         mmx=1d0,                          &
-                                         kky=0d0,                          &
-                                         llz=0d0,                          &
-                                         mmx1=0d0,                         &
-                                         kky1=0d0,                         &
-                                         llz1=0d0
+                                         mmx=1D0,                          &
+                                         kky=0D0,                          &
+                                         llz=0D0,                          &
+                                         mmx1=0D0,                         &
+                                         kky1=0D0,                         &
+                                         llz1=0D0
 
 
  DOUBLE PRECISION ::                     a6666=0D0,                    &
@@ -211,9 +240,13 @@
                                          Minpughvar,                   &
                                          Maxpughvar,                   &
                                          pughvar_ave,                  & 
+                                         bulk_m1,                      &
                                          bulk_m2,                      &
-                                         Min_bulkm2=0.0d0,             &
-                                         Max_bulkm2=0.0d0,             &
+                                         bulk_m3,                      &
+                                         Min_bulkm2=0.0D0,             &
+                                         Max_bulkm2=0.0D0,             &
+                                         Min_bulkm3=0.0D0,             &
+                                         Max_bulkm3=0.0D0,             &                                         
                                          gamma,                        &
                                          vv11=0D0,                     &
                                          vv12=0D0,                     &
@@ -230,10 +263,10 @@
                                          k33
 
  DOUBLE PRECISION, PARAMETER           ::  PI_C=3.14159265358979323846264338327950D0
- DOUBLE PRECISION                      ::  density,theta3,phi3,ma_avrag=1,dns,tot_at=0.0
+ DOUBLE PRECISION                      ::  density,density2d,theta3,phi3,ma_avrag=1,dns,tot_at=0.0
  INTEGER                               ::  k, n, m, ac_mod, plan
  DOUBLE PRECISION, DIMENSION (0:9,1:3) ::  poin
- DOUBLE PRECISION                      ::VVG_P,          &
+ DOUBLE PRECISION                      ::VVG_P,            &
                                          VVP_P=0D0,        &
                                          VV_P_PF=0D0,      &
                                          VVG_Sf=0D0,       &
@@ -241,7 +274,7 @@
                                          VV_Sf_PF=0D0,     &
                                          VVG_Ss=0D0,       &
                                          VVP_Ss=0D0,       &
-                                         VV_Ss_PF=0d0,     &
+                                         VV_Ss_PF=0D0,     &
                                          VVG_P_max=0D0,    &
                                          VVP_P_max=0D0,    &
                                          VV_P_PF_max=0D0,  &
@@ -259,7 +292,7 @@
                                          VV_Sf_PF_min=0D0, &
                                          VVG_Ss_min=0D0,   &
                                          VVP_Ss_min=0.0001D0,  &
-                                         VV_Ss_PF_min=0d0,     &
+                                         VV_Ss_PF_min=0D0,     &
                                          VVG_P_max_phi=0D0,    &
                                          VVP_P_max_phi=0D0,    &
                                          VV_P_PF_max_phi=0D0,  &
@@ -276,8 +309,8 @@
                                          VV_Sf_PF_min_phi=0D0, &
                                          VVG_Ss_min_phi=0D0,   &
                                          VVP_Ss_min_phi=0D0,   &
-                                         VV_Ss_PF_min_phi=0d0, &
-                                         VV_Ss_PF_max_phi=0d0, &
+                                         VV_Ss_PF_min_phi=0D0, &
+                                         VV_Ss_PF_max_phi=0D0, &
                                          VVG_P_max_theta=0D0,    &
                                          VVP_P_max_theta=0D0,    &
                                          VV_P_PF_max_theta=0D0,  &
@@ -294,15 +327,15 @@
                                          VV_Sf_PF_min_theta=0D0, &
                                          VVG_Ss_min_theta=0D0,   &
                                          VVP_Ss_min_theta=1D0,   &
-                                         VV_Ss_PF_min_theta=0d0, &
-                                         VV_Ss_PF_max_theta=0d0, &
+                                         VV_Ss_PF_min_theta=0D0, &
+                                         VV_Ss_PF_max_theta=0D0, &
                                          km                    , &
-                                         km_max=0.d0           , &
-                                         km_min=0.0d0          , &
-                                         km_min_phi=0.0d0      , &
-                                         km_max_phi=0.0d0      , &
-                                         km_min_theta=0.0d0    , &
-                                         km_max_theta=0.0d0   
+                                         km_max=0.D0           , &
+                                         km_min=0.0D0          , &
+                                         km_min_phi=0.0D0      , &
+                                         km_max_phi=0.0D0      , &
+                                         km_min_theta=0.0D0    , &
+                                         km_max_theta=0.0D0   
  
  TYPE normals
  DOUBLE PRECISION, DIMENSION (1:3,1:3) :: normod
@@ -335,16 +368,21 @@
                                     input_ewp,  &
                                     input_mtc,  &
                                     input_opt,  &
-                                    help_optin 
+                                    input_bulk, &
+                                    help_optin, &
+                                    input_hard, &
+                                    without_color
                                     
- DOUBLE PRECISION                :: input_dens
+ DOUBLE PRECISION                :: input_dens, cputime_s, cputime_e
  ChARACTER(len=7), Dimension(15) :: arg_mane
+ CALL CPU_TIME(cputime_s)
   !=================v1.7.3=======================
 !>>>>>>>>>>>>>>>>>>>>>>>>END<<<<<<<<<<<<<<<<<<<<<<<<< 
  OPEN(99,FILE="DATA.out") !> final static data 
  CALL SYSTEM('clear')
  WRITE(*,*) ' '
  CALL WELCOME()
+ CALL log_start_time()
  WRITE(*,*) ' '
  CALL SYSTEM('sleep 1.1')
   !=================v1.7.3======================= 
@@ -353,7 +391,10 @@
   input_ewp  = "N"
   input_mtc  = "N"
   input_opt  = "N"
+  input_bulk = "N"
+  input_hard = "N"
   input_dens = 0.0
+  without_color= "Y"
   argcount=iargc()
   DO i=1,argcount 
 !   CALL GETARG(i,wq_char)
@@ -374,6 +415,16 @@
         READ(wq_char,*) input_ewp
      END IF 
      ! 
+     IF ( INDEX(wq_char,'-b').NE.0 ) THEN
+        CALL GETARG(i+1,wq_char)
+        READ(wq_char,*) input_bulk
+     END IF
+     !
+     IF ( INDEX(wq_char,'-ha').NE.0 ) THEN
+        CALL GETARG(i+1,wq_char)
+        READ(wq_char,*) input_hard
+     END IF
+     ! 
      IF ( INDEX(wq_char,'-ktc').NE.0 ) THEN
         CALL GETARG(i+1,wq_char)
         READ(wq_char,*) input_mtc
@@ -383,10 +434,15 @@
         CALL GETARG(i+1,wq_char)
         READ(wq_char,*) input_opt
      END IF
+     IF ( INDEX(wq_char,'-nc').NE.0 ) THEN ! without color 
+        CALL GETARG(i+1,wq_char)
+        READ(wq_char,*) without_color
+     END IF     
      IF ( INDEX(wq_char,'-h').NE.0 ) THEN
         CALL GETARG(i+1,wq_char)
         READ(wq_char,*) help_optin
      END IF
+     
      !           
   END DO
   !=================v1.7.3======================= 
@@ -397,49 +453,73 @@
    ENDIF
 
 225 CALL SYSTEM('clear')
-IF (input_d == "N") THEN    !!!!! FOR COMMAND LINE NEW!! ====> start 
+IF (input_d == "N") THEN    !FOR COMMAND LINE NEW ====>start 
  
  WRITE(*,*)" > Select system dimension:"  !> go to type of system
- CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
+
+ if (without_color.EQ."Y") CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
+ if (without_color.EQ."N") CALL SYSTEM('echo " ========================"')
  !WRITE(*,*)"========================" 
+  WRITE(*,*)" 1D-Materials------ => 1" 
   WRITE(*,*)" 2D-Materials------ => 2"
   WRITE(*,*)" 3D-Materials------ => 3"
+  WRITE(*,*)" Exit-------------- => 0"
  !WRITE(*,*)"========================" 
- CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
+ if (without_color.EQ."N") CALL SYSTEM('echo " ========================"')
+ if (without_color.EQ."Y") CALL SYSTEM('tput setaf 36;tput bold; echo " ========================";tput sgr0')
  READ(*,*) d2d3
-  
+ IF(d2d3 == 0) THEN 
+  call SYSTEM("clear")
+  WRITE(*,*)"                           ==================================================="
+  PRINT*,   "                           >            | Have A Beautiful Day |             <"
+  PRINT*,   "                           >            |       Goodbye.       |             <"
+  WRITE(*,*)"                           ===================================================" 
+  WRITE(*,*)""
+  Goto 1370
+ ENDIF 
 ELSE !v1.7.3
 
-  IF (input_d == "3" ) THEN
+  IF(input_d == "3")THEN
       d2d3=3
       WRITE(99,*) " > System Type: 3D"
   ELSE IF(input_d == "2") THEN
       d2d3=2
       WRITE(99,*) " > System Type: 2D"
+  ELSE IF(input_d == "2") THEN
+      d2d3=1
+      WRITE(99,*) " > System Type: 1D"      
   ELSE 
    WRITE(*,"(2A)") "Invalid input: -d ", input_d
    STOP 
   ENDIF
 ENDIF   
- !=== !v1.7.3
+!write(*,*) without_color
+ ! === !v1.7.3
 IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   665  CALL SYSTEM('clear')
   IF (input_m == "N") THEN !=== !v1.7.3
-    WRITE(*,*)" > Select the desired method (code, file and databank):"
-    CALL SYSTEM('tput setaf 33;tput bold; echo "============================================================";tput sgr0')
-    !WRITE(*,*)"============================================================" 
-    WRITE(*,*)" IRelast-----------------------(       WEIN2k         )-=> 1"
-    WRITE(*,*)" Elast-------------------------(       WEIN2k         )-=> 2"
-    WRITE(*,*)" AELAS-------------------------(        VASP          )-=> 3"
-    WRITE(*,*)" ElaStic-----------------------(  QE,WEIN2k,Exciting  )-=> 4"   
-    WRITE(*,*)" Using Cij Tensor in Cij.dat---(     Other codes      )-=> 5" 
-    WRITE(*,*)" Using EC Databank-------------(      Offline MP      )-=> 6" 
-    WRITE(*,*)" Using EC Databank-------------(      Online  MP      )-=> 7"
-    WRITE(*,*)" Back --------------------------------------------------=> 0"
-    !WRITE(*,*)"============================================================" 
-    CALL SYSTEM('tput setaf 33;tput bold; echo "============================================================";tput sgr0')  
+    !################################
+    CALL call_thD_code(without_color) 
+    !################################    
     READ(*,*) Ncod
     IF(Ncod .EQ. 0) THEN; Goto 225; ENDIF
+    
+    335 CALL SYSTEM('clear')
+    !################################    
+    CALL call_thD_bulkmethod(without_color)
+    !################################    
+    READ(*,*) Nbulk
+    IF(Nbulk .EQ. 0) THEN; Goto 665; ENDIF
+    !=== !v1.7.4
+    !################################    
+    CALL call_thD_Hardnessmethod(without_color) 
+    !################################    
+    READ(*,*) Nhards
+    IF(Nhards .EQ. 1) method_hard = "M"
+    IF(Nhards .EQ. 2) method_hard = "C"
+    IF(Nhards .EQ. 3) method_hard = "T"
+    IF(Nhards .EQ. 0) THEN; Goto 335; ENDIF
+    
   ELSE !=== !v1.7.3
     IF (input_m == "IRelast" .or. input_m == "irelast" .or. input_m == "1") THEN
       Ncod=1
@@ -466,6 +546,35 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
       WRITE(*,"(2A)") "Invalid input: -m ", input_m
       STOP                 
     ENDIF 
+    
+    IF ( input_bulk == "1") THEN
+      Nbulk=1
+      WRITE(99,*) " > Bulk modulus: Method I"
+    ELSE IF( input_bulk == "2") THEN
+      Nbulk=2
+      WRITE(99,*) " > Bulk modulus: Method II"
+    ELSE IF( input_bulk == "3") THEN
+      Nbulk=3
+      WRITE(99,*) " > Bulk modulus: Method III"
+    ELSE   
+      WRITE(*,"(2A)") "Invalid input: -b ", input_bulk
+      STOP                 
+    ENDIF    
+    
+    IF ( input_hard == "1") THEN
+      method_hard = "M"
+      WRITE(99,*) " > Hardness modele: Mazhnik's model"
+    ELSE IF( input_hard == "2") THEN
+      method_hard = "C"
+      WRITE(99,*) " > Hardness modele: Chen's model"
+    ELSE IF( input_hard == "3") THEN
+      method_hard = "T"
+      WRITE(99,*) " > Hardness modele: Tian's model"
+    ELSE   
+      WRITE(*,"(2A)") "Invalid input: -ha ", input_hard
+      STOP                 
+    ENDIF   
+ 
   ENDIF
   !=== !v1.7.3
   IF(input_ewp == "n" .and. input_mtc == "n")THEN !=== !v1.7.3
@@ -483,25 +592,23 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
   IF(input_ewp == "n" .and. input_mtc == "N") THEN !=== !v1.7.3
     !WRITE(*,"(A,A4,A,A4)") "Invalid input: -ewp ", input_ewp, "-ktc ", input_mtc
     yn_veloc = "n"
+    WRITE(99,*) " > Calculate elastic wave properties: Off" 
     goto 5501
   ENDIF  
   IF(input_ewp == "N" .or. input_mtc == "N") THEN !=== !v1.7.3
       
-    IF (Ncod .eq. 1 .OR. Ncod .eq. 2 .OR. Ncod .eq. 3 .OR. Ncod .eq. 4 .OR. Ncod .eq. 5 .OR. Ncod .eq. 6 .OR. Ncod .eq. 7) THEN
+    IF (Ncod .EQ. 1 .OR. Ncod .EQ. 2 .OR. Ncod .EQ. 3 .OR. Ncod .EQ. 4 .OR. Ncod .EQ. 5 .OR. Ncod .EQ. 6 .OR. Ncod .EQ. 7 .OR. Ncod .EQ. 8) THEN
       WRITE(*,*)" > Do you want to calculate elastic wave properties? (Y/n):" !> select code for calculate of phase and group velocities
       READ(*,*) yn_veloc
       CALL SYSTEM('clear') 
       
       IF (yn_veloc == 'Y' .or. yn_veloc == 'y') THEN
-        WRITE(99,*) " > Calculate elastic wave properties: On"
-        WRITE(*,*)" > Select the desired option:"
-        CALL SYSTEM('tput setaf 63;tput bold; echo "================================================================";tput sgr0')
-        WRITE(*,"(a)")" Phase, group and PFA without Min. thermal conductivity-----=> 1"
-        WRITE(*,"(a)")" Phase, group and PFA  with   Min. thermal conductivity-----=> 2"
-        WRITE(*,"(a)")" Back ------------------------------------------------------=> 0"
-        CALL SYSTEM('tput setaf 63;tput bold; echo "================================================================";tput sgr0')
+        !################################    
+        CALL call_thD_thermalmethod(without_color)
+        !################################    
         Read(*,*) ewp
-        !#######################################################################
+        
+        !-----------------------------------------------------------
         IF (ewp == 1) THEN
           WRITE(99,*) " > Calculate Min. thermal conductivity: On"
           WRITE(*,*)"Density of Compound (kg/m^3):"
@@ -551,7 +658,7 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
         ENDIF
         !####################################################################### 
         IF (ewp== 0) THEN
-          Goto 665
+          Goto 335
         ENDIF
       ELSE
         WRITE(99,*) " > Calculate elastic wave properties: Off" 
@@ -623,8 +730,9 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
 
 
 
+
   !===================================
-5501  IF (Ncod .eq. 1) THEN
+5501  IF (Ncod .EQ. 1) THEN
     OPEN(4,FILE="INVELC-matrix",status='old',err=1367)
     CALL system ('cp INVELC-matrix Cij.dat')
     CALL C_Inv_M(6) 
@@ -633,7 +741,7 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
     CLOSE(4)
     CALL system('clear')
   ENDIF
-  IF (Ncod .eq. 2) THEN
+  IF (Ncod .EQ. 2) THEN
     OPEN(5,FILE="elast.output",status='old',err=1366)
     OPEN(6,FILE=".ELSEtcode") 
     OPEN(7,FILE="Cij.dat",status='old',err=1369) 
@@ -675,7 +783,7 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
     !CALL sleep(5)
   ENDIF
   
-  10 format(6F11.1)
+  10 format(6F13.1)
   IF (Ncod.EQ.4) THEN
     WRITE(*,*)"> The program does not support 3rd order of the elastic constant!"
     WRITE(*,*)"Do you continue? (Y/n)"
@@ -745,6 +853,44 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
       CALL system("rm aip.py")
       GOTO 101
     ENDIF
+    IF (Ncod .EQ. 8) THEN 
+     OPEN(54,FILE="OUTCAR",status='old', err=1342)   
+     CALL SYSTEM("grep 'XX' OUTCAR | tail -1 | cut -b 4- > cijvasp ")
+     CALL SYSTEM("grep 'YY' OUTCAR | tail -1 | cut -b 4- >> cijvasp")
+     CALL SYSTEM("grep 'ZZ' OUTCAR | tail -1 | cut -b 4- >> cijvasp")
+     CALL SYSTEM("grep 'XY' OUTCAR | tail -1 | cut -b 4- >> cijvasp")
+     CALL SYSTEM("grep 'YZ' OUTCAR | tail -1 | cut -b 4- >> cijvasp")
+     CALL SYSTEM("grep 'ZX' OUTCAR | tail -1 | cut -b 4- >> cijvasp")
+     CALL SYSTEM("echo '0 0 0 0 0 0'                               >> cijvasp")
+     CLOSE(54)
+     OPEN(11,FILE="cijvasp",status='old', err=1342)                             ! read cij data inpout
+     READ(11,*) C(1,1),C(1,2),C(1,3),C(1,4),C(1,5),C(1,6)
+     IF (C(1,1) /= 0.0 )then
+      READ(11,*) C(2,1),C(2,2),C(2,3),C(2,4),C(2,5),C(2,6)
+      READ(11,*) C(3,1),C(3,2),C(3,3),C(3,4),C(3,5),C(3,6)
+      READ(11,*) C(4,1),C(4,2),C(4,3),C(4,4),C(4,5),C(4,6)
+      READ(11,*) C(5,1),C(5,2),C(5,3),C(5,4),C(5,5),C(5,6)
+      READ(11,*) C(6,1),C(6,2),C(6,3),C(6,4),C(6,5),C(6,6)
+     Else
+      WRITE(*,"(A)") ""
+      WRITE(*,"(A)") "> STOP: Elastic coefficients were not found. Did you set INCAR‌ file correctly?"
+      WRITE(*,"(A)") ""
+      STOP
+     ENDIF 
+     CLOSE(11) 
+ 
+
+     
+     OPEN(14,FILE="Cij.dat" )                                                    ! write cij data inpout
+     WRITE(14,*) C(1,1)*0.1d0,C(1,2)*0.1d0,C(1,3)*0.1d0,C(1,4)*0.1d0,C(1,5)*0.1d0,C(1,6)*0.1d0
+     WRITE(14,*) C(2,1)*0.1d0,C(2,2)*0.1d0,C(2,3)*0.1d0,C(2,4)*0.1d0,C(2,5)*0.1d0,C(2,6)*0.1d0
+     WRITE(14,*) C(3,1)*0.1d0,C(3,2)*0.1d0,C(3,3)*0.1d0,C(3,4)*0.1d0,C(3,5)*0.1d0,C(3,6)*0.1d0
+     WRITE(14,*) C(4,1)*0.1d0,C(4,2)*0.1d0,C(4,3)*0.1d0,C(4,4)*0.1d0,C(4,5)*0.1d0,C(4,6)*0.1d0
+     WRITE(14,*) C(5,1)*0.1d0,C(5,2)*0.1d0,C(5,3)*0.1d0,C(5,4)*0.1d0,C(5,5)*0.1d0,C(5,6)*0.1d0
+     WRITE(14,*) C(6,1)*0.1d0,C(6,2)*0.1d0,C(6,3)*0.1d0,C(6,4)*0.1d0,C(6,5)*0.1d0,C(6,6)*0.1d0
+     CLOSE(14) 
+    ENDIF 
+    
     CALL system('clear')
     101 OPEN(11,FILE="Cij.dat",status='old', err=1369)                             ! read cij data inpout
     READ(11,*) C(1,1),C(1,2),C(1,3),C(1,4),C(1,5),C(1,6)
@@ -774,17 +920,17 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
     !> Stability 
     CALL stability3d( Stable, C,Eig3d )
     IF (Stable==1) THEN
-      CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
-      CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-      CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
+      !############################
+      CALL call_unstable(without_color) 
+      !############################
       WRITE(99,*)" ========================================" 
       WRITE(99,"(a)")" > Elastic Stability Conditions:  Unstable; STOP"
       WRITE(99,*)" ========================================" 
     END IF
     IF (Stable==0) THEN
-      CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
-      CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-      CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
+      !############################
+      CALL call_stable(without_color)
+      !############################
       WRITE(99,*)" ========================================" 
       WRITE(99,"(a)")" > Elastic Stability Conditions:  Stable"
       WRITE(99,*)" ========================================" 
@@ -792,6 +938,7 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
     WRITE(*,'(A,36f10.2)') " > Eigenvalues (GPa):",Eig3d(1,1),Eig3d(2,2),Eig3d(3,3) ,Eig3d(4,4) ,Eig3d(5,5) ,Eig3d(6,6)
     WRITE(99,'(A,36f10.2)') " > Eigenvalues (GPa):",Eig3d(1,1),Eig3d(2,2),Eig3d(3,3) ,Eig3d(4,4) ,Eig3d(5,5) ,Eig3d(6,6)
     WRITE(99,*)" "
+    CALL born_stb(d2d3) 
     CALL sleep(1) 
     !<
     CALL proelast()
@@ -800,7 +947,8 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
     IF (ewp== 2)                          WRITE (*,*) " > Mean mass of atoms =", ma_avrag, "(gr)"
     IF (ewp== 2)                          CALL pro_wave(density,ma_avrag)
     WRITE(*,*)""
-    CALL system ('tput setaf 122;tput bold; echo " > Enter phi-meah and theta-meah between 50 and 250 (Recom.: 150*150):";tput sgr0')
+   if (without_color.EQ."Y") CALL system ('tput setaf 122;tput bold; echo " > Enter phi-meah and theta-meah between 50 and 250 (Recom.: 150 150):";tput sgr0')
+   if (without_color.EQ."N") CALL system ('echo " > Enter phi-meah and theta-meah between 50 and 250 (Recom.: 150 150):"')
     !WRITE(*,*)" > Enter phi-meah and theta-meah between 50 and 250 (Recommended: 150):"
     OPEN(59,file='MESH')
     READ(*,*)phi_meah,theta_meah
@@ -808,7 +956,8 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
     WRITE(59,*)phi_meah,theta_meah,cutmesh
     close(59)
     WRITE (*,*) " "
-    CALL system ('tput setaf 142;tput bold; echo " > Select the (hkl) Miller indices for 2D cut:";tput sgr0')
+    if (without_color.EQ."N") CALL system ('echo " > Select the (hkl) Miller indices for 2D-cut [Example: 1 0 0 ]:"')
+    if (without_color.EQ."Y") CALL system ('tput setaf 142;tput bold; echo " > Select the (hkl) Miller indices for 2D-cut [Example: 1 0 0 ]:";tput sgr0')
     !WRITE(*,*)"> Select the (hkl) Miller indices for 2D cut:" 
     READ(*,*) mmx,kky,llz
     mmx1=mmx
@@ -828,57 +977,57 @@ IF(d2d3 == 3) THEN                               !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D 
   CALL system('clear; sleep 1.5')
 ELSE
   IF(d2d3 == 2) THEN
-    OPEN(140,file="HKL")
-    WRITE(140,*)"X"
-    WRITE(140,*)"Y"
-    WRITE(140,"(I2)")0 
-    WRITE(140,"(I2)")0
-    WRITE(140,"(I2)")1
-    WRITE(140,*)'N'
-    close(140)
+    
     226 CALL system('clear')
-    IF (input_m == "N")THEN
-      WRITE(*,*)" > Select the desired method (code or file):"
-      CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
-      !WRITE(*,*)"====================================================="
-      WRITE(*,*)" AELAS                            (    VASP   ) => 1"
-      WRITE(*,*)" IRelast                          (   WIEN2K  ) => 2"    
-      WRITE(*,*)" Using Cij Tensor in Cij-2D.dat   (other codes) => 3"
-      WRITE(*,*)" Back ----------------------------------------- => 0"    
-      !WRITE(*,*)"====================================================="
-      CALL SYSTEM('tput setaf 12;tput bold; echo " =====================================================";tput sgr0')
+    IF (input_m == "N" )THEN
+      !#########################
+      CALL call_twD_code(without_color)
+      !#########################
       read(*,*) Ncod
       IF(Ncod .EQ. 0) THEN; Goto 225; ENDIF
     ELSE
       IF (input_m == "AELAS" .or. input_m == "aelas" .or. input_m == "1") THEN
         Ncod=1
-        !WRITE(*,*) "Output code: Elast"
+        WRITE(99,*) " > Output code: AELAS"
       ELSE IF(input_m == "IRelast2D" .or. input_m == "irelast2D" .or. input_m == "2") THEN
         Ncod=2
-        !WRITE(*,*) "Output code: Elast"
+        WRITE(99,*) " > Output code: IRelast-2D"
       ELSE IF(input_m == "Cij" .or. input_m == "cij" .or. input_m == "3") THEN
         Ncod=3
-      ELSE
-        WRITE(*,"(2A)") "Invalid input: -m ", input_m
+        WRITE(99,*) " > Output code: Cij-2D.dat"
+      ELSE  
+        WRITE(*,"(2A)") "Invalid input: -m ", input_m 
         STOP                 
       ENDIF
     ENDIF
     IF (Ncod .EQ. 1) THEN
       CALL system('clear')
       IF(input_opt == "N" )THEN
-        WRITE(*,*)" > Select the type of two-dimensional system:"    
-        CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
-        WRITE(*,*) " Default  option (Hex., Squ., and Rec. systems) => 1  "
-        WRITE(*,*) " Advanced option (       Oblique systems      ) => 2  "
-        WRITE(*,*) " Back ------------------------------------------=> 0  "      
-        CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
-        read(*,*)adv_mubner
+           !###########################
+           CALL call_twD_sysmethod(without_color) 
+           !###########################
+           read(*,*)adv_mubner
+           IF (adv_mubner == 0 ) goto 226
+              !==========
+           WRITE(*,*)""
+           !yn_veloc2d="n"
+           WRITE(*,*)" > Do you want to calculate elastic wave properties? (Y/n):" 
+           READ(*,*) yn_veloc2d
+           IF (TRIM(ADJUSTL(yn_veloc2d)) == "y" .or.  TRIM(ADJUSTL(yn_veloc2d)) == "Y") ThEN
+               call plane_2d(trim(yn_veloc2d))
+               WRITE(*,*)""        
+               WRITE(*,*)"Density of Compound (kg/m^2):"
+               READ(*,*) density2d        
+               CALL SYSTEM('clear')           
+           ENDIF 
+           call plane_2d(trim(yn_veloc2d))       
       ELSE
         IF (input_opt == "def" .or. input_opt == "1") THEN
           adv_mubner=1
-          !WRITE(*,*) "Output code: Elast"
+          WRITE(99,*) " > Type of 2D option: Default"
         ELSE IF(input_opt == "adv"  .or. input_opt == "2") THEN
           adv_mubner=2
+          WRITE(99,*) " > Type of 2D option: Advanced"
         ELSE
           WRITE(*,"(2A)") "Invalid input: -op ", adv_mubner
           STOP                 
@@ -887,8 +1036,9 @@ ELSE
 
       IF (adv_mubner == 2 ) adv = "adv"
       IF (adv_mubner == 1 ) adv = "ndv"
-      IF (adv_mubner == 0 ) goto 226
-    
+
+
+           
       CALL system("sed '1,2d' ELADAT > ELADAT_temp")
       OPEN(79,FILE="Cij-2D.dat")
       OPEN(53,FILE="ELADAT_temp",status='old',err=1361)
@@ -903,9 +1053,9 @@ ELSE
       !> Stability
       CALL stability2d( Stable, C2D,Eig2d )
       IF (Stable == 1) THEN
-        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
-        CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
+        !###########################
+        CALL call_unstable(without_color) 
+        !###########################
         WRITE(99,*)" ========================================" 
         WRITE(99,*) " > Elastic Stability Conditions:  Unstable" 
         WRITE(99,*)" ========================================"  
@@ -913,9 +1063,9 @@ ELSE
         STOP
       END IF
       IF (Stable == 0) THEN
-        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
-        CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
+        !###########################
+        CALL call_stable(without_color) 
+        !###########################
         WRITE(99,*)" ========================================" 
         WRITE(99,*) " > Elastic Stability Conditions:  Stable" 
         WRITE(99,*)" ========================================" 
@@ -924,33 +1074,47 @@ ELSE
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,*)" "
- 
+      CALL born_stb(d2d3) 
       !<
       CALL C_Inv_M2D(3)
-      CALL proelast_2D ()
+      CALL proelast_2D()
       CALL sleep(2)
       WRITE(*,*)""
-      CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
+      if (without_color.EQ."N") CALL system ('echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):"')
+      if (without_color.EQ."Y") CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
       !WRITE(*,*)" > Enter phi-mesh. Be divisible by 100.(e.g. 100, 200, 300, etc):"
       read(*,*)npoint
     ENDIF
-    IF (Ncod .eq. 2) THEN                                   !> IRelast2D
+    IF (Ncod .EQ. 2) THEN                                   !> IRelast2D
       
       CALL system('clear')
       IF(input_opt == "N" )THEN
-         WRITE(*,*)" > Select the type of two-dimensional system:"    
-         CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
-         WRITE(*,*) " Default  option (Hex., Squ., and Rec. systems) => 1  "
-         WRITE(*,*) " Advanced option (       Oblique systems      ) => 2  "
-         WRITE(*,*) " Back ------------------------------------------=> 0  "      
-         CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
+        !###########################
+        CALL call_twD_sysmethod(without_color) 
+        !###########################  
          read(*,*)adv_mubner
+         IF (adv_mubner == 0 ) goto 226
+         !==========
+         WRITE(*,*)""
+         !yn_veloc2d="n"
+         WRITE(*,*)" > Do you want to calculate elastic wave properties? (Y/n):" 
+         READ(*,*) yn_veloc2d
+         !CALL SYSTEM('clear')  
+        IF (TRIM(ADJUSTL(yn_veloc2d)) == "y" .or.  TRIM(ADJUSTL(yn_veloc2d)) == "Y") ThEN
+           call plane_2d(trim(yn_veloc2d))
+           WRITE(*,*)""        
+           WRITE(*,*)"Density of Compound (kg/m^2):"
+           READ(*,*) density2d        
+           CALL SYSTEM('clear')           
+        ENDIF      
+        call plane_2d(trim(yn_veloc2d))            
       ELSE
         IF (input_opt == "def" .or. input_opt == "1") THEN
           adv_mubner=1
-          !WRITE(*,*) "Output code: Elast"
+          WRITE(99,*) " > Type of 2D option: Default"
         ELSE IF(input_opt == "adv"  .or. input_opt == "2") THEN
           adv_mubner=2
+          WRITE(99,*) " > Type of 2D option: Advanced"
         ELSE
           WRITE(*,"(2A)") "Invalid input: -op ", adv_mubner
           STOP                 
@@ -959,7 +1123,7 @@ ELSE
 
       IF (adv_mubner == 2 ) adv = "adv"
       IF (adv_mubner == 1 ) adv = "ndv"
-      IF (adv_mubner == 0 ) goto 226
+ 
     
       OPEN(11,FILE="ELC-matrix",status='old', err=13692)        
       READ(11,*) C2D(1,1)
@@ -982,9 +1146,9 @@ ELSE
       CALL stability2d( Stable, C2D,Eig2d )
       IF (Stable == 1) THEN
         WRITE(*,*)""
-        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
-        CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-        CALL system ('tput setaf 9;tput bold; echo " =======================================";tput sgr0')
+        !###########################
+        CALL call_unstable(without_color) 
+        !###########################
         WRITE(99,*)" ========================================" 
         WRITE(99,*) " > Elastic Stability Conditions:  Unstable" 
         WRITE(99,*)" ========================================"         
@@ -992,9 +1156,9 @@ ELSE
       END IF
       IF (Stable == 0) THEN
         WRITE(*,*)""
-        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
-        CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-        CALL system ('tput setaf 10;tput bold; echo " =======================================";tput sgr0')
+        !###########################
+        CALL call_stable(without_color) 
+        !###########################
         WRITE(99,*)" ========================================" 
         WRITE(99,*) " > Elastic Stability Conditions:  Stable" 
         WRITE(99,*)" ========================================" 
@@ -1002,32 +1166,46 @@ ELSE
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,*)" "
+      CALL born_stb(d2d3) 
       !>
       CALL C_Inv_M2D(3)
       CALL proelast_2D ()
       CALL sleep(2)
       WRITE(*,*)""
-      CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
+      if (without_color.EQ."N") CALL system ('echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):"')
+      if (without_color.EQ."Y") CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
       !WRITE(*,*)" > Enter phi-mesh. Be divisible by 100.(e.g. 100, 200, 300, etc):"
       read(*,*)npoint
     END IF    
-    IF (Ncod .eq. 3) THEN
+    IF (Ncod .EQ. 3) THEN
       CALL system('clear')
       IF(input_opt == "N" )THEN
-
-      WRITE(*,*)" > Select the type of two-dimensional system:"    
-      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
-      WRITE(*,*) " Default  option (Hex., Squ., and Rec. systems) => 1  "
-      WRITE(*,*) " Advanced option (       Oblique systems      ) => 2  "
-      WRITE(*,*) " Back ------------------------------------------=> 0  "      
-      CALL SYSTEM('tput setaf 41;tput bold; echo " ====================================================";tput sgr0')  
+        !###########################
+        CALL call_twD_sysmethod(without_color) 
+        !###########################  
       read(*,*)adv_mubner
+      IF (adv_mubner == 0 ) goto 226
+        !==========
+        WRITE(*,*)""
+        !yn_veloc2d="n"
+        WRITE(*,*)" > Do you want to calculate elastic wave properties? (Y/n):" 
+        READ(*,*) yn_veloc2d
+        IF (TRIM(ADJUSTL(yn_veloc2d)) == "y" .or.  TRIM(ADJUSTL(yn_veloc2d)) == "Y") ThEN
+            call plane_2d(trim(yn_veloc2d))
+            WRITE(*,*)""        
+            WRITE(*,*)"Density of Compound (kg/m^2):"
+            READ(*,*) density2d        
+            CALL SYSTEM('clear')           
+        ENDIF
+        call plane_2d(trim(yn_veloc2d))
+        !CALL SYSTEM('clear')      
       ELSE
         IF (input_opt == "def" .or. input_opt == "1") THEN
           adv_mubner=1
-          !WRITE(*,*) "Output code: Elast"
+          WRITE(99,*) " > Type of 2D option: Default"
         ELSE IF(input_opt == "adv"  .or. input_opt == "2") THEN
           adv_mubner=2
+          WRITE(99,*) " > Type of 2D option: Advanced"
         ELSE
           WRITE(*,"(2A)") "Invalid input: -op ", adv_mubner
           STOP                 
@@ -1035,7 +1213,7 @@ ELSE
       ENDIF
       IF (adv_mubner == 2 ) adv = "adv"
       IF (adv_mubner == 1 ) adv = "ndv"
-      IF (adv_mubner == 0 ) goto 226
+   
       OPEN(11,FILE="Cij-2D.dat",status='old', err=13691)        
       READ(11,*) C2D(1,1),C2D(1,2),C2D(1,3)
       READ(11,*) C2D(2,1),C2D(2,2),C2D(2,3)
@@ -1046,9 +1224,9 @@ ELSE
       CALL stability2d( Stable, C2D,Eig2d )
       IF (Stable == 1) THEN
         WRITE(*,*)""
-        CALL system ('tput setaf 9;tput bold; echo " ========================================";tput sgr0')     
-        CALL system ('tput setaf 9;tput bold; echo " > Elastic Stability Conditions:  Unstable; STOP";tput sgr0')
-        CALL system ('tput setaf 9;tput bold; echo " ========================================";tput sgr0')
+        !###########################
+        CALL call_unstable(without_color) 
+        !###########################
         WRITE(99,*)" ========================================" 
         WRITE(99,*) " > Elastic Stability Conditions:  Unstable" 
         WRITE(99,*)" ========================================" 
@@ -1056,9 +1234,9 @@ ELSE
       END IF
       IF (Stable == 0) THEN
         WRITE(*,*)""
-        CALL system ('tput setaf 10;tput bold; echo " ========================================";tput sgr0')
-        CALL system ('tput setaf 10;tput bold; echo " > Elastic Stability Conditions:  Stable";tput sgr0')
-        CALL system ('tput setaf 10;tput bold; echo " ========================================";tput sgr0')
+        !###########################
+        CALL call_stable(without_color) 
+        !###########################
         WRITE(99,*)" ========================================" 
         WRITE(99,*) " > Elastic Stability Conditions:  Stable" 
         WRITE(99,*)" ========================================" 
@@ -1066,24 +1244,112 @@ ELSE
       WRITE(*,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,'(A,36f10.2)')" > Eigenvalues (N/m):", Eig2d(1,1),Eig2d(2,2),Eig2d(3,3) 
       WRITE(99,*)" "
+      CALL born_stb(d2d3) 
       !<
       CALL C_Inv_M2D(3)
-      CALL proelast_2D()
+      CALL proelast_2D() !<================ import
       CALL sleep(1)
       WRITE(*,*)""
-      CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
+      if (without_color.EQ."N") CALL system ('echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):"')
+      if (without_color.EQ."Y") CALL system ('tput setaf 122;tput bold; echo " > Enter phi-mesh. Be divisible by 100 (e.g. 100, 200, 300, etc):";tput sgr0')
       !WRITE(*,*)" > Enter phi-mesh. Be divisible by 100.(e.g. 100, 200, 300, etc):"
       read(*,*)npoint
     END IF    
-    IF(d2d3 /= 3 .and. d2d3 /= 2) THEN
+    IF(d2d3 /= 3 .and. d2d3 /= 2 .and. d2d3 /= 1) THEN
       WRITE(*,*)"Invalid Input!!";   
       STOP
     END IF 
   END IF
 END IF  !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D end
 
+IF(d2d3 == 1) THEN
+      CALL system('clear')
+    IF (input_m == "N" )THEN
+      !#############################
+      CALL  call_oneD_code(without_color)
+      !#############################
+      read(*,*) Ncod
+      IF(Ncod .EQ. 0) THEN; Goto 225; ENDIF
+    ELSE
+      IF (input_m == "Cij" .or. input_m == "cij" .or. input_m == "1") THEN
+        Ncod=1
+        WRITE(99,*) " > Output code: Cij-1D.dat"
+      ELSE IF(input_m == "Manual" .or. input_m == "manual" .or. input_m == "2") THEN
+        Ncod=3
+        WRITE(99,*) " > Output code: Manual data"
+      ELSE  
+        WRITE(*,"(2A)") "Invalid input: -m ", input_m 
+        STOP                 
+      ENDIF
+   ENDIF 
+ IF (Ncod==1) ThEN
+      OPEN(11,FILE="Cij-1D.dat",status='old', err=13690)        
+      READ(11,*) C1D(1,1),C1D(1,2) 
+      READ(11,*) C1D(2,1),C1D(2,2) 
+      close(11)
+      CALL stability1d( Stable, C1D )
+      IF (Stable == 1) THEN
+        WRITE(*,*)""
+        !###########################
+        CALL call_unstable(without_color) 
+        !###########################
+        WRITE(99,*)" ========================================" 
+        WRITE(99,*) " > Elastic Stability Conditions:  Unstable" 
+        WRITE(99,*)" ========================================" 
+        STOP
+      END IF
+      IF (Stable == 0) THEN
+        WRITE(*,*)""
+        !###########################
+        CALL call_stable(without_color) 
+        !###########################
+        WRITE(99,*)" ========================================" 
+        WRITE(99,*) " > Elastic Stability Conditions:  Stable" 
+        WRITE(99,*)" ========================================" 
+        CALL sleep(1)
+      END IF      
+ ENDIF
 
+ IF (Ncod==2) ThEN
+      OPEN(11,FILE="Cij-1D.dat") 
+      WRITE(*,*)"> C11:"       
+      READ(*,*) C1D(1,1)
+      WRITE(*,*)"> C22:"       
+      READ(*,*) C1D(2,2)
+      WRITE(*,*)"> C12 (= C21):"      
+      READ(*,*) C1D(1,2) 
+      C1D(2,1)=C1D(1,2)
+      Write(11,"(2F8.2)") C1D(1,1),C1D(1,2) 
+      Write(11,"(2F8.2)") C1D(2,1),C1D(2,2) 
+      close(11)
+      CALL stability1d( Stable, C1D )
+     IF (Stable ==1) THEN 
+        WRITE(*,*)""
+        !###########################
+        CALL call_unstable(without_color) 
+        !###########################
+        WRITE(99,*)" ========================================" 
+        WRITE(99,*) " > Elastic Stability Conditions:  Unstable" 
+        WRITE(99,*)" ========================================" 
+        STOP
+      END IF
+      IF (Stable == 0) THEN
+        WRITE(*,*)""
+        !###########################
+        CALL call_stable(without_color) 
+        !###########################
+        WRITE(99,*)" ========================================" 
+        WRITE(99,*) " > Elastic Stability Conditions:  Stable" 
+        WRITE(99,*)" ========================================" 
+        CALL sleep(1)
+      END IF      
+ ENDIF
+
+CALL sij1D(C1D,S1D)  
+CALL proelast_1D(S1D)
+ENDIF
 WRITE(*,*)" > Preparing data. Please wait..."
+
 IF(d2d3 == 3) THEN !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
 !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Data clarity
   Nmesh_thata  = theta_meah!100
@@ -1101,7 +1367,7 @@ IF(d2d3 == 3) THEN !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
   OPEN(65, FILE="3d_pugh.dat"    )
  ! OPEN(66,FILE="pughP_Min.dat"   )
  ! OPEN(67,FILE="pughN_Min.dat"   )
- ! OPEN(68,FILE="pughP_Ave.dat"   )
+  OPEN(68,FILE="3d_pwave.dat"   )
  
   OPEN(15, FILE="3d_young.dat")
   
@@ -1116,8 +1382,9 @@ IF(d2d3 == 3) THEN !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
  ! OPEN(22,FILE="MinN_ratio.dat"   )
   !OPEN(23,FILE="AveP_ratio.dat"   )
   !OPEN(24,FILE="AveN_ratio.dat"   )
-  
-  OPEN(30, FILE="3d_bulk_m2.dat" )
+ ! OPEN(24, FILE="3d_bulk_m3.dat" )
+ ! OPEN(30, FILE="3d_bulk_m2.dat" )
+  ! OPEN(30, FILE="3d_bulk_m1.dat" )
   OPEN(31, FILE="3d_bulk.dat"      )
   
   OPEN(32, FILE="3d_sound.dat"     ) 
@@ -1150,32 +1417,41 @@ IF(d2d3 == 3) THEN !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
     !inter_phi=Nmesh_phi/Nmesh_phIF 
         !
   open(59, FILE='.aelastpro')
-  
+
   IF (yn_veloc=='Y' .or. yn_veloc=='y') THEN
-    open(655, FILE='.aelastpro2')
+    open(55, FILE='.aelastpro2')
   ENDIF
   
-!! Start loop=0 for wave  and elste pro.============================
+!! Start loop=0 for wave  and elast pro.============================
 
         CALL CALLCij (CCO)
         i=0
         j=0
         theta=DBLE(i)/DBLE(Nmesh_thata)*PI
         phi=DBLE(j)/DBLE(Nmesh_phi)*2D0*PI
+        
         vec(1)=SIN(theta)*COS(phi)
         vec(2)=SIN(theta)*SIN(phi)
         vec(3)=COS(theta)
         v11=vec(1)*vec(1) ; v12=vec(1)*vec(2)
         v13=vec(1)*vec(3) ; v22=vec(2)*vec(2)
         v23=vec(2)*vec(3) ; v33=vec(3)*vec(3)
-                
-        BB=( S(1,1)+S(1,2)+S(1,3) )*v11&
-          +( S(1,6)+S(2,6)+S(3,6) )*v12&
-          +( S(1,5)+S(2,5)+S(3,5) )*v13&
-          +( S(1,2)+S(2,2)+S(2,3) )*v22&
-          +( S(1,4)+S(2,4)+S(3,4) )*v23&
-          +( S(1,3)+S(2,3)+S(3,3) )*v33 
-      BINver=1D0/BB
+        
+      IF (Nbulk==1) THEN                
+          CALL bulk_method_one(S,v11,v12,v22,v13,v23,v33, bulk_m1)
+         BINver= bulk_m1
+      ENDIF
+      
+     ! IF (Nbulk==2) THEN
+     !   CALL bulk_method_two(Pratio, sheainvar*1000D0, bulk_m2)
+      ! BINver= bulk_m2
+     ! ENDIF
+      
+      IF (Nbulk==2) THEN
+        CALL bulk_method_three(S, vec, phi, theta, bulk_m3)
+        BINver= 1.D0/bulk_m3
+      ENDIF      
+      
       Maxbulk = BINver
       Minbulk = BINver
       !!
@@ -1197,32 +1473,16 @@ IF(d2d3 == 3) THEN !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start
       +2*v12*v13*S(5,6)+  v12*v12*S(6,6)
       SINver=1.0_dp/SS   !Young
       CALL CShear(G_min,G_max,G_Ave,phi,theta,v11,v12,v13,v22,v23,v33,a6666,sheainvar)
-      !==================================================== bulk method 3       v1.7.3        
- CALL bulk_method(Pratio, sheainvar*1000D0, bulk_m2)
-     
- ! Max_bulkm2 = bulk_m2
-		Min_bulkm2 = bulk_m2
-		
-		!WRITE(*,*) bulk_m2
-	IF (bulk_m2 .GE. Max_bulkm2)THEN
-     Max_bulkm2      = bulk_m2
-     Maxbulkm2_theta = theta
-     Maxbulkm2_phi   = phi
-    ! WRITE(*,*) Max_bulkm2
-  ENDIF
  
-	IF (bulk_m2 .LE. Min_bulkm2)THEN
-		Min_bulkm2      = bulk_m2
-    Minbulkm2_theta = theta
-    Minbulkm2_phi   = phi
-    !WRITE(*,*) Min_bulkm2
-	ENDIF
-     
-!==================================================== bulk method 3       v1.7.3 
-      CALL CHardness(BINver,SINver,sheainvar,hardvar)
+      !method_hard = "T"
+       CALL CHardness(BINver, SINver, G_min*1000D0, G_max*1000D0, &
+                      NPratio_min, NPratio_max, hardvar_max, hardvar_min, hardvar, method_hard)
       ! WRITE(*,*)hardvar
-        Ha_max2 = hardvar
-        Ha_min2 = hardvar
+        Ha_max1 = hardvar_max
+        Ha_min1 = hardvar_max
+        
+        Ha_max2 = hardvar_min
+        Ha_min2 = hardvar_min
         
  IF (yn_veloc=='Y' .or. yn_veloc=='y') THEN        
         CALL wave_main_AAEP(i,j,theta,phi,vec,CCO,density,   VVG_P,    &
@@ -1273,11 +1533,12 @@ ENDIF
     theta=DBLE(i)/DBLE(Nmesh_thata)*PI
     
     Nmesh_phi2 = Nmesh_phi
-    IF (i.EQ.0 .OR. i.EQ.Nmesh_thata) Nmesh_phi2=0D0 
-    IF ( i==Nmesh_thata/4d0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '|====%25====>-------------|'; ENDIF
-    IF ( i==Nmesh_thata/3d0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '|======%50======>---------|'; ENDIF
-    IF ( i==Nmesh_thata/2d0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '|========%75========>-----|'; ENDIF
-    IF ( i==Nmesh_thata/1d0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '|==========%100==========>|'; ENDIF
+    !IF (i.EQ.0 .OR. i.EQ.Nmesh_thata) Nmesh_phi2=0D0 
+     IF (i.EQ.0) Nmesh_phi2=0 
+    IF ( i==Nmesh_thata/4D0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '[====%25====>-----------------]'; ENDIF
+    IF ( i==Nmesh_thata/3D0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '[======%50======>-------------]'; ENDIF
+    IF ( i==Nmesh_thata/2D0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '[=========%75=========>-------]'; ENDIF
+    IF ( i==Nmesh_thata/1D0 ) THEN  ; CALL system( ' clear ' ) ;PRINT*, '[===========%100=============>]'; ENDIF
     
     DO j=0, Nmesh_phi2
       phi=DBLE(j)/DBLE(Nmesh_phi)*2D0*PI
@@ -1424,14 +1685,24 @@ ENDIF
         !
         ! Triclinic
         !IF(CLaS .EQ. 7) THEN
-!==================================================== bulk method 1       v1.7.2        
-      BB=( S(1,1)+S(1,2)+S(1,3) )*v11&
-        +( S(1,6)+S(2,6)+S(3,6) )*v12&
-        +( S(1,5)+S(2,5)+S(3,5) )*v13&
-        +( S(1,2)+S(2,2)+S(2,3) )*v22&
-        +( S(1,4)+S(2,4)+S(3,4) )*v23&
-        +( S(1,3)+S(2,3)+S(3,3) )*v33 
-      BINver=1D0/BB
+!==================================================== bulk method 1       v1.7.2  
+IF (Nbulk == 1) then      
+   CALL bulk_method_one(S,v11,v12,v22,v13,v23,v33, bulk_m1)
+   BINver= bulk_m1
+ENDIF 
+!==================================================== bulk method 2       v1.7.3 
+!IF (Nbulk == 2) then      
+! CALL bulk_method_two(Pratio, sheainvar*1000D0, bulk_m2) 
+!  BINver = bulk_m2
+!ENDIF
+!==================================================== bulk method 3       v1.7.4  
+IF (Nbulk == 2) then      
+  CALL bulk_method_three(S, vec,phi, theta, bulk_m3)
+  BINver = 1.D0/bulk_m3
+ENDIF
+!-------  
+      Maxbulk = BINver
+      Minbulk = BINver
       IF (BINver.GE.Maxbulk) THEN
         Maxbulk       = BINver
         Maxbulk_theta = theta
@@ -1445,30 +1716,9 @@ ENDIF
         Minbulk_phi   = phi
         !WRITE(*,*)Minyoung
       ENDIF
-!==================================================== bulk method 1        v1.7.2 
+!==================================================== END bulk methods       
 
-!==================================================== bulk method 3       v1.7.3        
- CALL bulk_method(Pratio, sheainvar*1000D0, bulk_m2)
-     
- ! Max_bulkm2 = bulk_m2
-		Min_bulkm2 = bulk_m2
-		
-		!WRITE(*,*) bulk_m2
-	IF (bulk_m2 .GE. Max_bulkm2)THEN
-     Max_bulkm2      = bulk_m2
-     Maxbulkm2_theta = theta
-     Maxbulkm2_phi   = phi
-    ! WRITE(*,*) Max_bulkm2
-  ENDIF
- 
-	IF (bulk_m2 .LE. Min_bulkm2)THEN
-		Min_bulkm2      = bulk_m2
-    Minbulkm2_theta = theta
-    Minbulkm2_phi   = phi
-    !WRITE(*,*) Min_bulkm2
-	ENDIF
-     
-!==================================================== bulk method 3       v1.7.3        
+  !==================================================== bulk method 4       v1.7.4        
       SS=v11*v11*S(1,1)&
       +2*v12*v12*S(1,2)&
       +2*v13*v13*S(1,3)&
@@ -1537,7 +1787,7 @@ ENDIF
       IF (G_Ave.LE.0D0) shaven = -G_Ave
       IF (G_Ave.ge.0D0) shavep =  G_Ave
 
-      CALL Cpugh(pugh_min,pugh_max,pugh_Ave,phi,theta,v11,v12,v13,v22,v23,v33,a6666,sheainvar)
+      CALL Cpugh(pugh_min,pugh_max,G_min*1000000D0,G_max*1000000D0,BINver)
 
       IF (pugh_max.GE.pugh_max2) THEN
         pugh_max2       = pugh_max
@@ -1555,6 +1805,22 @@ ENDIF
       IF (pugh_Ave.LE.0D0) pughaven = -pugh_Ave
       IF (pugh_Ave.ge.0D0) pughavep =  pugh_Ave
 
+
+     CALL CPWave(G_min*1000D0,G_max*1000D0,BINver,Pw_max,Pw_min)
+      pwave_min2=G_min*1000D0
+      pwave_max2=G_max*1000D0
+      IF (Pw_max.GE.pwave_max2) THEN
+        pwave_max2       = Pw_max
+        pwave_max2_theta = theta
+        pwave_max2_phi   = phi
+      ENDIF  
+      IF (Pw_min.LE.pwave_min2) THEN
+        pwave_min2       = Pw_min
+        pwave_min2_theta = theta
+        pwave_min2_phi   = phi
+      ENDIF
+      IF (Pw_min.LE.0D0) pwaveminn = -Pw_min
+      IF (Pw_min.ge.0D0) pwaveminp =  Pw_min
 
       CO= ( S(1,1)+S(1,2)+S(1,3) )*v11&
             +( S(1,6)+S(2,6)+S(3,6) )*v12&
@@ -1575,10 +1841,10 @@ ENDIF
         Mincomp_theta = theta
         Mincomp_phi   = phi
       ENDIF
-      comminn=0.0d0
-      comminp=0.0d0
+      comminn=0.0D0
+      comminp=0.0D0
       ! WRITE(41,*) Mincomp
-      IF (co .LE. 0.0D0) comminn = -1.0d0*CO
+      IF (co .LE. 0.0D0) comminn = -1.0D0*CO
       IF (co .GE. 0.0D0) comminp =  CO
 
       NPratio_max=0D0
@@ -1619,85 +1885,106 @@ ENDIF
       IF (NPratio_ave.LE.0.0000D0) paven = -NPratio_ave
       IF (NPratio_ave.ge.0.0000D0) pavep =  NPratio_ave
 !!!!!!!!!!!!!!!!!!!  v1.6.3
-      CALL CHardness(BINver,SINver,G_max*1000D0, hardvar)
- 
-      IF (hardvar.GE.Ha_max2) THEN
-        Ha_max2       = hardvar   
+      !CALL CHardness(BINver,SINver,G_max*1000D0, hardvar)
+       !method_hard = "T"
+       CALL CHardness(BINver, SINver, G_min*1000D0, G_max*1000D0, &
+                      NPratio_min, NPratio_max, hardvar_max, hardvar_min, hardvar, method_hard)
+      !write(*,*)hardvar
+      IF (hardvar_max.GE.Ha_max2) THEN
+        Ha_max2       = hardvar_max   
         Ha_max2_theta = theta
         Ha_max2_phi   = phi
       ENDIF  
-      IF (hardvar.LE.Ha_min2) THEN
-        Ha_min2       = hardvar
+      IF (hardvar_max.LE.Ha_min2) THEN
+        Ha_min2       = hardvar_max
         Ha_min2_theta = theta
         Ha_min2_phi   = phi
       ENDIF
-!
+
+      IF (hardvar_min.GE.Ha_max1) THEN
+        Ha_max1       = hardvar_min   
+        Ha_max1_theta = theta
+        Ha_max1_phi   = phi
+      ENDIF  
+      IF (hardvar_min.LE.Ha_min1) THEN
+        Ha_min1       = hardvar_min
+        Ha_min1_theta = theta
+        Ha_min1_phi   = phi
+      ENDIF      
+!===
       !open(41,file='o')
-      WRITE(59,*) G_max*1000D0,shminp*1000D0,shminn*1000D0,shavep*1000D0,SINver,CO*1000d0,comminp*1000d0,&
-                  comminn*1000d0,NPratio_max,pminp,pminn,pavep,paven,BINver,maxEVaLM,maxEVaTM,minEVaTM,pugh_max*1000D0,&
-                  pughminp*1000D0,pughminn*1000D0,pughavep*1000D0,hardvar
+     
+      WRITE(59,*) G_max*1000D0,shminp*1000D0,shminn*1000D0,shavep*1000D0,SINver,CO*1000D0,comminp*1000D0,&
+                  comminn*1000D0,NPratio_max,pminp,pminn,pavep,paven,BINver,maxEVaLM,maxEVaTM,minEVaTM,pugh_max*1000D0,&
+                  pughminp*1000D0,pughminn*1000D0,pughavep*1000D0,hardvar_max, hardvar_min
                   
       IF (yn_veloc=='Y' .or. yn_veloc=='y') THEN
-      !rite(*,*)"GH"
-        WRITE(655,*) VVP_P/1000D0,VVG_P/1000D0,VVP_Sf/1000D0,VVG_Sf/1000D0,VVP_Ss/1000D0,VVG_Ss/1000D0,VV_P_PF,VV_Sf_PF,VV_Ss_PF,km
+        WRITE(55,*) VVP_P/1000D0,VVG_P/1000D0,VVP_Sf/1000D0,VVG_Sf/1000D0,VVP_Ss/1000D0,VVG_Ss/1000D0,VV_P_PF,VV_Sf_PF,VV_Ss_PF,km
       ENDIF
-     
+      
+      
       WRITE(111,*) theta, phi
       WRITE(115,"(3F30.15)")vec(1),vec(2),vec(3)
       
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! tests
-WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    vec(3)*ABS( bulk_m2 )   ,&     
-                      vec(1)*ABS( Min_bulkm2 ),    vec(2)*ABS( Min_bulkm2 ),    vec(3)*ABS( Min_bulkm2 ),&    
-                      vec(1)*ABS( Max_bulkm2 ),    vec(2)*ABS( Max_bulkm2 ),    vec(3)*ABS( Max_bulkm2 ) 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      
-      WRITE(28,"(4F30.15)")  vec(1)*ABS(   hardvar   ),    vec(2)*ABS(   hardvar   ),    vec(3)*ABS(   hardvar   )                     !>> hardness
+      WRITE(68,"(12F30.15)") vec(1)*ABS( Pw_max ),          vec(2)*ABS( Pw_max ),          vec(3)*ABS( Pw_max ),&     !>> P-wave
+                             vec(1)*ABS(pwaveminp ),        vec(2)*ABS( pwaveminp),        vec(3)*ABS(pwaveminp ),&   !>> P-wave
+                             (theta*180.0D0)/PI, (phi*180.0D0)/PI ,Pw_max,pwaveminp                                   !>> P-wave
+
+     
+      WRITE(28,"(12F30.15)")  vec(1)*ABS(   hardvar_max   ),    vec(2)*ABS(   hardvar_max   ),    vec(3)*ABS(   hardvar_max   ) ,&  !>> hardness
+                             vec(1)*ABS(   hardvar_min   ),    vec(2)*ABS(   hardvar_min   ),    vec(3)*ABS(   hardvar_min   ) ,&  !>> hardness
+                             (theta*180.0D0)/PI, (phi*180.0D0)/PI,hardvar_max, hardvar_min          
+                                                            !>> hardness
       !WRITE(18,*) vec(1)*ABS( G_Ave*1000D0 ),    vec(2)*ABS( G_Ave*1000D0 ),    vec(3)*ABS( G_Ave*1000D0 )                !>> shear
-      WRITE(16,"(12F30.15)") vec(1)*ABS( G_max*1000D0 ),    vec(2)*ABS( G_max*1000D0 ),    vec(3)*ABS( G_max*1000D0 ),&    !>> shear
+      WRITE(16,"(18F30.15)") vec(1)*ABS( G_max*1000D0 ),    vec(2)*ABS( G_max*1000D0 ),    vec(3)*ABS( G_max*1000D0 ),&    !>> shear
                              vec(1)*ABS(shminp*1000D0 ),    vec(2)*ABS( shminp*1000D0),    vec(3)*ABS(shminp*1000D0 ),&    !>> shear
                              vec(1)*ABS(shminn*1000D0 ),    vec(2)*ABS( shminn*1000D0),    vec(3)*ABS(shminn*1000D0 ),&    !>> shear
-                             vec(1)*ABS(shavep*1000D0 ),    vec(2)*ABS( shavep*1000D0),    vec(3)*ABS(shavep*1000D0 )      !>> shear
+                             vec(1)*ABS(shavep*1000D0 ),    vec(2)*ABS( shavep*1000D0),    vec(3)*ABS(shavep*1000D0 ),&    !>> shear
+                             (theta*180.0D0)/PI, (phi*180.0D0)/PI,G_max*1000D0,shminp*1000D0                               !>> shear
       !WRITE(18,*) vec(1)*ABS(shaven*1000D0 ),    vec(2)*ABS( shaven*1000D0),    vec(3)*ABS(shaven*1000D0 )   !>> shear
 	
-      WRITE(65,"(12F30.15)") vec(1)*ABS( pugh_max*1000D0  ),    vec(2)*ABS( pugh_max*1000D0  ),     vec(3)*ABS( pugh_max*1000D0  ),&    !>> pugh
+      WRITE(65,"(18F30.15)") vec(1)*ABS( pugh_max*1000D0  ),    vec(2)*ABS( pugh_max*1000D0  ),     vec(3)*ABS( pugh_max*1000D0  ),&    !>> pugh
                              vec(1)*ABS( pughminp*1000D0  ),    vec(2)*ABS( pughminp*1000D0  ),     vec(3)*ABS( pughminp*1000D0  ),&    !>> pugh
                              vec(1)*ABS( pughminn*1000D0  ),    vec(2)*ABS( pughminn*1000D0  ),     vec(3)*ABS( pughminn*1000D0  ),&    !>> pugh
-                             vec(1)*ABS( pughavep*1000D0  ),    vec(2)*ABS( pughavep*1000D0  ),     vec(3)*ABS( pughavep*1000D0  )      !>> pugh
-   
-      WRITE(15,"(3F30.15)") vec(1)*ABS(    SINver        ),    vec(2)*ABS(    SINver        ),    vec(3)*ABS(   SINver          )    !>> young
+                             vec(1)*ABS( pughavep*1000D0  ),    vec(2)*ABS( pughavep*1000D0  ),     vec(3)*ABS( pughavep*1000D0  ),&       !>> pugh
+                             (theta*180.0D0)/PI, (phi*180.0D0)/PI,pugh_max*1000D0, pughminp*1000D0
+                             
+      WRITE(15,"(9F30.15)") vec(1)*ABS(    SINver        ),    vec(2)*ABS(    SINver        ),    vec(3)*ABS(   SINver          ),&     !>> young
+	                           (theta*180.0D0)/PI, (phi*180.0D0)/PI,pugh_max*1000D0,SINver
 	   
-	   
-      WRITE(14,"(9F30.15)")  vec(1)*ABS(  CO*1000d0   ),    vec(2)*ABS(  CO*1000d0   ),    vec(3)*ABS(  CO*1000d0   ),&    !>> compress
-                             vec(1)*ABS(comminp*1000d0),    vec(2)*ABS(comminp*1000d0),    vec(3)*ABS(comminp*1000d0),&    !>> compress
-                             vec(1)*ABS(comminn*1000d0),    vec(2)*ABS(comminn*1000d0),    vec(3)*ABS(comminn*1000d0)      !>> compress
-	   
-      WRITE(20,"(15F30.15)") vec(1)*ABS( NPratio_max  ),    vec(2)*ABS( NPratio_max  ),    vec(3)*ABS(  NPratio_max ),&    !>> poisson
+      WRITE(14,"(20F30.15)")  vec(1)*ABS(  CO*1000D0   ),    vec(2)*ABS(  CO*1000D0   ),    vec(3)*ABS(  CO*1000D0   ),&    !>> compress
+                             vec(1)*ABS(comminp*1000D0),    vec(2)*ABS(comminp*1000D0),    vec(3)*ABS(comminp*1000D0),&    !>> compress
+                             vec(1)*ABS(comminn*1000D0),    vec(2)*ABS(comminn*1000D0),    vec(3)*ABS(comminn*1000D0),&       !>> compress
+	                            (theta*180.0D0)/PI, (phi*180.0D0)/PI,CO*1000D0,comminp*1000D0,comminn*1000D0
+	                            
+      WRITE(20,"(26F30.15)") vec(1)*ABS( NPratio_max  ),    vec(2)*ABS( NPratio_max  ),    vec(3)*ABS(  NPratio_max ),&    !>> poisson
                              vec(1)*ABS(    pminp     ),    vec(2)*ABS(    pminp     ),    vec(3)*ABS(    pminp     ),&    !>> poisson
                              vec(1)*ABS(    pminn     ),    vec(2)*ABS(    pminn     ),    vec(3)*ABS(    pminn     ),&    !>> poisson
                              vec(1)*ABS(    pavep     ),    vec(2)*ABS(    pavep     ),    vec(3)*ABS(    pavep     ),&    !>> poisson
-                             vec(1)*ABS(    paven     ),    vec(2)*ABS(    paven     ),    vec(3)*ABS(    paven     )      !>> poisson
-	   
+                             vec(1)*ABS(    paven     ),    vec(2)*ABS(    paven     ),    vec(3)*ABS(    paven     ),&       !>> poisson
+	                             (theta*180.0D0)/PI, (phi*180.0D0)/PI,NPratio_max,pminp,pminn
       ! WRITE(30,*) vec(1)*ABS(   Minbulk    ),    vec(2)*ABS(   Minbulk    ),    vec(3)*ABS(   Minbulk    )         !>> bulk
-      WRITE(31,"(3F30.15)") vec(1)*ABS(   BINver    ),    vec(2)*ABS(   BINver    ),    vec(3)*ABS(   BINver    )    !>> bulk
-	   
+      WRITE(31,"(9F30.15)") vec(1)*ABS(   BINver    ),    vec(2)*ABS(   BINver    ),    vec(3)*ABS(   BINver    ),&     !>> bulk
+	                            (theta*180.0D0)/PI, (phi*180.0D0)/PI,BINver
       WRITE(32,"(9F30.15)") vec(1)*ABS(   maxEVaLM   ),    vec(2)*ABS(  maxEVaLM    ),    vec(3)*ABS(   maxEVaLM   ),&    !>> sound
                             vec(1)*ABS(   maxEVaTM   ),    vec(2)*ABS(  maxEVaTM    ),    vec(3)*ABS(   maxEVaTM   ),&    !>> sound
                             vec(1)*ABS(   minEVaTM   ),    vec(2)*ABS(  minEVaTM    ),    vec(3)*ABS(   minEVaTM   )      !>> sound
 
       IF(yn_veloc=='Y' .or. yn_veloc=='y') THEN
-        WRITE(100,*) vec(1)*ABS(    VVP_P   ),    vec(2)*ABS(   VVP_P     ) ,vec(3)*ABS(   VVP_P    )   !>>  VVP_P
-        WRITE(101,*) vec(1)*ABS(    VVG_P   ),    vec(2)*ABS(   VVG_P     ) ,vec(3)*ABS(   VVG_P    )   !>>  VVG_P
-        WRITE(102,*) vec(1)*ABS(    VV_P_PF ),    vec(2)*ABS(   VV_P_PF   ) ,vec(3)*ABS(   VV_P_PF  )   !>>  VV_P_PF
-        WRITE(103,*) vec(1)*ABS(    VVG_Sf  ),    vec(2)*ABS(   VVG_Sf    ) ,vec(3)*ABS(   VVG_Sf   )   !>>  VVG_Sf
-        WRITE(104,*) vec(1)*ABS(    VVP_Sf  ),    vec(2)*ABS(   VVP_Sf    ) ,vec(3)*ABS(   VVP_Sf   )   !>>  VVP_Sf
-        WRITE(105,*) vec(1)*ABS(    VV_Sf_PF),    vec(2)*ABS(   VV_Sf_PF  ) ,vec(3)*ABS(   VV_Sf_PF )   !>>  VV_Sf_PF
-        WRITE(106,*) vec(1)*ABS(    VVG_Ss  ),    vec(2)*ABS(   VVG_Ss    ) ,vec(3)*ABS(   VVG_Ss   )   !>>  VVG_Ss
-        WRITE(107,*) vec(1)*ABS(    VVP_Ss  ),    vec(2)*ABS(   VVP_Ss    ) ,vec(3)*ABS(   VVP_Ss   )   !>>  VVP_Ss
-        WRITE(108,*) vec(1)*ABS(  VV_Ss_PF  ),    vec(2)*ABS(   VV_Ss_PF  ) ,vec(3)*ABS(  VV_Ss_PF  )   !>>  VVP_Ss_PF
+        WRITE(100,"(9F30.15)") vec(1)*ABS(    VVP_P   ),    vec(2)*ABS(   VVP_P     ) ,vec(3)*ABS(   VVP_P    ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VVP_P    !>>  VVP_P
+        WRITE(101,"(9F30.15)") vec(1)*ABS(    VVG_P   ),    vec(2)*ABS(   VVG_P     ) ,vec(3)*ABS(   VVG_P    ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VVG_P   !>>  VVG_P
+        WRITE(102,"(9F30.15)") vec(1)*ABS(    VV_P_PF ),    vec(2)*ABS(   VV_P_PF   ) ,vec(3)*ABS(   VV_P_PF  ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VV_P_PF   !>>  VV_P_PF
+        WRITE(103,"(9F30.15)") vec(1)*ABS(    VVG_Sf  ),    vec(2)*ABS(   VVG_Sf    ) ,vec(3)*ABS(   VVG_Sf   ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VVG_Sf   !>>  VVG_Sf
+        WRITE(104,"(9F30.15)") vec(1)*ABS(    VVP_Sf  ),    vec(2)*ABS(   VVP_Sf    ) ,vec(3)*ABS(   VVP_Sf   ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VVP_Sf   !>>  VVP_Sf
+        WRITE(105,"(9F30.15)") vec(1)*ABS(    VV_Sf_PF),    vec(2)*ABS(   VV_Sf_PF  ) ,vec(3)*ABS(   VV_Sf_PF ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VV_Sf_PF   !>>  VV_Sf_PF
+        WRITE(106,"(9F30.15)") vec(1)*ABS(    VVG_Ss  ),    vec(2)*ABS(   VVG_Ss    ) ,vec(3)*ABS(   VVG_Ss   ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VVG_Ss   !>>  VVG_Ss
+        WRITE(107,"(9F30.15)") vec(1)*ABS(    VVP_Ss  ),    vec(2)*ABS(   VVP_Ss    ) ,vec(3)*ABS(   VVP_Ss   ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VVP_Ss  !>>  VVP_Ss
+        WRITE(108,"(9F30.15)") vec(1)*ABS(  VV_Ss_PF  ),    vec(2)*ABS(   VV_Ss_PF  ) ,vec(3)*ABS(  VV_Ss_PF  ), (theta*180.0D0)/PI, (phi*180.0D0)/PI ,VV_Ss_PF   !>>  VVP_Ss_PF
       ENDIF
       
       IF(yn_km=='Y' .or. yn_km=='y') THEN
-        WRITE(110,*) vec(1)*ABS(    km   ),    vec(2)*ABS(   km     ) ,vec(3)*ABS(   km    )     !>>  k_m
+        WRITE(110,"(9F30.15)") vec(1)*ABS(    km   ),    vec(2)*ABS(   km     ) ,vec(3)*ABS(   km    ),&     !>>  k_m
+                     (theta*180.0D0)/PI, (phi*180.0D0)/PI,km
       ENDIF
       
     ENDDO 
@@ -1710,7 +1997,7 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
     WRITE(65,*) " "
     !WRITE(66,*) " "
     !WRITE(67,*) " "
-    !WRITE(68,*) " "
+    WRITE(68,*) " "
     !WRITE(18,*) " "
     WRITE(15,*) " "
     WRITE(14,*) " "
@@ -1739,9 +2026,9 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !CLOSE(21)
   !CLOSE(22)
   !CLOSE(23)
-  !CLOSE(24)
+  CLOSE(24)
   !CLOSE(7 )
-   !LOSE(55)
+  !CLOSE(8 )
   CLOSE (30)
   CLOSE (31)
   CLOSE (32)
@@ -1758,9 +2045,9 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   CLOSE (108)
   CLOSE (110)
   CLOSE (41)
-
+  CLOSE (10)
   CLOSE (59)
-  CLOSE (655)
+  CLOSE (55)
   !CALL("touch .MaMiout2")
  ! IF (yn_veloc=='Y' .or. yn_veloc=='y') THEN
     OPEN(37,file='.MaMiout2')
@@ -1770,15 +2057,18 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
     CLOSE (37)
  ! ENDIF
   OPEN(36,file='.MaMiout')
-  WRITE(36,*)Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2*1000D0,G_min2*1000D0,Maxbulk,Minbulk,&
-             Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2*1000D0,pugh_min2*1000D0, Ha_max2,Ha_min2
+  WRITE(36,*)Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2*1000D0,G_min2*1000D0,Maxbulk,Minbulk,& !
+             Pratio_max, Pratio_min, maxEVaTMf, maxEVaLM, minEVaTMf, pugh_max2*1000D0, pugh_min2*1000D0, Ha_max2, Ha_min2, Ha_max1, Ha_min1
   CLOSE(36)
 
 !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Preparing features...
   WRITE(*,*)''
   CALL anisotropy(Maxyoung,Minyoung, Ax(1))
-	CALL SYSTEM('tput setaf 196;tput bold; echo " ==================================================> Youngs Modulus"')
-	CALL SYSTEM('tput setaf 196;tput bold; echo "  Max(GPa)             Min(GPa)  Anisotropy"')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 196;tput bold; echo " ==================================================> Youngs Modulus"')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 196;tput bold; echo "  Max(GPa)             Min(GPa)  Anisotropy"')
+if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Youngs Modulus"')
+	if (without_color.EQ."N") CALL SYSTEM('echo "  Max(GPa)             Min(GPa)  Anisotropy"')	
+	
 	WRITE (*,'(3xF6.2,a,2xF6.2,a,2xF6.2)') Maxyoung,"             ",Minyoung," ",Ax(1)
 	CALL angl2cart(Maxyoung_theta,Maxyoung_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(Minyoung_theta,Minyoung_phi, vec1(1),vec1(2),vec1(3))
@@ -1788,13 +2078,15 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 	WRITE(*,*)"------------------------------------------"
 	WRITE (*,*) "   x     y     z","        x     y     z"
 	WRITE (*,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
-	CALL SYSTEM('tput setaf 196;tput bold; echo " ==================================================";tput sgr0')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 196;tput bold; echo " ==================================================";tput sgr0')
 	CALL SYSTEM('sleep 0.5')
 	!$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   WRITE(*,*)''
   CALL anisotropy(Maxcomp,Mincomp, Ax(1))
-	CALL SYSTEM('tput setaf 202;tput bold; echo " ==================================================> Linear Compressibiliy";tput sgr0')
-	CALL SYSTEM('tput setaf 202;tput bold; echo "  Max(TPa-1)           Min(TPa-1)  Anisotropy"')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 202;tput bold; echo " ==================================================> Linear Compressibiliy";tput sgr0')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 202;tput bold; echo "  Max(TPa-1)           Min(TPa-1)  Anisotropy"')
+	if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Linear Compressibiliy"')
+	if (without_color.EQ."N") CALL SYSTEM('echo "  Max(TPa-1)           Min(TPa-1)  Anisotropy"')	
 	WRITE (*,'(1xF9.3,a,F9.3,a,2xF6.3)') Maxcomp,"             ",Mincomp," ",Ax(1)
 	CALL angl2cart(Maxcomp_theta,Maxcomp_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(Mincomp_theta,Mincomp_phi,vec1(1),vec1(2),vec1(3))
@@ -1809,8 +2101,10 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   WRITE(*,*)''
   CALL anisotropy(G_max2,G_min2, Ax(1))
-	CALL SYSTEM('tput setaf 161;tput bold; echo " ==================================================> Shear Modulus";tput sgr0')
-	CALL SYSTEM('tput setaf 161;tput bold; echo "  Max(GPa)             Min(GPa)  Anisotropy"')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 161;tput bold; echo " ==================================================> Shear Modulus";tput sgr0')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 161;tput bold; echo "  Max(GPa)             Min(GPa)  Anisotropy"')
+	if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Shear Modulus"')
+	if (without_color.EQ."N") CALL SYSTEM('echo "  Max(GPa)             Min(GPa)  Anisotropy"')	
 	WRITE (*,'(3xF6.2,a,2xF6.2,a,2xF6.2)') G_max2*1000D0,"             ",G_min2*1000D0," ",Ax(1)
 	CALL angl2cart(G_max2_theta,G_max2_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(G_min2_theta,G_min2_phi,vec1(1),vec1(2),vec1(3))
@@ -1825,9 +2119,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   WRITE(*,*)''
   CALL anisotropy(Maxbulk,Minbulk, Ax(1))
-	CALL SYSTEM('tput setaf 126;tput bold; echo " ==================================================> Bulk Modulus method 1 (Experimental)";tput sgr0')
-	CALL SYSTEM('tput setaf 126;tput bold; echo "   Max(GPa/100)              Min(GPa/100)  Anisotropy"')
-	WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') Maxbulk/100.d0,"            ",Minbulk/100.d0," ",Ax(1)
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 126;tput bold; echo " ==================================================> Bulk Modulus";tput sgr0')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 126;tput bold; echo "   Max(GPa*100)              Min(GPa*100)  Anisotropy"')
+	if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Bulk Modulus"')
+	if (without_color.EQ."N") CALL SYSTEM('echo "   Max(GPa*100)              Min(GPa*100)  Anisotropy"')	
+	WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') Maxbulk/100.D0,"            ",Minbulk/100.D0," ",Ax(1)
 	CALL angl2cart(Maxbulk_theta,Maxbulk_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(Minbulk_theta,Minbulk_phi,vec1(1),vec1(2),vec1(3))
 	WRITE(*,*)"------------------------------------------"
@@ -1840,26 +2136,33 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   CALL SYSTEM('sleep 0.5')
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   WRITE(*,*)''
-  CALL anisotropy(Max_bulkm2,Min_bulkm2, Ax(1))
-	CALL SYSTEM('tput setaf 126;tput bold; echo " ==================================================> Bulk Modulus method 2 (Experimental)";tput sgr0')
-	CALL SYSTEM('tput setaf 126;tput bold; echo "   Max(GPa/100)              Min(GPa/100)  Anisotropy"')
-	WRITE (*,'(2xF11.2,a,1xF11.2,a,2xF6.2)') Max_bulkm2/100.d0,"            ",Min_bulkm2/100.d0," ",Ax(1)
-	CALL angl2cart(Maxbulkm2_theta,Maxbulkm2_phi, vec(1), vec(2),vec(3))
-	CALL angl2cart(Minbulkm2_theta,Minbulkm2_phi, vec1(1),vec1(2),vec1(3))
+  CALL anisotropy(pwave_max2,pwave_min2, Ax(1))
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 136;tput bold; echo " ==================================================> P-Wave Modulusf";tput sgr0')
+	if (without_color.EQ."Y") CALL SYSTEM('tput setaf 136;tput bold; echo "   Max(GPa)               Min(GPa)  Anisotropy"')
+	if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> P-Wave Modulus"')
+	if (without_color.EQ."N") CALL SYSTEM('echo "   Max(GPa)               Min(GPa)  Anisotropy"')	
+	WRITE (*,'(1xF11.2,a,1xF11.2,a,2xF6.2)') pwave_max2,"        ",pwave_min2," ",Ax(1)
+	CALL angl2cart(pwave_max2_theta,pwave_max2_phi, vec(1),vec(2),vec(3))
+	CALL angl2cart(pwave_min2_theta,pwave_min2_phi,vec1(1),vec1(2),vec1(3))
 	WRITE(*,*)"------------------------------------------"
 	WRITE (*,*) "  Theta   Phi","          Theta   Phi"
-	WRITE (*,'(1x2F6.1,11x2F6.1)') (Maxbulkm2_theta*180.0D0)/PI,(Maxbulkm2_phi*180.0D0)/PI,(Minbulkm2_theta*180.0D0)/PI,(Minbulkm2_phi*180.0D0)/PI
+	WRITE (*,'(1x2F6.1,11x2F6.1)') (pwave_max2_theta*180.0D0)/PI,(pwave_max2_phi*180.0D0)/PI,(pwave_min2_theta*180.0D0)/PI,(pwave_min2_phi*180.0D0)/PI
 	WRITE(*,*)"------------------------------------------"
 	WRITE (*,*) "   x     y     z","        x     y     z"
 	WRITE (*,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
   WRITE (*,*) "=================================================="
-  CALL SYSTEM('sleep 0.5')
+  CALL SYSTEM('sleep 0.5')  
+  !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+  WRITE(*,*)''
+
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   IF (yn_veloc=='Y' .or. yn_veloc=='y') THEN
     WRITE(*,*)''
     CALL anisotropy(VVP_P_max,VVP_P_min, Ax(1))
-	  CALL SYSTEM('tput setaf 21;tput bold; echo " ==================================================> Phase P-Mode";tput sgr0')
-    CALL SYSTEM('tput setaf 21;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	   if (without_color.EQ."Y") CALL SYSTEM('tput setaf 21;tput bold; echo " ==================================================> Phase P-Mode";tput sgr0')
+    if (without_color.EQ."Y") CALL SYSTEM('tput setaf 21;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	   if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Phase P-Mode"')
+    if (without_color.EQ."N") CALL SYSTEM('echo "   Max(km/a)              Min(km/s)  Anisotropy"')    
     WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_P_max/1000D0,"            ",VVP_P_min/1000D0," ",Ax(1)
     CALL angl2cart(VVP_P_max_theta,VVP_P_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_P_min_theta,VVP_P_min_phi,vec1(1),vec1(2),vec1(3))
@@ -1875,8 +2178,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     WRITE(*,*)''
     CALL anisotropy(VVP_Sf_max,VVP_Sf_min, Ax(1))
-    CALL SYSTEM('tput setaf 33;tput bold; echo " ==================================================> Phase Fast-Mode";tput sgr0')
-    CALL SYSTEM('tput setaf 33;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+    if (without_color.EQ."Y") CALL SYSTEM('tput setaf 33;tput bold; echo " ==================================================> Phase Fast-Mode";tput sgr0')
+    if (without_color.EQ."Y") CALL SYSTEM('tput setaf 33;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+    if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Phase Fast-Mode"')
+    if (without_color.EQ."N") CALL SYSTEM('echo "   Max(km/a)              Min(km/s)  Anisotropy"')    
+    
     WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_Sf_max/1000D0,"            ",VVP_Sf_min/1000D0," ",Ax(1)
     CALL angl2cart(VVP_Sf_max_theta,VVP_Sf_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_Sf_min_theta,VVP_Sf_min_phi,vec1(1),vec1(2),vec1(3))
@@ -1892,8 +2198,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     WRITE(*,*)''
     CALL anisotropy(VVP_Ss_max,VVP_Ss_min, Ax(1))
-    CALL SYSTEM('tput setaf 34;tput bold; echo " ==================================================> Phase Slow-Mode";tput sgr0')
-    CALL SYSTEM('tput setaf 34;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+    if (without_color.EQ."Y") CALL SYSTEM('tput setaf 34;tput bold; echo " ==================================================> Phase Slow-Mode";tput sgr0')
+    if (without_color.EQ."Y") CALL SYSTEM('tput setaf 34;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+    if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Phase Slow-Mode"')
+    if (without_color.EQ."N") CALL SYSTEM('echo "   Max(km/a)              Min(km/s)  Anisotropy"')   
+     
     WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVP_Ss_max/1000D0,"            ",VVP_Ss_min/1000D0," ",Ax(1)
     CALL angl2cart(VVP_Ss_max_theta,VVP_Ss_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(VVP_Ss_min_theta,VVP_Ss_min_phi,vec1(1),vec1(2),vec1(3))
@@ -1909,8 +2218,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     WRITE(*,*)''
     CALL anisotropy(VVG_P_max,VVG_P_min, Ax(1))
-	  CALL SYSTEM('tput setaf 40;tput bold; echo " ==================================================> Group P-Mode";tput sgr0')
-	  CALL SYSTEM('tput setaf 40;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	  if (without_color.EQ."Y") CALL SYSTEM('tput setaf 40;tput bold; echo " ==================================================> Group P-Mode";tput sgr0')
+	  if (without_color.EQ."Y") CALL SYSTEM('tput setaf 40;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	  if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Group P-Mode"')
+	  if (without_color.EQ."N") CALL SYSTEM('echo "   Max(km/a)              Min(km/s)  Anisotropy"')	 
+	   
 	  WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_P_max/1000D0,"            ",VVG_P_min/1000D0," ",Ax(1)
 	  CALL angl2cart(VVG_P_max_theta,VVG_P_max_phi, vec(1),vec(2),vec(3))
 	  CALL angl2cart(VVG_P_min_theta,VVG_P_min_phi,vec1(1),vec1(2),vec1(3))
@@ -1926,8 +2238,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     WRITE(*,*)''
     CALL anisotropy(VVG_Sf_max,VVG_Sf_min, Ax(1))
-	  CALL SYSTEM('tput setaf 226;tput bold; echo " ==================================================> Group Fast-Mode";tput sgr0')
-	  CALL SYSTEM('tput setaf 226;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	  if (without_color.EQ."Y") CALL SYSTEM('tput setaf 226;tput bold; echo " ==================================================> Group Fast-Mode";tput sgr0')
+	  if (without_color.EQ."Y") CALL SYSTEM('tput setaf 226;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	  if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Group Fast-Mode"')
+	  if (without_color.EQ."N") CALL SYSTEM('echo "   Max(km/a)              Min(km/s)  Anisotropy"')	  
+	  
 	  WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_Sf_max/1000D0,"            ",VVG_Sf_min/1000D0," ",Ax(1)
 	  CALL angl2cart(VVG_Sf_max_theta,VVG_Sf_max_phi, vec(1),vec(2),vec(3))
 	  CALL angl2cart(VVG_Sf_min_theta,VVG_Sf_min_phi,vec1(1),vec1(2),vec1(3))
@@ -1943,8 +2258,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     WRITE(*,*)''
     CALL anisotropy(VVG_Ss_max,VVG_Ss_min, Ax(1))
-	  CALL SYSTEM('tput setaf 22;tput bold; echo " ==================================================> Group Slow-Mode";tput sgr0')
-	  CALL SYSTEM('tput setaf 22;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	  if (without_color.EQ."Y") CALL SYSTEM('tput setaf 22;tput bold; echo " ==================================================> Group Slow-Mode";tput sgr0')
+	  if (without_color.EQ."Y") CALL SYSTEM('tput setaf 22;tput bold; echo "   Max(km/a)              Min(km/s)  Anisotropy"')
+	  if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Group Slow-Mode"')
+	  if (without_color.EQ."N") CALL SYSTEM('echo "   Max(km/a)              Min(km/s)  Anisotropy"')	  
+	  
   	WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') VVG_Ss_max/1000D0,"            ",VVG_Ss_min/1000D0," ",Ax(1)
 	  CALL angl2cart(VVG_Ss_max_theta,VVG_Ss_max_phi, vec(1),vec(2),vec(3))
   	CALL angl2cart(VVG_Ss_min_theta,VVG_Ss_min_phi,vec1(1),vec1(2),vec1(3))
@@ -1961,8 +2279,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   IF (yn_km=='Y' .or. yn_km=='y') THEN
     WRITE(*,*)''
      CALL anisotropy(km_max,km_min, Ax(1))
-	  CALL SYSTEM('tput setaf 12;tput bold; echo " ==================================================> Min. thermal conductivity";tput sgr0')
-    CALL SYSTEM('tput setaf 12;tput bold; echo "   Max(W/K.m)              Min(W/K.m)        Anisotropy"')
+	   if (without_color.EQ."Y")  CALL SYSTEM('tput setaf 12;tput bold; echo " ==================================================> Min. thermal conductivity";tput sgr0')
+    if (without_color.EQ."Y") CALL SYSTEM('tput setaf 12;tput bold; echo "   Max(W/K.m)              Min(W/K.m)        Anisotropy"')
+	   if (without_color.EQ."N")  CALL SYSTEM('echo " ==================================================> Min. thermal conductivity"')
+    if (without_color.EQ."N") CALL SYSTEM('echo "   Max(W/K.m)              Min(W/K.m)        Anisotropy"')    
+    
     WRITE (*,'(2xF11.3,a,1xF11.3,a,2xF6.2)') km_max,"            ",km_min ,"           ",Ax(1) 
     CALL angl2cart(km_max_theta,km_max_phi, vec(1),vec(2),vec(3))
     CALL angl2cart(km_min_theta,km_min_phi,vec1(1),vec1(2),vec1(3))
@@ -1980,8 +2301,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   WRITE(*,*)''
   CALL anisotropy(Pratio_max,Pratio_min, Ax(1))
-  CALL SYSTEM('tput setaf 201;tput bold; echo " ==================================================> Poissons Ratio";tput sgr0')
-	CALL SYSTEM('tput setaf 201;tput bold; echo "     Max                  Min  Anisotropy"')
+  if (without_color.EQ."Y") CALL SYSTEM('tput setaf 201;tput bold; echo " ==================================================> Poissons Ratio";tput sgr0')
+	 if (without_color.EQ."Y") CALL SYSTEM('tput setaf 201;tput bold; echo "     Max                  Min  Anisotropy"')
+  if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Poissons Ratio"')
+	 if (without_color.EQ."N") CALL SYSTEM('echo "     Max                  Min  Anisotropy"')	 
+	 
 	WRITE (*,'(2xF6.3,a,2xF6.3,a,2xF6.2)') Pratio_max,"             ",Pratio_min," ",Ax(1)
 	CALL angl2cart(Pratio_max_theta,Pratio_max_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(Pratio_min_theta,Pratio_min_phi, vec1(1),vec1(2),vec1(3))
@@ -1996,8 +2320,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   WRITE(*,*)''
   CALL anisotropy(pugh_max2,pugh_min2, Ax(1))
        !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-	CALL SYSTEM('tput setaf 91;tput bold; echo " ==================================================> Pugh Ratio";tput sgr0')
-	CALL SYSTEM('tput setaf 91;tput bold; echo "     Max                  Min  Anisotropy"')
+	 if (without_color.EQ."Y") CALL SYSTEM('tput setaf 91;tput bold; echo " ==================================================> Pugh Ratio";tput sgr0')
+	 if (without_color.EQ."Y") CALL SYSTEM('tput setaf 91;tput bold; echo "     Max                  Min  Anisotropy"')
+	 if (without_color.EQ."N") CALL SYSTEM('echo " ==================================================> Pugh Ratio"')
+	 if (without_color.EQ."N") CALL SYSTEM('echo "     Max                  Min  Anisotropy"')	 
+	 
 	WRITE (*,'(3xF6.3,a,2xF6.3,a,2xF6.2)') pugh_max2*1000D0,"             ",pugh_min2*1000D0," ",Ax(1)
 	CALL angl2cart(pugh_max2_theta,pugh_max2_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(pugh_min2_theta,pugh_min2_phi,vec1(1),vec1(2),vec1(3))
@@ -2012,9 +2339,12 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 	WRITE(*,*)''
   	!$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   WRITE(*,*)''
-  CALL anisotropy(Maxbulk,Minbulk, Ax(1))
-	CALL SYSTEM('tput setaf 55;tput bold; echo " ==================================================> Hardness (Experimental)";tput sgr0')
-	CALL SYSTEM('tput setaf 55;tput bold; echo "         Max                     Min  Anisotropy"')
+  CALL anisotropy(Ha_max2,Ha_min2, Ax(1))
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 55;tput bold; echo " ==================================================> Hardness_max";tput sgr0')
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 55;tput bold; echo "         Max                     Min  Anisotropy"')
+if (without_color.EQ."N")	CALL SYSTEM('echo " ==================================================> Hardness_max"')
+if (without_color.EQ."N")	CALL SYSTEM('echo "         Max                     Min  Anisotropy"')
+
 	WRITE (*,'(2xF10.3,a,1xF10.3,a,2xF6.2)') Ha_max2,"            ",Ha_min2," ",Ax(1)
 	CALL angl2cart(Ha_max2_theta,Ha_max2_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(Ha_min2_theta,Ha_min2_phi,vec1(1),vec1(2),vec1(3))
@@ -2028,11 +2358,33 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   CALL SYSTEM('sleep 0.5')
   WRITE(*,*)''
   !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-	CALL SYSTEM('tput setaf 56;tput bold; echo " ==================================================> Sound < testing";tput sgr0')
-	CALL SYSTEM('tput setaf 56;tput bold; echo "  Transverse high  Longitudinal   Transverse low "')
+  CALL anisotropy(Ha_max1,Ha_min1, Ax(1))
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 60;tput bold; echo " ==================================================> Hardness_min";tput sgr0')
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 60;tput bold; echo "         Max                     Min  Anisotropy"')
+if (without_color.EQ."N")	CALL SYSTEM('echo " ==================================================> Hardness_min"')
+if (without_color.EQ."N")	CALL SYSTEM('echo "         Max                     Min  Anisotropy"')
+
+	WRITE (*,'(2xF10.3,a,1xF10.3,a,2xF6.2)') Ha_max1,"            ",Ha_min1," ",Ax(1)
+	CALL angl2cart(Ha_max1_theta,Ha_max1_phi, vec(1),vec(2),vec(3))
+	CALL angl2cart(Ha_min1_theta,Ha_min1_phi,vec1(1),vec1(2),vec1(3))
+	WRITE(*,*)"------------------------------------------"
+	WRITE (*,*) "  Theta   Phi","          Theta   Phi"
+	WRITE (*,'(1x2F6.1,11x2F6.1)') (Ha_max1_theta*180.0D0)/PI,(Ha_max1_phi*180.0D0)/PI,(Ha_min1_theta*180.0D0)/PI,(Ha_min1_phi*180.0D0)/PI
+	WRITE(*,*)"------------------------------------------"
+	WRITE (*,*) "   x     y     z","        x     y     z"
+	WRITE (*,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
+  WRITE (*,*) "=================================================="
+  CALL SYSTEM('sleep 0.5')
+  WRITE(*,*)''  
+  !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 56;tput bold; echo " ==================================================> Sound < testing";tput sgr0')
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 56;tput bold; echo "  Transverse high  Longitudinal   Transverse low "')
+if (without_color.EQ."N")	CALL SYSTEM('echo " ==================================================> Sound < testing"')
+if (without_color.EQ."N")	CALL SYSTEM('echo "  Transverse high  Longitudinal   Transverse low "')
 	WRITE (*,'(3xF6.2,a,2xF6.2,a,2xF6.2)') maxEVaTMf,"         ",maxEVaLM,"         ",minEVaTMf
 
-	CALL SYSTEM('tput setaf 56;tput bold; echo " ==================================================";tput sgr0')
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 59;tput bold; echo " ==================================================";tput sgr0')
+if (without_color.EQ."N")	CALL SYSTEM('echo " =================================================="')
 	WRITE(*,*)' '
 
 !***************************************************************
@@ -2092,9 +2444,9 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 	!$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   WRITE(99,*)' '
   CALL anisotropy(Maxbulk,Minbulk, Ax(1))
-	WRITE(99,*) " ==================================================> Bulk Modulus (Experimental)"
-	WRITE(99,*) "   Max(GPa/100)              Min(GPa/100)           Anisotropy"
-	WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') Maxbulk/100.d0,"            ",Minbulk/100.d0,"           ",Ax(1)
+	WRITE(99,*) " ==================================================> Bulk Modulus"
+	WRITE(99,*) "   Max(GPa*100)              Min(GPa*100)           Anisotropy"
+	WRITE (99,'(2xF11.2,a,1xF11.2,a,2xF6.2)') Maxbulk/100.D0,"            ",Minbulk/100.D0,"           ",Ax(1)
 	CALL angl2cart(Maxbulk_theta,Maxbulk_phi, vec(1),vec(2),vec(3))
 	CALL angl2cart(Minbulk_theta,Minbulk_phi,vec1(1),vec1(2),vec1(3))
 	WRITE(99,*)"------------------------------------------"
@@ -2235,9 +2587,25 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 	WRITE(99,*) "   x     y     z","        x     y     z"
 	WRITE(99,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
 	WRITE(99,*) "=================================================="
+	
  WRITE(99,*)''
-  CALL anisotropy(Maxbulk,Minbulk, Ax(1))
-	WRITE(99,*) " ==================================================> Hardness (Experimental)"
+ CALL anisotropy(pugh_max2,pugh_min2, Ax(1))
+	WRITE(99,*) " ==================================================>  Pugh Ratio" 
+	WRITE(99,*) "     Max                  Min  Anisotropy" 
+	WRITE (99,'(3xF6.3,a,2xF6.3,a,2xF6.2)') pugh_max2*1000D0,"             ",pugh_min2*1000D0," ",Ax(1)
+	CALL angl2cart(pugh_max2_theta,pugh_max2_phi, vec(1),vec(2),vec(3))
+	CALL angl2cart(pugh_min2_theta,pugh_min2_phi,vec1(1),vec1(2),vec1(3))
+	WRITE(99,*)"------------------------------------------"
+	WRITE (99,*) "  Theta   Phi","          Theta   Phi"
+	WRITE (99,'(1x2F6.1,11x2F6.1)') (pugh_max2_theta*180.0D0)/PI,(pugh_max2_phi*180.0D0)/PI,(pugh_min2_theta*180.0D0)/PI,(pugh_min2_phi*180.0D0)/PI
+	WRITE(99,*)"------------------------------------------"
+	WRITE (99,*) "   x     y     z","        x     y     z"
+	WRITE (99,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
+	WRITE(99,*) "=================================================="
+	
+ WRITE(99,*)''
+  CALL anisotropy(Ha_max2,Ha_min2, Ax(1))
+	WRITE(99,*) " ==================================================> Hardness_max"
 	WRITE(99,*) "       Max                     Min  Anisotropy" 
 	WRITE (99,'(2xF10.3,a,1xF10.3,a,2xF6.2)') Ha_max2,"            ",Ha_min2," ",Ax(1)
 	CALL angl2cart(Ha_max2_theta,Ha_max2_phi, vec(1),vec(2),vec(3))
@@ -2250,11 +2618,30 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 	WRITE (99,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
   WRITE (99,*) "=================================================="
   WRITE(99,*)''
-	WRITE(99,*) " ==================================================> Sound"
-	WRITE(99,*) "  Transverse high  Longitudinal   Transverse low "
-	WRITE(99,'(3xF6.2,a,2xF6.2,a,2xF6.2)') maxEVaTMf,"         ",maxEVaLM,"         ",minEVaTMf
-	WRITE (99,*) "=================================================="
-	WRITE(*,*)''
+!	WRITE(99,*) " ==================================================> Sound"
+!	WRITE(99,*) "  Transverse high  Longitudinal   Transverse low "
+!	WRITE(99,'(3xF6.2,a,2xF6.2,a,2xF6.2)') maxEVaTMf,"         ",maxEVaLM,"         ",minEVaTMf
+!	WRITE (99,*) "=================================================="
+	WRITE(99,*)''
+	  CALL anisotropy(Ha_max1,Ha_min1, Ax(1))
+	WRITE(99,*) " ==================================================> Hardness_min"
+	WRITE(99,*) "       Max                     Min  Anisotropy" 
+	WRITE (99,'(2xF10.3,a,1xF10.3,a,2xF6.2)') Ha_max1,"            ",Ha_min1," ",Ax(1)
+	CALL angl2cart(Ha_max1_theta,Ha_max1_phi, vec(1),vec(2),vec(3))
+	CALL angl2cart(Ha_min1_theta,Ha_min1_phi,vec1(1),vec1(2),vec1(3))
+	WRITE(99,*)"------------------------------------------"
+	WRITE (99,*) "  Theta   Phi","          Theta   Phi"
+	WRITE (99,'(1x2F6.1,11x2F6.1)') (Ha_max1_theta*180.0D0)/PI,(Ha_max1_phi*180.0D0)/PI,(Ha_min1_theta*180.0D0)/PI,(Ha_min1_phi*180.0D0)/PI
+	WRITE(99,*)"------------------------------------------"
+	WRITE (99,*) "   x     y     z","        x     y     z"
+	WRITE (99,'(1x3F6.2,3x3F6.2)') vec(1),vec(2),vec(3),vec1(1),vec1(2),vec1(3)
+  WRITE (99,*) "=================================================="
+  WRITE(99,*)''
+!	WRITE(99,*) " ==================================================> Sound"
+	!WRITE(99,*) "  Transverse high  Longitudinal   Transverse low "
+!	WRITE(99,'(3xF6.2,a,2xF6.2,a,2xF6.2)') maxEVaTMf,"         ",maxEVaLM,"         ",minEVaTMf
+!	WRITE (99,*) "=================================================="
+!		WRITE(99,*)''
 !***************************************************************
 !***************************************************************
 !
@@ -2301,41 +2688,23 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !
       CO=      ( S(1,1)+S(1,2)+S(1,3) )*vv11 &
-      +( S(1,6)+S(2,6)+S(3,6) )*vv12         &
-      +( S(1,5)+S(2,5)+S(3,5) )*vv13         &
-      +( S(1,2)+S(2,2)+S(2,3) )*vv22         &
-      +( S(1,4)+S(2,4)+S(3,4) )*vv23         &
-      +( S(1,3)+S(2,3)+S(3,3) )*vv33 
+              +( S(1,6)+S(2,6)+S(3,6) )*vv12 &
+              +( S(1,5)+S(2,5)+S(3,5) )*vv13 &
+              +( S(1,2)+S(2,2)+S(2,3) )*vv22 &
+              +( S(1,4)+S(2,4)+S(3,4) )*vv23 &
+              +( S(1,3)+S(2,3)+S(3,3) )*vv33 
 !
-      IF (CO*1000D0 .GE.0.0d0) THEN
+      IF (CO*1000D0 .GE.0.0D0) THEN
         !Maxcomp=
         comMAX2d(num)=CO*1000D0 !Maxcomp
       ENDIF
       !WRITE(*,*)CO*1000D0             
-      IF (CO *1000D0 .LE. 0.0d0) THEN
+      IF (CO *1000D0 .LE. 0.0D0) THEN
        !Mincomp=
         comMIN2d(num)=CO*1000D0 !Mincomp
       ENDIF
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      BB =  ( S(1,1)+S(1,2)+S(1,3) )*vv11 &
-           +( S(1,6)+S(2,6)+S(3,6) )*vv12 &
-           +( S(1,5)+S(2,5)+S(3,5) )*vv13 &
-           +( S(1,2)+S(2,2)+S(2,3) )*vv22 &
-           +( S(1,4)+S(2,4)+S(3,4) )*vv23 &
-           +( S(1,3)+S(2,3)+S(3,3) )*vv33 
-      BINver = 1D0/BB
-      bulkMax2d(num) = BINver
- !     IF (BINver.GE.0D0) THEN
- !	Maxbulk       = BINver
- !          bulkMax2d(num) = Maxbulk 
- !    ENDIF 
-
-
-      IF(BINver.LE.0D0) THEN
-        Minbulk        = BINver                       
-        bulkMin2d(num) = Maxbulk
-      ENDIF
 
       ave = 0D0
         v = 0
@@ -2383,10 +2752,7 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
       shear2dmax(num) = G_max
       IF (G_max.GE.0D0) shear2dminp(num) = G_min
       IF (G_max.LE.0D0) shear2dminn(num) = G_min
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      pugh2dmax(num) =shear2dmax(num)/bulkMax2d(num)
-      pugh2dminp(num)=shear2dminp(num)/bulkMax2d(num)
-      pugh2dminn(num)=shear2dminn(num)/bulkMax2d(num)
+
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       NPratio_max=0D0
       NPratio_min=1D0
@@ -2397,14 +2763,51 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
       poisson2dmax(num) = NPratio_max
       IF (NPratio_min.GE.0D0) poisson2dminp(num) = NPratio_min
       IF (NPratio_min.LE.0D0) poisson2dminn(num) = NPratio_min 
+
+     IF (Nbulk == 1) THEN
+       CALL bulk_method_one(S,vv11,vv12,vv22,vv13,vv23,vv33, bulk_m1)
+       BINver = bulk_m1
+     ENDIF
+      
+    ! IF (Nbulk == 2) then      
+   !   CALL bulk_method_two(Pratio, sheainvar, bulk_m2) 
+  !          BINver = bulk_m2
+  !   ENDIF
+     !==================================================== bulk method 3       v1.7.3  
+     IF (Nbulk == 2) then      
+       CALL bulk_method_three(S, vec, phi, theta, bulk_m3)
+       BINver = 1.D0/bulk_m3
+     ENDIF
+     
+      bulkMax2d(num) = BINver
+      IF (BINver.GE.0D0) THEN
+          	Maxbulk       = BINver
+           bulkMax2d(num) = Maxbulk 
+     ENDIF 
+
+
+      IF(BINver.LE.0D0) THEN
+        Minbulk        = BINver                       
+        bulkMin2d(num) = Maxbulk
+      ENDIF  
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      CALL CHardness(BINver,SINver,sheainvar,hardvar)  
- 
-      IF (hardvar.NE.0.0) THEN
-        hard2dmax(num) = hardvar   
-      ELSE  
-        hard2dmax(num) = 0D0
-      ENDIF        
+
+
+      pugh2dminp(num) = bulkMax2d(num)/shear2dmax(num)
+      pugh2dmax(num)  = bulkMax2d(num)/shear2dminp(num)
+      pugh2dminn(num) = bulkMax2d(num)/shear2dminn(num)
+      !write(*,*) bulkMax2d(num)        
+  !method_hard= "T"
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       CALL CHardness(BINver, SINver, G_min, G_max,&
+                      NPratio_min, NPratio_max, hardvar_max, hardvar_min, hardvar, method_hard)
+        hard2dmax(num) =  hardvar_max
+        hard2dmin(num) =  hardvar_min
+      !IF (hardvar.NE.0.0) THEN
+     !   hard2dmax(num) = hardvar   
+     ! ELSE  
+      !  hard2dmax(num) = 0D0
+      !ENDIF        
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IF (yn_km=='Y' .OR. yn_km=='y') THEN
       CALL Ckm_cal(density, SINver, ma_avrag, km )
@@ -2414,16 +2817,18 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
         km2dmax(num)=0D0
       ENDIF
     ENDIF
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!----------------------------------------------------------------------------
+
+
       num=num+1
     ENDDO
 !!!!!!!!!!!!!!#######################################!!!!!!!!!!!!!!!!!!!!    
     IF (yn_veloc=='Y' .OR. yn_veloc=='y') THEN
 
        vec  = 0D0
-       theta = 0.0d0
+       theta = 0.0D0
        DO i=0,180
-        phi=0.0d0
+        phi=0.0D0
         DO j=0,360
           CALL CALLCij (CCO)
           CALL twoD_calc_wave(mmx,kky,llz,smkl,j,vec)
@@ -2449,9 +2854,9 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 
          
           ! WRITE(*,*)VV_Sf_PF  
-          phi=phi+ 0.5d0
+          phi=phi+ 0.5D0
         ENDDO 
-        theta=theta+0.5d0
+        theta=theta+0.5D0
       ENDDO
     ENDIF
 
@@ -2491,42 +2896,61 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
     DO num = 0,Nmesh_thata
     
       t2d = DBLE(num)*2D0*pi/Nmesh_thata
-      new_num =  (360.0d0/Nmesh_thata)*num
-       CALL slic3D_calc(mmx,kky,llz,smkl,num, Nmesh_thata, vec_3dslic)
+      new_num =  (360.0D0/Nmesh_thata)*num                      ! out
+       CALL slic3D_calc(mmx, kky, llz, smkl, num, Nmesh_thata, vec_3dslic)
       
-      WRITE(50,"(7F30.20)")new_num,SQRT( (young2dmax(num)*COS(t2d)   )**2D0 + (young2dmax(num)*SIN(t2d)   )**2D0),& 
-                                   SQRT( (young2dmin(num)*COS(t2d)   )**2D0 + (young2dmin(num)*SIN(t2d)   )**2D0), &
-                                   vec_3dslic(1)*young2dmax(num), vec_3dslic(2)*young2dmax(num) ,vec_3dslic(3)*young2dmax(num) 
+      WRITE(50,"(13F30.20)")new_num,SQRT( (young2dmax(num)*COS(t2d)   )**2D0 + (young2dmax(num)*SIN(t2d)   )**2D0),             & 
+                                    SQRT( (young2dmin(num)*COS(t2d)   )**2D0 + (young2dmin(num)*SIN(t2d)   )**2D0),             &
+                                    vec_3dslic(1)*young2dmax(num), vec_3dslic(2)*young2dmax(num) ,vec_3dslic(3)*young2dmax(num),&
+                                    vec_3dslic(1)*young2dmin(num), vec_3dslic(2)*young2dmin(num) ,vec_3dslic(3)*young2dmin(num)
 
-      WRITE(52,"(5F30.20)")new_num,SQRT( (shear2dmax(num)*COS(t2d)   )**2D0 + (shear2dmax(num)*SIN(t2d)   )**2D0),&
-	                                  SQRT( (shear2dminp(num)*COS(t2d)  )**2D0 + (shear2dminp(num)*SIN(t2d)  )**2D0),&
-                                   SQRT( (shear2dminn(num)*COS(t2d)  )**2D0 + (shear2dminn(num)*SIN(t2d)  )**2D0)
+      WRITE(52,"(17F30.20)")new_num,SQRT( (shear2dmax(num)*COS(t2d)   )**2D0 + (shear2dmax(num)*SIN(t2d)   )**2D0),                &
+	                                   SQRT( (shear2dminp(num)*COS(t2d)  )**2D0 + (shear2dminp(num)*SIN(t2d)  )**2D0),                &
+                                    SQRT( (shear2dminn(num)*COS(t2d)  )**2D0 + (shear2dminn(num)*SIN(t2d)  )**2D0),                &
+                                    vec_3dslic(1)*shear2dmax(num), vec_3dslic(2)*shear2dmax(num) ,vec_3dslic(3)*shear2dmax(num),   &
+                                    vec_3dslic(1)*shear2dminp(num), vec_3dslic(2)*shear2dminp(num) ,vec_3dslic(3)*shear2dminp(num),&
+                                    vec_3dslic(1)*shear2dminn(num), vec_3dslic(2)*shear2dminn(num) ,vec_3dslic(3)*shear2dminn(num)
                      
-	    WRITE(55,"(5F25.14)") new_num,SQRT( (comMAX2d(num)*COS(t2d)     )**2D0 + (comMAX2d(num)*SIN(t2d)     )**2D0),&
-                                   SQRT( (comMIN2d(num)*COS(t2d)     )**2D0 + (comMIN2d(num)*SIN(t2d)     )**2D0)
+	    WRITE(55,"(14F25.14)") new_num,SQRT( (comMAX2d(num)*COS(t2d)     )**2D0 + (comMAX2d(num)*SIN(t2d)     )**2D0),               &
+                                    SQRT( (comMIN2d(num)*COS(t2d)     )**2D0 + (comMIN2d(num)*SIN(t2d)     )**2D0),               &
+                                    vec_3dslic(1)*comMAX2d(num), vec_3dslic(2)*comMAX2d(num) ,vec_3dslic(3)*comMAX2d(num),        &
+                                    vec_3dslic(1)*comMIN2d(num), vec_3dslic(2)*comMIN2d(num) ,vec_3dslic(3)*comMIN2d(num)
 
-      WRITE(57,"(5F30.20)")new_num,SQRT( (poisson2dmax(num)*COS(t2d) )**2D0 + (poisson2dmax(num)*SIN(t2d) )**2D0),&
-                                   SQRT( (poisson2dminp(num)*COS(t2d))**2D0 + (poisson2dminp(num)*SIN(t2d))**2D0),&
-                                   SQRT( (poisson2dminn(num)*COS(t2d))**2D0 + (poisson2dminn(num)*SIN(t2d))**2D0)
+      WRITE(57,"(17F30.20)")new_num,SQRT( (poisson2dmax(num)*COS(t2d) )**2D0 + (poisson2dmax(num)*SIN(t2d) )**2D0),                      &
+                                    SQRT( (poisson2dminp(num)*COS(t2d))**2D0 + (poisson2dminp(num)*SIN(t2d))**2D0),                      &
+                                    SQRT( (poisson2dminn(num)*COS(t2d))**2D0 + (poisson2dminn(num)*SIN(t2d))**2D0),                      &
+                                    vec_3dslic(1)*poisson2dmax(num), vec_3dslic(2)*poisson2dmax(num) ,vec_3dslic(3)*poisson2dmax(num),   &
+                                    vec_3dslic(1)*poisson2dminp(num), vec_3dslic(2)*poisson2dminp(num) ,vec_3dslic(3)*poisson2dminp(num),&
+                                    vec_3dslic(1)*poisson2dminn(num), vec_3dslic(2)*poisson2dminn(num) ,vec_3dslic(3)*poisson2dminn(num)
 
-      WRITE(60,"(5F30.11)")new_num,SQRT( (bulkmin2d(num)*COS(t2d)    )**2D0 + (bulkmin2d(num)*SIN(t2d)    )**2D0),&
-                                   SQRT( (bulkMax2d(num)*COS(t2d)    )**2D0 + (bulkmax2d(num)*SIN(t2d)    )**2D0)
+      WRITE(60,"(13F30.11)")new_num,SQRT( (bulkmin2d(num)*COS(t2d)    )**2D0 + (bulkmin2d(num)*SIN(t2d)    )**2D0),          &
+                                    SQRT( (bulkMax2d(num)*COS(t2d)    )**2D0 + (bulkmax2d(num)*SIN(t2d)    )**2D0),          &
+                                    vec_3dslic(1)*bulkmin2d(num), vec_3dslic(2)*bulkmin2d(num) ,vec_3dslic(3)*bulkmin2d(num),&
+                                    vec_3dslic(1)*bulkmax2d(num), vec_3dslic(2)*bulkmax2d(num) ,vec_3dslic(3)*bulkmax2d(num)
 
-      WRITE(62,"(5F30.20)")new_num,SQRT( (LM2d(num)*COS(t2d)         )**2D0 + (LM2d(num) *SIN(t2d)        )**2D0),&
-                                   SQRT( (TMmax2d(num)*COS(t2d)      )**2D0 + (TMmax2d(num)*SIN(t2d)      )**2D0),&
-                                   SQRT( (TMmin2d(num)*COS(t2d)      )**2D0 + (TMmin2d(num)*SIN(t2d)      )**2D0)
+      WRITE(62,"(17F30.20)")new_num,SQRT( (LM2d(num)*COS(t2d)         )**2D0 + (LM2d(num) *SIN(t2d)        )**2D0),          &
+                                    SQRT( (TMmax2d(num)*COS(t2d)      )**2D0 + (TMmax2d(num)*SIN(t2d)      )**2D0),          &
+                                    SQRT( (TMmin2d(num)*COS(t2d)      )**2D0 + (TMmin2d(num)*SIN(t2d)      )**2D0),          &
+                                    vec_3dslic(1)*LM2d(num), vec_3dslic(2)*LM2d(num) ,vec_3dslic(3)*LM2d(num),               &
+                                    vec_3dslic(1)*TMmax2d(num), vec_3dslic(2)*TMmax2d(num) ,vec_3dslic(3)*TMmax2d(num),      &
+                                    vec_3dslic(1)*TMmin2d(num), vec_3dslic(2)*TMmin2d(num) ,vec_3dslic(3)*TMmin2d(num) 
 
-      WRITE(71,"(5F30.20)")new_num,SQRT( (pugh2dmax(num)*COS(t2d)   )**2D0 + (pugh2dmax(num)*SIN(t2d)     )**2D0),&
-                                   SQRT( (pugh2dminp(num)*COS(t2d)  )**2D0 + (pugh2dminp(num)*SIN(t2d)    )**2D0),&
-                                   SQRT( (pugh2dminn(num)*COS(t2d)  )**2D0 + (pugh2dminn(num)*SIN(t2d)    )**2D0) 
+      WRITE(71,"(17F30.20)")new_num,SQRT( (pugh2dmax(num)*COS(t2d)   )**2D0 + (pugh2dmax(num)*SIN(t2d)     )**2D0),             &
+                                    SQRT( (pugh2dminp(num)*COS(t2d)  )**2D0 + (pugh2dminp(num)*SIN(t2d)    )**2D0),             &
+                                    SQRT( (pugh2dminn(num)*COS(t2d)  )**2D0 + (pugh2dminn(num)*SIN(t2d)    )**2D0),             &
+                                    vec_3dslic(1)*pugh2dmax(num), vec_3dslic(2)*pugh2dmax(num) ,vec_3dslic(3)*pugh2dmax(num),   &
+                                    vec_3dslic(1)*pugh2dminp(num), vec_3dslic(2)*pugh2dminp(num) ,vec_3dslic(3)*pugh2dminp(num),&
+                                    vec_3dslic(1)*pugh2dminn(num), vec_3dslic(2)*pugh2dminn(num) ,vec_3dslic(3)*pugh2dminn(num)
 
-      WRITE(72,"(5F30.20)")new_num,SQRT( (hard2dmax(num)*COS(t2d)   )**2D0 + (hard2dmax(num)*SIN(t2d)   )**2D0),& 
-                                  SQRT( (hard2dmin(num)*COS(t2d)   )**2D0 + (hard2dmin(num)*SIN(t2d)   )**2D0)
-
+      WRITE(72,"(17F30.20)")new_num,SQRT( (hard2dmax(num)*COS(t2d)   )**2D0 + (hard2dmax(num)*SIN(t2d)   )**2D0),            & 
+                                    SQRT( (hard2dmin(num)*COS(t2d)   )**2D0 + (hard2dmin(num)*SIN(t2d)   )**2D0),            &
+                                    vec_3dslic(1)*hard2dmax(num), vec_3dslic(2)*hard2dmax(num) ,vec_3dslic(3)*hard2dmax(num),&
+                                    vec_3dslic(1)*hard2dmin(num), vec_3dslic(2)*hard2dmin(num) ,vec_3dslic(3)*hard2dmin(num)
 
       
     IF (yn_km == 'Y' .or. yn_km == 'y') THEN        
-      WRITE(499,"(5F30.20)")new_num,SQRT( (km2dmax(num)*COS(t2d)   )**2D0 + (km2dmax(num)*SIN(t2d)   )**2D0)  
+      WRITE(499,"(17F30.20)")new_num,SQRT( (km2dmax(num)*COS(t2d)   )**2D0 + (km2dmax(num)*SIN(t2d)   )**2D0),               &
+                                     vec_3dslic(1)*km2dmax(num), vec_3dslic(2)*km2dmax(num), vec_3dslic(3)*km2dmax(num) 
     ENDIF  
         
     ENDDO
@@ -2534,18 +2958,29 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
       
        DO num=0,360
         t2d=DBLE(num)/360D0*2D0*PI
-        !WRITE(*,*)t2d
-        WRITE(500,'(I3,3F30.15)')num,SQRT( (VVG_P_2D(num)*COS(t2d)   )**2D0 + (VVG_P_2D(num)*SIN(t2d)      )**2D0),&
-                                     SQRT( (VVG_Sf_2D(num)*COS(t2d)   )**2D0 + (VVG_Sf_2D(num)*SIN(t2d)    )**2D0),&
-                                     SQRT( (VVG_Ss_2D(num)*COS(t2d)   )**2D0 + (VVG_Ss_2D(num)*SIN(t2d)    )**2D0)
+        CALL slic3D_calc(mmx,kky,llz,smkl,num, 360, vec_3dslic)
 
-        WRITE(501,'(I3,3F30.15)')num,SQRT( (VVP_P_2D(num)*COS(t2d)   )**2D0 + (VVP_P_2D(num)*SIN(t2d)      )**2D0),&
-                                     SQRT( (VVP_Sf_2D(num)*COS(t2d)   )**2D0 + (VVP_Sf_2D(num)*SIN(t2d)    )**2D0),&
-                                     SQRT( (VVP_Ss_2D(num)*COS(t2d)   )**2D0 + (VVP_Ss_2D(num)*SIN(t2d)    )**2D0)
+        ! WRITE(*,*)t2d
+        WRITE(500,'(I3,14F30.15)')num,SQRT( (VVG_P_2D(num)*COS(t2d)   )**2D0 + (VVG_P_2D(num)*SIN(t2d)      )**2D0),&
+                                      SQRT( (VVG_Sf_2D(num)*COS(t2d)   )**2D0 + (VVG_Sf_2D(num)*SIN(t2d)    )**2D0),&
+                                      SQRT( (VVG_Ss_2D(num)*COS(t2d)   )**2D0 + (VVG_Ss_2D(num)*SIN(t2d)    )**2D0),&
+                                      vec_3dslic(1)*VVG_P_2D(num), vec_3dslic(2)*VVG_P_2D(num) ,vec_3dslic(3)*VVG_P_2D(num),&
+                                      vec_3dslic(1)*VVG_Sf_2D(num), vec_3dslic(2)*VVG_Sf_2D(num) ,vec_3dslic(3)*VVG_Sf_2D(num),&
+                                      vec_3dslic(1)*VVG_Ss_2D(num), vec_3dslic(2)*VVG_Ss_2D(num) ,vec_3dslic(3)*VVG_Ss_2D(num)
 
-        WRITE(502,'(I3,3F30.15)')num,SQRT( (VV_P_PF_2D(num)*COS(t2d)   )**2D0 + (VV_P_PF_2D(num)*SIN(t2d)  )**2D0),&
-                                     SQRT( (VV_Sf_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Sf_PF_2D(num)*SIN(t2d))**2D0),&
-                                     SQRT( (VV_Ss_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Ss_PF_2D(num)*SIN(t2d))**2D0)   
+        WRITE(501,'(I3,14F30.15)')num,SQRT( (VVP_P_2D(num)*COS(t2d)   )**2D0 + (VVP_P_2D(num)*SIN(t2d)      )**2D0),&
+                                      SQRT( (VVP_Sf_2D(num)*COS(t2d)   )**2D0 + (VVP_Sf_2D(num)*SIN(t2d)    )**2D0),&
+                                      SQRT( (VVP_Ss_2D(num)*COS(t2d)   )**2D0 + (VVP_Ss_2D(num)*SIN(t2d)    )**2D0),&
+                                      vec_3dslic(1)*VVP_P_2D(num),  vec_3dslic(2)*VVP_P_2D(num),  vec_3dslic(3)*VVP_P_2D(num),&
+                                      vec_3dslic(1)*VVP_Sf_2D(num), vec_3dslic(2)*VVP_Sf_2D(num), vec_3dslic(3)*VVP_Sf_2D(num),&
+                                      vec_3dslic(1)*VVP_Ss_2D(num), vec_3dslic(2)*VVP_Ss_2D(num), vec_3dslic(3)*VVP_Ss_2D(num)                                     
+
+        WRITE(502,'(I3,14F30.15)')num,SQRT( (VV_P_PF_2D(num)*COS(t2d)   )**2D0 + (VV_P_PF_2D(num)*SIN(t2d)  )**2D0),&
+                                      SQRT( (VV_Sf_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Sf_PF_2D(num)*SIN(t2d))**2D0),&
+                                      SQRT( (VV_Ss_PF_2D(num)*COS(t2d)   )**2D0 + (VV_Ss_PF_2D(num)*SIN(t2d))**2D0),&
+                                      vec_3dslic(1)*VV_P_PF_2D(num),  vec_3dslic(2)*VV_P_PF_2D(num),  vec_3dslic(3)*VV_P_PF_2D(num),&
+                                      vec_3dslic(1)*VV_Sf_PF_2D(num), vec_3dslic(2)*VV_Sf_PF_2D(num), vec_3dslic(3)*VV_Sf_PF_2D(num),&
+                                      vec_3dslic(1)*VV_Ss_PF_2D(num), vec_3dslic(2)*VV_Ss_PF_2D(num), vec_3dslic(3)*VV_Ss_PF_2D(num) 
        ENDDO                                  
       ENDIF    
       
@@ -2562,8 +2997,7 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
     CLOSE (60)
    ! CLOSE(61)
     CLOSE (62)
-    !CLOSE(63)
-   ! CLOSE(64)
+
     CLOSE (71)
     CLOSE (72)
     !CLOSE(73)
@@ -2590,15 +3024,16 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
       CALL SYSTEM('mkdir  DatFile')
       CALL plotshear3d(YN)
       WRITE(*,*)"=================================="
-      CALL plotpugh3d(YN)
+      IF (pugh_min2*1000D0 < 0D0)  CALL plotpugh3d(YN,1)
+      IF (pugh_min2*1000D0 > 0D0)  CALL plotpugh3d(YN,2)
       WRITE(*,*)"=================================="
-      IF (Mincomp < 0d0) CALL plotcomp3d(YN,1)
-      IF (Mincomp > 0d0) CALL plotcomp3d(YN,2)	
+      IF (Mincomp < 0D0) CALL plotcomp3d(YN,1)
+      IF (Mincomp > 0D0) CALL plotcomp3d(YN,2)	
       WRITE(*,*)"=================================="
       CALL plotbulk3d(YN)
       WRITE(*,*)"=================================="
-      IF (Pratio_min < 0d0) CALL plotRatio3d(YN,1)
-      IF (Pratio_min > 0d0) CALL plotRatio3d(YN,2)
+      IF (Pratio_min < 0D0) CALL plotRatio3d(YN,1)
+      IF (Pratio_min > 0D0) CALL plotRatio3d(YN,2)
       	!CALL plotRatio3d(YN)
       WRITE(*,*)"=================================="
       CALL plotyoung3d(YN)
@@ -2610,7 +3045,7 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
       CALL SYSTEM('mv *.dat ./DatFile')
       CALL SLEEP (1)
       CALL SYSTEM('mv *.ps PicFile')
-      CALL SYSTEM('mv *.png PicFile')
+      CALL SYSTEM('mv Poissons_ratio.pdf shear_modulus.pdf Pugh_ratio.pdf young_modulus.pdf PicFile')
       CALL SYSTEM('IF [ -e 2DPugh.ps ]; THEN mv 2DPugh.ps PicFile; fi') 
       !CALL SYSTEM('cat PicFile/2Dbox.ps            | epstopdf --filter > PicFile/2Dbox.pdf'                    )
       !CALL SYSTEM('cat PicFile/2DBulk.ps           | epstopdf --filter > PicFile/2DBulk.pdf'                    )
@@ -2650,8 +3085,15 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
     CALL SYSTEM('rm -rf *.gnu')
   ELSE
     IF(d2d3 == 2) THEN      !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system start  
-      CALL analiz_2D_sys(adv,npoint)
-    
+      
+      if (yn_veloc2d=="Y" .or. yn_veloc2d=="y") then
+        adv="wav"
+        CALL analiz_2D_sys(adv, npoint, density2d)
+      else
+         yn_veloc2d="n"
+         adv="els"
+         CALL analiz_2D_sys(adv, npoint, density2d)
+      endif
  
       WRITE(*,*)"#==================================#"
       PRINT*," > Do you want to prepare the data for ploting? (Y/N):"
@@ -2685,17 +3127,28 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
       ENDIF 
     END IF
   END IF   !@@@@@@@@@@@@@@@@@@@@@@@ 2D_3D system END 
+  
+  
+  
   CLOSE(99)
 
  CALL checkfolder_old(1,0,d2d3)
  IF (YN.EQ."Y".OR. YN.EQ."y") THEN ; CALL checkfolder_old(0,1,d2d3); ENDIF
-     
-	CALL SYSTEM('tput setaf 55;tput bold; echo " ======================================= Visualization Tools =======================================";tput sgr0')  
-	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2gnu.x  | To visualize data in polar, spherical coordinates and heat-maps diagrams: 2D sys., 2D projecton and 3D sys. ";tput sgr0') 
- CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2agr.x  | To visualize data in polar, Cartesian coordinates                       : 2D projecton";tput sgr0') 
-	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2wrl.x  | To visualize data in spherical coordinates                              : 3D sys. ";tput sgr0') 
-	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2html.x | To visualize data in spherical coordinates                              : 3D sys. ";tput sgr0')
-	CALL SYSTEM('tput setaf 55;tput bold; echo " ===================================================================================================";tput sgr0')  
+ CALL CPU_TIME(cputime_e)    
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 55;tput bold; echo " ======================================= Visualization Tools =======================================";tput sgr0')  
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2gnu.x  | To visualize data in polar, spherical coordinates and heat-maps diagrams: 2D sys., 2D projecton and 3D sys. ";tput sgr0') 
+if (without_color.EQ."Y") CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2agr.x  | To visualize data in polar, Cartesian coordinates                       : 2D projecton";tput sgr0') 
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2wrl.x  | To visualize data in spherical coordinates                              : 3D sys. ";tput sgr0') 
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 55;tput bold; echo " - dat2html.x | To visualize data in spherical coordinates                              : 3D sys. ";tput sgr0')
+if (without_color.EQ."Y")	CALL SYSTEM('tput setaf 55;tput bold; echo " ===================================================================================================";tput sgr0')  
+
+if (without_color.EQ."N")	CALL SYSTEM('echo " ======================================= Visualization Tools ======================================="')  
+if (without_color.EQ."N")	CALL SYSTEM('echo " - dat2gnu.x  | To visualize data in polar, spherical coordinates and heat-maps diagrams: 2D sys., 2D projecton and 3D sys. "') 
+if (without_color.EQ."N") CALL SYSTEM('echo " - dat2agr.x  | To visualize data in polar, Cartesian coordinates                       : 2D projecton"') 
+if (without_color.EQ."N")	CALL SYSTEM('echo " - dat2wrl.x  | To visualize data in spherical coordinates                              : 3D sys. "') 
+if (without_color.EQ."N")	CALL SYSTEM('echo " - dat2html.x | To visualize data in spherical coordinates                              : 3D sys. "')
+if (without_color.EQ."N")	CALL SYSTEM('echo " ==================================================================================================="')  
+
 	 WRITE(*,*)""
 	 WRITE(*,*)"For any use of ElATools, please cite:"
 	 WRITE(*,*)"Shahram Yalameha, Zahra Nourbakhsh, Daryoosh Vashaee,"
@@ -2712,7 +3165,7 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
   PRINT*,   "                           >            |       Goodbye.       |             <"
   WRITE(*,*)"                           ===================================================" 
   WRITE(*,*)"" 
-
+  WRITE(*,"(A, F5.3, A)") "Time taken: ", (cputime_e-cputime_s), " s"
   CALL creadfolder(1, 0,mmx1,kky1,llz1)
 
   IF (YN.EQ."Y".OR. YN.EQ."y") THEN ; CALL creadfolder(0, 1,mmx1,kky1,llz1); ENDIF
@@ -2720,9 +3173,11 @@ WRITE(30,"(9F30.15)") vec(1)*ABS( bulk_m2 ),       vec(2)*ABS( bulk_m2    ),    
 
   1369 WRITE(*,*)  " > NOT FOUNDE    Cij.dat    FILE"             ; STOP
   13691 WRITE(*,*) " > NOT FOUNDE   Cij-2D.dat  FILE"             ; STOP
+  13690 WRITE(*,*) " > NOT FOUNDE   Cij-1D.dat  FILE"             ; STOP  
   13692 WRITE(*,*) " > NOT FOUNDE   ELC-matrix  FILE"             ; STOP  
   1367 WRITE(*,*)  " > NOT FOUNDE INVELC-matrix FILE"             ; STOP
   1366 WRITE(*,*)  " > NOT FOUNDE elast.output  FILE "            ; STOP 
   1361 WRITE(*,*)  " > NOT FOUNDE    ELADAT     FILE "            ; STOP
   1341 WRITE(*,*)  " > NOT FOUNDE    ElaStic_2nd.out     FILE "   ; STOP
+  1342 WRITE(*,*)  " > NOT FOUNDE    OUTCAR     FILE "            ; STOP
 1370 END PROGRAM

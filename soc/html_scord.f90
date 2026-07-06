@@ -21,3 +21,38 @@ SUBROUTINE start_cord_web(cord_ename)
     WRITE(66,"(a)")'      ['
     endif       
 END SUBROUTINE
+!===========================
+SUBROUTINE start_cordslice_web(cord_ename)
+  IMPLICIT NONE
+     ChARACTER(len=1)                :: cord_ename
+  if (cord_ename=="x") then
+    WRITE(66,"(a)")'   x: ['
+     endif
+   if (cord_ename=="y") then
+    WRITE(66,"(a)")'   y: ['
+     endif
+  if (cord_ename=="z") then
+    WRITE(66,"(a)")'   z: ['
+     endif       
+END SUBROUTINE
+!===========================
+SUBROUTINE start_cordslice_web_hmap(cord_ename)
+  IMPLICIT NONE
+     ChARACTER(len=1)                :: cord_ename
+  if (cord_ename=="x") then
+    WRITE(66,"(a)")'       x: ['
+     endif
+   if (cord_ename=="y") then
+    WRITE(66,"(a)")'       y: ['
+     endif
+  if (cord_ename=="z") then
+    WRITE(66,"(a)")'       z: ['
+     endif       
+END SUBROUTINE
+!===========================
+SUBROUTINE end_cordslice_web_hmap()
+  IMPLICIT NONE
+    WRITE(66,"(a)")'          ],'             
+END SUBROUTINE
+
+

@@ -58,13 +58,13 @@ SUBROUTINE CPratio(a1111,MinPratio,MaxPratio,AvePratio,&
 		gamma= DBLE(kk)/DBLE(Nmesh_gamma)*pi
 	    v(1) = COS(theta)*COS(phi)*COS(gamma)-SIN(phi)*SIN(gamma)
 	    v(2) = COS(theta)*SIN(phi)*COS(gamma)+COS(phi)*SIN(gamma)
-		v(3) =-SIN(theta)*COS(gamma)
+	   	v(3) =-SIN(theta)*COS(gamma)
 		v11  = v(1)*v(1); v12  = v(1)*v(2)
 		v13  = v(1)*v(3); v22  = v(2)*v(2)
 		v23  = v(2)*v(3); v33  = v(3)*v(3) 
 
 
-		a1122 =   k11*v11*S(1,1)          &
+		a1122 =         k11*v11*S(1,1)          &
                 +(k11*v22+k22*v11)*S(1,2) &
                 +(k11*v33+k33*v11)*S(1,3) &
                 + k22*v22*S(2,2)          &
@@ -85,18 +85,18 @@ SUBROUTINE CPratio(a1111,MinPratio,MaxPratio,AvePratio,&
                  +(k23*v13+k13*v23)*S(4,5)                &
                  +(k23*v12+k12*v23)*S(4,6)+k13*v13*S(5,5) &
 			            	 +(k13*v12+k12*v13)*S(5,6)+k12*v12*S(6,6) 
-		Pratio = -a1122/a1111
+		Pratio = -a1122*(a1111**-1)
 	IF (kk.EQ.0) THEN 
 			MaxPratio=Pratio; MinPratio=Pratio;
 			vec1max = v(1);  vec2max = v(2); vec3max = v(3) 
 			vec1min = v(1);  vec2min = v(2); vec3min = v(3)      
     ELSE
 		IF (Pratio.GE.MaxPratio) THEN
-			MaxPratio=Pratio
+			     MaxPratio=Pratio
 	       vec1max = v(1); vec2max = v(2); vec3max = v(3)
 	    ENDIF  
 		IF (Pratio.LE.MinPratio) THEN
-			MinPratio=Pratio
+		      	MinPratio=Pratio
 	        vec1min = v(1); vec2min = v(2); vec3min = v(3)      
 		ENDIF  
 	ENDIF

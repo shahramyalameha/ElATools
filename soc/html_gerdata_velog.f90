@@ -7,7 +7,7 @@
 SUBROUTINE get_data_velog_plotly( namepro,xyz,n_phif,n_thetaf,cutmesh, type_pro)
   implicit NONE
   
-  DOUBLE PRECISION, DIMENSION(193000)  ::  VVG_P0_x, VVG_P0_y, VVG_P0_z, & 
+  DOUBLE PRECISION, DIMENSION(193000)  ::   VVG_P0_x, VVG_P0_y, VVG_P0_z, & 
                                             VVG_Pe_x, VVG_Pe_y, VVG_Pe_z, & 
                                             VVG_P_x, VVG_P_y, VVG_P_z ,&
                                             VVG_Sf0_x, VVG_Sf0_y, VVG_Sf0_z,&
@@ -17,7 +17,7 @@ SUBROUTINE get_data_velog_plotly( namepro,xyz,n_phif,n_thetaf,cutmesh, type_pro)
                                             VVG_Sse_x, VVG_Sse_y, VVG_Sse_z,&
                                             VVG_Ss_x, VVG_Ss_y, VVG_Ss_z                                          
                                          
-  INTEGER,          DIMENSION(19030,4) :: mesh=0
+  INTEGER,          DIMENSION(19030,4)  :: mesh=0
   INTEGER                               :: n_phif, n_thetaf, num_mesh,i,ii,argl,cutmesh,k,&
                                            start_new_reng,end_new_reng,xyz
   character(len=10)                     :: val='',namepro ,type_pro ! type_pro : max, min, neg

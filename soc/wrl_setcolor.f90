@@ -6,10 +6,10 @@
 !```````````````````````````````````````````````````````````````````````````````````````````
 !!  "wrl_diffuse_color: data file ( of ELATools code) to wrl file. 
 
-SUBROUTINE set_colors(val, num_color,color_val_out,color_val_out2)
+SUBROUTINE set_colors(val, num_color, color_val_out, color_val_out2, color_val_out3)
 implicit none
   ChARACTER(len=10)               :: val
-  DOUBLE PRECISION, DIMENSION(4)  :: color_val_out,color_val_out2,color_val_out3,color_out
+  DOUBLE PRECISION, DIMENSION(4)  :: color_val_out, color_val_out2, color_val_out3, color_out
   integer                         :: i, num_color
   IF (val=='young' .or. val=='Young' .or. val=='yon') THEN
     WRITE(*,*)"___________________________________________________"
@@ -51,12 +51,13 @@ implicit none
     WRITE(*,*)"___________________________________________________"
   endif
   !============================================================================================  
-    IF (val=='herd' .or. val=='hardness' .or. val=='Hardness') THEN
+    IF (val=='hard' .or. val=='hardness' .or. val=='Hardness') THEN
     WRITE(*,*)"___________________________________________________"
     WRITE(*,*)"Set the color of the Hardness,"
     WRITE(*,*)"by [Red, Green, Blue, Transparency] between 0 to 1"
     WRITE(*,*)""
   if(num_color==1)then
+      WRITE(*,*)"========= color of Max. Posivive value =========="
     Do i=1,4
       if (i==1) write(*,*) "> set diffuse red   color :"
       if (i==2) write(*,*) "> set diffuse green color :"
@@ -67,6 +68,20 @@ implicit none
     WRITE(*,"(A,4F8.5)")"Set:",color_val_out
     WRITE(*,*)""
     call check_color(color_val_out)
+  endif
+  if(num_color==2)then
+    WRITE(*,*)"========= color of Min. Posivive value =========="
+    Do i=1,4
+      if (i==1) write(*,*) "> set diffuse red   color :"
+      if (i==2) write(*,*) "> set diffuse green color :"
+      if (i==3) write(*,*) "> set diffuse blue  color :"
+      if (i==4) write(*,*) "> set transp.             :"
+      read(*,*)color_val_out2(i)
+    END do
+    WRITE(*,*)"========= ============================ =========="
+    WRITE(*,"(A,4F8.5)")"Set:",color_val_out2
+    WRITE(*,*)""
+    call check_color(color_val_out2)
   endif
     WRITE(*,*)"___________________________________________________"
   endif

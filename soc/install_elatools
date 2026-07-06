@@ -1,0 +1,260 @@
+#!/bin/csh -f
+
+# last modified 2025/06/04
+
+set name = $0
+set bin  = $name:h		# directory of the script
+# set binsr = `pwd` # This variable was not used
+
+echo ""
+echo ""
+echo ""
+set bold   = `tput bold`
+set normal = `tput sgr0`
+set redd   = `tput setaf 1`
+set green  = `tput setaf 2`
+set nc     = `tput sgr0` # Same as normal
+
+echo "     ${bold}===========================================${normal}"
+echo "     ${bold}#       Welcome to ElATools installer     #${normal}"
+echo "     ${bold}#        last modified 20/02/2025         #${normal}" # Tool's own last modified date
+echo "     ${bold}===========================================${normal}"
+echo ""
+echo ""
+echo ""
+sleep 1
+
+# set arb = ar # This variable was not used
+
+# Determine the absolute path to the ElATools base directory
+set elatools_base_dir = `cd "$bin/.." && pwd`
+
+# Get user's shell
+set usershell = `getent passwd $USER | awk -F: '{print $NF}'`
+set usershell = $usershell:t
+
+# Change to the source/compilation directory
+cd "$bin/../soc"
+if ($status != 0) then
+    echo "${redd}Error: Could not change to directory $bin/../soc. Installation aborted.${normal}"
+    exit 1
+endif
+
+if (! -e Makefile.orig) then
+    if (-e Makefile) then
+        cp Makefile Makefile.orig
+    else
+        echo "${redd}Warning: Makefile not found in $PWD. Cannot create Makefile.orig.${normal}"
+    endif
+    if (-e Makefileg) then
+        mv Makefileg Makefile
+    else
+        echo "${redd}Warning: Makefileg not found in $PWD. Cannot set it as default Makefile.${normal}"
+    endif
+endif
+
+echo -n "     Do you want to run install ElATools ? (y/N) "
+set yn = $<
+if ("$yn" != "y" && "$yn" != "Y") then
+    echo ""
+    echo "  ElATools install aborted by user."
+    echo ""
+    exit
+endif
+
+echo -n "     Do you want to set path MP and db data of ElATools ? (y/N) "
+set yn2 = $<
+if ("$yn2" == "y" || "$yn2" == "Y") then
+    if (-e ./run_path.sh) then
+        chmod +x ./run_path.sh
+        ./run_path.sh
+    else
+        echo "${redd}Warning: ./run_path.sh not found in $PWD. Skipping this step.${normal}"
+    endif
+endif
+# Regardless of yn2, proceed to reinstallation/compilation steps
+goto reinstall
+
+reinstall:
+if (-e ../bin/Elatools.x) then
+    echo ""
+    echo " ElATools appears to be compiled already."
+    echo ""
+    echo -n "     Do you want to recompile ElATools ? (y/N) "
+    set yn_recompile = $<
+    if ("$yn_recompile" == "y" || "$yn_recompile" == "Y") then
+        if (-e ../bin/Elatools.x_org) then
+            rm -f ../bin/Elatools.x_org # Remove old backup if it exists
+        endif
+        cp ../bin/Elatools.x ../bin/Elatools.x_org
+        rm ../bin/Elatools.x
+        goto recompile
+    else
+        goto linkbashrc
+    endif
+else
+    # If Elatools.x does not exist, proceed to compile
+    goto recompile
+endif
+
+recompile:
+echo ""
+echo "${bold}*************************************${normal}"
+echo "${bold}#             Compiler                #${normal}"
+echo "${bold}*************************************${normal}"
+echo ""
+echo "Available compilers:"
+echo "  - The Intel(R) Fortran compiler (v > 2019) (ifort)"
+echo "  - The GNU Fortran compiler               (gfortran)"
+echo ""
+
+# Default to ifort by ensuring Makefile_ifort is copied to Makefile
+if (-e Makefile_ifort) then
+    cat Makefile_ifort > Makefile
+else
+    echo "${redd}Warning: Makefile_ifort not found. Cannot set default compiler configuration.${normal}"
+endif
+
+echo -n " Choose your compiler (ifort / gfortran) [default: ifort]: "
+set compiler_choice = $<
+
+if ("$compiler_choice" == "gfortran") then
+    echo "     ================================="
+    echo "             Gfortran Compiler        "
+    echo "     ================================="
+    sleep 1
+    if (-e Makefile_gfort) then
+        cat Makefile_gfort > Makefile
+    else
+        echo "${redd}Warning: Makefile_gfort not found. Cannot switch to gfortran configuration.${normal}"
+    endif
+else if ("$compiler_choice" == "ifort" || "$compiler_choice" == "") then
+    echo "     ================================="
+    echo "              Ifort Compiler          "
+    echo "     ================================="
+    # Makefile_ifort is already set as Makefile (or attempted)
+    sleep 1
+else
+    echo "     Invalid choice. Using default (ifort)."
+    # Makefile_ifort remains as Makefile
+    sleep 1
+endif
+
+echo "     ================================="
+echo "              Making ElATools        "
+echo "     ================================="
+sleep 2
+make clean
+make
+
+echo ""
+echo ""
+echo "     ================================="
+echo "              Install ElATools       "
+echo "     ================================= "
+echo ""
+sleep 2
+goto linkbashrc
+
+linkbashrc:
+if (! -e ../bin/Elatools.x) then
+    goto error1
+endif
+
+# Configuration of shell rc files
+cd ~
+if ($status != 0) then
+    echo "${redd}Error: Could not change to home directory. Installation aborted.${normal}"
+    exit 1
+endif
+
+touch .cshrc .bashrc # Ensure files exist
+
+# Backup existing rc files
+cp ~/.cshrc ~/.cshrc.savez
+cp ~/.bashrc ~/.bashrc.savez
+
+# Check if ElATools setup already exists
+# Grep for a unique part of the BEGIN marker.
+# The `grep ... | wc -l` might not be robust if filenames are printed by grep.
+# A more robust way is to check count from each file or use grep -c.
+# For simplicity, keeping original logic but with refined grep.
+set cshrc_done = `grep -c "#################added by ElATools:  BEGIN" ~/.cshrc`
+set bashrc_done = `grep -c "#################added by ElATools: BEGIN" ~/.bashrc`
+@ userdone = $cshrc_done + $bashrc_done
+
+if ($userdone > 0) then
+    echo ""
+    echo "      ElATools environment variables seem to be already set up in your shell rc file(s)."
+    echo ""
+    echo -n "     Do you want to remove the old setup and install again? (y/N) "
+    set yn_resetup = $<
+    if ("$yn_resetup" == "y" || "$yn_resetup" == "Y") then
+        echo "     Removing old ElATools setup from rc files..."
+        # Use specific markers for sed
+        sed -e '/^#################added by ElATools:  BEGIN #############$/,/^#################added by ElATools: END #########################$/d' ~/.cshrc > ~/.cshrc.tmp
+        mv ~/.cshrc.tmp ~/.cshrc
+        sed -e '/^#################added by ElATools: BEGIN  #############$/,/^#################added by ElATools: END ########################$/d' ~/.bashrc > ~/.bashrc.tmp
+        mv ~/.bashrc.tmp ~/.bashrc
+        goto contsetup
+    else
+        echo ""
+        echo "      ElATools install aborted due to a previous run. No changes made."
+        echo "      Your original .cshrc and .bashrc backups are in .cshrc.savez and .bashrc.savez"
+        echo ""
+        # rm ~/.cshrc.savez # User might want these backups
+        # rm ~/.bashrc.savez
+        exit
+    endif
+endif
+
+contsetup:
+if ("$usershell" == "bash") then
+    echo ""
+    echo "     *) Adding ElATools environment to .bashrc"
+    echo ""
+    sleep 1
+    cat << EOF_BASHRC >> ~/.bashrc
+
+#################added by ElATools: BEGIN  #############
+export ELATOOLS_TOPDIR="${elatools_base_dir}/bin"
+export PATH="\$ELATOOLS_TOPDIR:\$PATH"
+#################added by ElATools: END ########################
+EOF_BASHRC
+else # Assuming csh or tcsh
+    echo "     *) Adding ElATools environment to .cshrc"
+    echo ""
+    sleep 1
+    cat << EOF_CSHRC >> ~/.cshrc
+
+#################added by ElATools:  BEGIN #############
+setenv ELATOOLS_TOPDIR "${elatools_base_dir}/bin"
+setenv PATH "${elatools_base_dir}/bin:\$PATH"
+#################added by ElATools: END #########################
+EOF_CSHRC
+endif
+
+
+set proceed_cmd = "source ~/.cshrc"
+if ("$usershell" == "bash") then
+    set proceed_cmd = ". ~/.bashrc"
+endif
+
+echo ""
+echo "${green}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%${normal}"
+echo "${green}Your environment for ElATools is now configured.${normal}"
+echo "${green}You have to restart your shell or run the following command for the changes to take effect:${normal}"
+echo "${green}  ${proceed_cmd}${normal}"
+echo "${green}After that, you can try to start by typing: Elatools.x${normal}"
+echo "${green}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%${normal}"
+exit 0
+
+error1:
+echo ""
+echo "${redd}>>>>> ERROR <<<<<${normal}"
+echo "${redd}>>   ElATools not compiled successfully. Check your compiler and build output.${normal}"
+echo "${redd}>>   (A Fortran compiler is required).${normal}"
+echo "${redd}>>>>> ERROR <<<<<${normal}"
+exit 1
+
+

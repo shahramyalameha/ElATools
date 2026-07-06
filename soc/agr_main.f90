@@ -23,9 +23,7 @@ PROGRAM data2D_to_agr
  ChARACTER(4) :: onoff
  REAL(8), DIMENSION(400) :: sh,shtheta, com,comtheta, poi,poitheta, bu,butheta, yo,yotheta, so,sotheta,temp	
 	
-	open(875, file="MESH")
-	 read(875, *) phi_meah, theta_meah, cutmesh
-	close(875)
+
 	
      ! Get command line args (Fortran 2003 standard)
   if (command_argument_count() > 0) then
@@ -84,7 +82,9 @@ PROGRAM data2D_to_agr
 	 else
 		WRITE(*,*)'Using: dat2agr_lapw [ box or polar] in the  DatFile_*** folder ';STOP
 	 endif
-	 
+	open(875, file="MESH")
+	 read(875, *) phi_meah, theta_meah, cutmesh
+	close(875)	 
 
 	 WRITE(*,*) " > Scale factor for ploting (If needed):"
 	 READ(*,*)ASF

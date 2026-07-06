@@ -1,0 +1,136 @@
+# ============================================================================== #
+#                  Improved Generic Makefile for Elatools_lapw                   #
+#                            (Using gfortran Compiler)                           #
+# ============================================================================== #
+
+# ------------------------------------------------------------------------------
+#                           User Defined Variables
+# ------------------------------------------------------------------------------
+# --- Compiler ---
+FC = gfortran
+
+# --- Compiler Options ---
+FOPT = -ffree-form -O2 -ffree-line-length-none
+FGEN = -ffree-form -O2 -ffree-line-length-none
+
+# --- Linker Options ---
+LDFLAGS = $(FOPT) -lblas -llapack -lpthread
+
+# --- ANSI Color Codes for Output ---
+GREEN   = \033[0;32m
+YELLOW  = \033[0;33m
+NC      = \033[0m # No Color
+
+# ------------------------------------------------------------------------------
+#                     Project Structure and File Definitions
+# ------------------------------------------------------------------------------
+# --- Destination for executables ---
+DESTDIR  = ../bin/
+
+# --- List of Executable Names ---
+EXECNAME  = Elatools.x
+EXECNAME1 = dat2wrl.x
+EXECNAME2 = dat2agr.x
+EXECNAME3 = dat2gnu.x
+EXECNAME4 = dens.x
+EXECNAME5 = dat2html.x
+
+# --- Full paths for executables ---
+EXEC  = $(DESTDIR)$(EXECNAME)
+EXEC1 = $(DESTDIR)$(EXECNAME1)
+EXEC2 = $(DESTDIR)$(EXECNAME2)
+EXEC3 = $(DESTDIR)$(EXECNAME3)
+EXEC4 = $(DESTDIR)$(EXECNAME4)
+EXEC5 = $(DESTDIR)$(EXECNAME5)
+
+# A list of all executables for easier cleaning
+EXECS = $(EXEC) $(EXEC1) $(EXEC2) $(EXEC3) $(EXEC4) $(EXEC5)
+
+# --- Object files for each executable ---
+OBJS =  Eatools_main.o	Eatools_born.o Eatools_2Dyoung.o Eatools_2Dpoisson.o  Eatools_2Dshear.o \
+        Eatools_2DMaxMin.o Eatools_2Danalyz.o Eatools_2D_proelast.o Eatools_2dPL.o \
+        Eatools_3dPLbul.o Eatools_3dPLpoi.o Eatools_3dPLyou.o Eatools_hkl.o Eatools_cijinv.o \
+        Eatools_cijinv2D.o  Eatools_poi.o Eatools_so.o Eatools_2dcal.o Eatools_2dPLv2.o Eatools_aniso.o \
+        Eatools_3dPLcom.o Eatools_stability.o Eatools_db.o	Eatools_3dPLsh.o Eatools_ang2car.o Eatools_dsyec3.o \
+        Eatools_dutester.o Eatools_proelast.o Eatools_sh.o Eatools_welc.o Eatools_pugh.o Eatools_3dPLpugh.o \
+        Eatools_hardness.o Eatools_km.o Eatools_wave_start.o Eatools_wave_vgvf.o Eatools_wave_rot.o Eatools_wave_cal.o \
+        Eatools_wave_main.o Eatools_2dcal_wave.o Eatools_pro_wave.o Eatools_2Dadv.o Eatools_api.o  Eatools_pwave.o\
+        Eatools_3dslic.o Eatools_bulk.o help.o Eatools_1D_proelast.o Eatools_wave_cal2d.o Eatools_2DlC.o Eatools_2DStiffness.o Eatools_baner.o
+
+OBJS1 = wrl_calylm.o wrl_colorsign.o wrl_end.o wrl_main.o \
+	    wrl_mesh.o wrl_shape.o wrl_spherappear.o wrl_spher.o wrl_start.o wrl_setcolor.o
+
+OBJS2 = agr_autoset.o agr_curvef.o agr_main.o agr_minmax.o agr_automake.o \
+       	agr_polar.o agr_setplot.o agr_start.o agr_winend.o agr_win.o agr_fzero.o
+
+OBJS3 = gnu_main.o gnu_subs.o gnu_3dmap.o gnu_copyri.o
+
+OBJS4 = rho_main.o rho_mass.o
+
+OBJS5 = html_colorscale.o html_gerdata.o html_scord.o html_strace.o html_elayout.o html_main.o html_setpare.o html_swin.o \
+        html_etrace.o html_mincord.o html_stitle.o html_gerdata_velop.o  html_gerdata_velog.o html_gerdata_polar.o html_minpolar.o \
+        html_spolar.o html_colorsettings.o html_gerdata3dslic.o html_gerdataslice_velop.o html_gerdataslice_velog.o  html_gerdataslice_velof.o html_cheakdim.o\
+        html_gerdata_hmap.o html_slayout_hmap.o html_3dmap.o html_swin_map.o
+
+# ------------------------------------------------------------------------------
+#                              Build Rules
+# ------------------------------------------------------------------------------
+# Phony targets are not files. 'all' and 'clean' are classic examples.
+.PHONY: all clean elatools dat2wrl dat2agr dat2gnu dens dat2html
+
+# --- Default target: build all executables ---
+all: elatools dat2wrl dat2agr dat2gnu dens dat2html
+
+# --- Rule to build the main executable ---
+elatools: $(OBJS)
+	@echo -e "$(YELLOW)--> Linking to create $(notdir $@)...$(NC)"
+	$(FC) -o $(EXEC) $^ $(LDFLAGS)
+	@echo -e "$(GREEN)==== $(notdir $(EXEC)) successfully created ====$(NC)\n"
+
+# --- Rule to build dat2wrl.x ---
+dat2wrl: $(OBJS1)
+	@echo -e "$(YELLOW)--> Linking to create $(notdir $@)...$(NC)"
+	$(FC) -o $(EXEC1) $^ $(LDFLAGS)
+	@echo -e "$(GREEN)==== $(notdir $(EXEC1)) successfully created ====$(NC)\n"
+
+# --- Rule to build dat2agr.x ---
+dat2agr: $(OBJS2)
+	@echo -e "$(YELLOW)--> Linking to create $(notdir $@)...$(NC)"
+	$(FC) -o $(EXEC2) $^ $(LDFLAGS)
+	@echo -e "$(GREEN)==== $(notdir $(EXEC2)) successfully created ====$(NC)\n"
+
+# --- Rule to build dat2gnu.x ---
+dat2gnu: $(OBJS3)
+	@echo -e "$(YELLOW)--> Linking to create $(notdir $@)...$(NC)"
+	$(FC) -o $(EXEC3) $^
+	@echo -e "$(GREEN)==== $(notdir $(EXEC3)) successfully created ====$(NC)\n"
+
+# --- Rule to build dens.x ---
+dens: $(OBJS4)
+	@echo -e "$(YELLOW)--> Linking to create $(notdir $@)...$(NC)"
+	$(FC) -o $(EXEC4) $^ $(LDFLAGS)
+	@echo -e "$(GREEN)==== $(notdir $(EXEC4)) successfully created ====$(NC)\n"
+
+# --- Rule to build dat2html.x ---
+dat2html: $(OBJS5)
+	@echo -e "$(YELLOW)--> Linking to create $(notdir $@)...$(NC)"
+	$(FC) -o $(EXEC5) $^ $(LDFLAGS)
+	@echo -e "$(GREEN)==== $(notdir $(EXEC5)) successfully created ====$(NC)\n"
+
+# ------------------------------------------------------------------------------
+#                    Implicit Rule for Fortran Compilation
+# ------------------------------------------------------------------------------
+# --- Suffix rule to compile .f90 files to .o object files ---
+.SUFFIXES: .o .f90
+
+.f90.o:
+	@echo "Compiling $<..."
+	$(FC) -c $(FGEN) $< -o $@
+
+# ------------------------------------------------------------------------------
+#                                 Clean Rule
+# ------------------------------------------------------------------------------
+clean:
+	@echo "Cleaning up project files..."
+	rm -f *.o *.mod *~ $(EXECS)
+	@echo "Done."

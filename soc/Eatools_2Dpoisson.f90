@@ -30,8 +30,11 @@
   Y2 = (Y1-A)*vv33-C(1,2)*(vv11+vv22)
   Y3 = C(1,1)*vv11+C(2,2)*vv22
   !phi_poisson(l) = -1D0*(Y2)/(Y3+A-2d0*B)                    ! methoe_ 1 by Cij
-  E=(S(1,1)*(vv22)+S(2,2)*(vv11)+(S(3,3)+2.d0*S(1,2))*vv33)   
-  Pe=vv33*(S(1,1)+S(2,2)-S(3,3))+S(1,2)*(vv11+vv22)
+  
+  E  = ( ( 2.d0 * S(1,2) + S(3,3) )* vv33 ) + (S(1,1) * vv22 + S(2,2) * vv11   )
+   
+  Pe = ( S(1,1) + S(2,2) - S(3,3) ) * vv33 + S(1,2)*(vv11 + vv22)
+  
   phi_poisson(l) =-(Pe/E)                                  ! method_ 2 by Sij (Recommend)
   !write(*,*)phi_young_test(l)
   IF (l.EQ.0) THEN 

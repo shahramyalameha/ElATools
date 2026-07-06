@@ -16,3 +16,10 @@ SUBROUTINE end_cord_web()
     WRITE(66,"(a)")'      ]'
     WRITE(66,"(a)")'   ],'
 END SUBROUTINE
+!===========================
+
+SUBROUTINE middle_cordslice_web()
+  IMPLICIT NONE
+    WRITE(66,"(a)")'      ],'
+END SUBROUTINE
+!===========================

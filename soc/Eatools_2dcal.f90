@@ -1,59 +1,63 @@
-!```````````````````````````````````````````````````````````````````````````````````````````
-! Copyright (c) 2018 Shahram Yalameha <yalameha93@gmail.com> , <sh.yalameha@sci.ui.ac.ir>, `
-!               Please report bugs or suggestions to:  yalameha93@gmail.com                `
-!                                                                                          `
-!```````````````````````````````````````````````````````````````````````````````````````````
-! SUBROUTINE: fOR 2D MATERIAL , CALCULATE vectors and (theta, pih) in the (001) plane
+ !```````````````````````````````````````````````````````````````````````````````````````````
+ ! COPYRIGHT (C) 2018 SHAHRAM YALAMEHA <YALAMEHA93@GMAIL.COM> , <SH.YALAMEHA@SCI.UI.AC.IR>, `
+ !               PLEASE REPORT BUGS OR SUGGESTIONS TO:  YALAMEHA93@GMAIL.COM                `
+ !                                                                                          `
+ !```````````````````````````````````````````````````````````````````````````````````````````
+ ! SUBROUTINE: FOR 2D MATERIAL , CALCULATE VECTORS AND (THETA, PIH) IN THE (001) PLANE
 
-SUBROUTINE twoD_calc(vv11,vv12,vv13,vv22,vv23,vv33,mmx,kky,llz,smkl,i,phi,theta,theta_point,vec)
-    IMPLICIT NONE
-	  DOUBLE PRECISION                  :: smkl,smkl2,&
-		                                  twoDTheta=0D0,&
-		                                           mmx, &
-		                                           kky, &
-		                                           llz, &
-                                               vv11,&
-		                                           vv12,&
-		                                           vv13,&
-                                               vv22,&
-		                                           vv23,&
-		                                           vv33,theta,phi
-	  DOUBLE PRECISION, DIMENSION(3)               :: vec
-	  DOUBLE PRECISION,PARAMETER                   :: pi=3.1415926535897932384626433832795D0,ee=0.00001D0
-	  INTEGER                                      :: i,j,theta_point
- 
-    twoDTheta=DBLE(i)*2D0*pi/theta_point
-    IF ((ABS(mmx).LE.ee).AND.(ABS(llz).LE.ee)) THEN  
-      vec(1) = COS(twoDTheta)
-      vec(2) = 0D0
-      vec(3) = SIN(twoDTheta)        
-    ELSE  
-      smkl=SQRT(mmx**2D0+llz**2D0)   
-      vec(1) = ( llz*COS(twoDTheta)-mmx*kky*SIN(twoDTheta)    )/smkl
-      vec(2) = ( (mmx**2D0+llz**2D0)*SIN(twoDTheta)           )/smkl
-      vec(3) = ( -mmx*COS(twoDTheta)-kky*llz*SIN(twoDTheta)   )/smkl
-    ENDIF
+SUBROUTINE TWOD_CALC(VV11,VV12,VV13,VV22,VV23,VV33,MMX,KKY,LLZ,SMKL,I,PHI,THETA,THETA_POINT,VEC)
+   IMPLICIT NONE
+   DOUBLE PRECISION                  :: SMKL,SMKL2,&
+      TWODTHETA=0D0,&
+      MMX, &
+      KKY, &
+      LLZ, &
+      VV11,&
+      VV12,&
+      VV13,&
+      VV22,&
+      VV23,&
+      VV33,THETA,PHI
+   DOUBLE PRECISION, DIMENSION(3)               :: VEC
+   DOUBLE PRECISION,PARAMETER                   :: PI=3.1415926535897932384626433832795D0,EE=0.00001D0
+   INTEGER                                      :: I,J,THETA_POINT
 
-    IF (1D0-( ABS( vec(3) ) ).LE.ee) THEN 
-      theta = 0D0
-      phi   = 0D0
-    ELSE  
-      theta=ACOS( vec(3) )
-      IF (vec(2).LE.ee) THEN
-        IF ( ( ABS(vec(1))-ABS( SIN(theta) ) ).LE.ee ) THEN 
-          smkl2=0.999999D0*vec(1)/SIN(theta)
-        ELSE
-          smkl2=vec(1)/SIN(theta)
-        ENDIF      
-        phi=sign( ACOS(smkl2),vec(2) )     
+   TWODTHETA=DBLE(I)*2D0*PI/THETA_POINT
+   IF ((ABS(MMX).LE.EE).AND.(ABS(LLZ).LE.EE)) THEN
+      VEC(1) = COS(TWODTHETA)
+      VEC(2) = 0D0
+      VEC(3) = SIN(TWODTHETA)
+   ELSE
+      SMKL=SQRT(MMX**2D0+LLZ**2D0)
+      VEC(1) = ( LLZ*COS(TWODTHETA)-MMX*KKY*SIN(TWODTHETA)    )/SMKL
+      VEC(2) = ( (MMX**2D0+LLZ**2D0)*SIN(TWODTHETA)           )/SMKL
+      VEC(3) = ( -MMX*COS(TWODTHETA)-KKY*LLZ*SIN(TWODTHETA)   )/SMKL
+   ENDIF
+
+   IF (1D0-( ABS( VEC(3) ) ).LE.EE) THEN
+      THETA = 0D0
+      PHI   = 0D0
+   ELSE
+      THETA=ACOS( VEC(3) )
+      IF (VEC(2).LE.EE) THEN
+         IF ( ( ABS(VEC(1))-ABS( SIN(THETA) ) ).LE.EE ) THEN
+            SMKL2=0.999999D0*VEC(1)/SIN(THETA)
+         ELSE
+            SMKL2=VEC(1)/SIN(THETA)
+         ENDIF
+         PHI=SIGN( ACOS(SMKL2),VEC(2) )
       ELSE
-        phi=sign( ACOS(vec(1)/SIN(theta)),vec(2) )            
+         PHI=SIGN( ACOS(VEC(1)/SIN(THETA)),VEC(2) )
       ENDIF
-    ENDIF
-    vv11 = vec(1)*vec(1) ; vv12 = vec(1)*vec(2)
-    vv13 = vec(1)*vec(3) ; vv22 = vec(2)*vec(2)
-    vv23 = vec(2)*vec(3) ; vv33 = vec(3)*vec(3)
-   !write(*,*)vv11,vv13,vv23,vv12,vv22,vv33
+   ENDIF
+   VV11 = VEC(1)*VEC(1) ; VV12 = VEC(1)*VEC(2)
+   VV13 = VEC(1)*VEC(3) ; VV22 = VEC(2)*VEC(2)
+   VV23 = VEC(2)*VEC(3) ; VV33 = VEC(3)*VEC(3)
+   !WRITE(*,*)VV11,VV13,VV23,VV12,VV22,VV33
 
-   END SUBROUTINE
- 
+END SUBROUTINE
+
+
+
+
+

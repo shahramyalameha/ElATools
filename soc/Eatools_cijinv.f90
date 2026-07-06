@@ -26,7 +26,7 @@
 			READ(58,*) (U(i,j),j=1,N)
 	      ENDDO
 		  close(58)
-		  33    FORMAT(100(F12.8,1X))
+		  33    FORMAT(100(F15.8,1X))
 		  14    FORMAT (6F8.2)
               !
 	      M=N

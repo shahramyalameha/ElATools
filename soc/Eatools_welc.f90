@@ -6,7 +6,7 @@
 ! SUBROUTINE: Hi ElATools. Welcome (: .
 !-----------------------------------------------------------------
 SUBROUTINE WELCOME()
-WRITE(*,'(a)')'================= Welcome to =================='
+WRITE(*,'(a)')'============== 🎈 Welcome to 🎈 ==============='
 WRITE(*,'(a)')'                                               ' 
 WRITE(*,'(a)')"          Anisotropic Elasticity Tools         "
 WRITE(*,'(a)')"          -           --         -             "
@@ -48,3 +48,24 @@ WRITE(99,*)'                                                   '
 
 END
 
+
+
+SUBROUTINE log_start_time()
+  !> Turn off implicit typing
+  IMPLICIT NONE
+
+  !> Variable declarations
+  INTEGER, DIMENSION(8) :: values
+
+  !> Get the current date and time from the system clock
+  CALL DATE_AND_TIME(VALUES=values)
+
+  !> Write the formatted date and time to unit 99 (DATA.out)
+  !> Using I2.2 format to ensure a minimum of 2 digits with leading zeros
+  WRITE(99, '(A)')    '==================================================='
+  WRITE(99, '(A, I4.4, A, I2.2, A, I2.2)') ' > Program started on: ', values(1), '-', values(2), '-', values(3)
+  WRITE(99, '(A, I2.2, A, I2.2, A, I2.2)') ' > at:                 ', values(5), ':', values(6), ':', values(7)
+  WRITE(99, '(A)')    '==================================================='
+  WRITE(99, *) '' !> Write a blank line for better readability
+
+END SUBROUTINE log_start_time

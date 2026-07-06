@@ -19,8 +19,8 @@
         integer i, j, Stable
         dimension Celas(6,6)
         dimension Eig3d(6,6), Vector(6,6)
-        double precision EPS
-        double precision Celas, Eig3d, Vector
+        DOUBLE PRECISION :: EPS
+        double precision :: Celas, Eig3d, Vector
         
         do i=1,6
            do j=1,6
@@ -28,7 +28,7 @@
            enddo
         enddo
 
-        EPS=0.01 
+        EPS=0.01D0 
         call cjcbj(Eig3d,6,EPS,Vector)
 
 !C       Stable=0: Stable
@@ -76,7 +76,7 @@
         integer i, j, Stable
         dimension Celas(3,3)
         dimension Eig2d(3,3), Vector(3,3)
-        double precision EPS
+        DOUBLE PRECISION ::EPS
         double precision Celas, Eig2d, Vector
         do i=1,3
            do j=1,3
@@ -114,7 +114,49 @@
            endif
         enddo
 
- end subroutine       
+ end subroutine 
+!================== 
+subroutine stability1d( Stable, Celas)    
+        integer i, j, Stable
+        dimension Celas(2,2)
+        dimension Vector(2,2)
+        double precision Celas, Vector
+ if (Celas(2,2)> 0 .and. Celas(2,2)>Celas(1,2)) THEN
+   Stable=0
+ Else
+   Stable=1
+ ENDIF       
+         
+end subroutine   
+ 
+ !---------------------
+subroutine sij1D(Celas,Selas)    
+        integer i, j
+        dimension Celas(2,2)
+        dimension Selas(2,2)
+      double precision Celas, Selas
+   DOUBLE PRECISION                 :: DET
+   
+   OPEN(11,FILE="Cij-1D.dat",status='old', ACTION='READ')        
+      READ(11,*) Celas(1,1),Celas(1,2) 
+      READ(11,*) Celas(2,1),Celas(2,2) 
+   close(11)   
+   
+  DET = Celas(1, 1) * Celas(2, 2) - Celas(1, 2) * Celas(2, 1)
+  ! CHECK IF THE DETERMINANT IS NON-ZERO
+  IF (DET == 0) THEN
+    PRINT *, "THE MATRIX IS NOT INVERTIBLE."
+    STOP
+  ELSE
+    ! CALCULATE THE INVERSE OF THE MATRIX
+    Selas(1, 1) =  Celas(2, 2) / DET
+    Selas(1, 2) = -Celas(1, 2) / DET
+    Selas(2, 1) = -Celas(2, 1) / DET
+    Selas(2, 2) =  Celas(1, 1) / DET
+! Write(*,*)Selas(1, 1), Selas(2, 2) , Selas(1, 2) ,Selas(2, 1)   
+  END IF
+   
+ end subroutine 
 !C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 !C%%%%%   subprogram "cjcbj" is used to solve the matrix        %%%% 
 !C%%%%%   eigenvalues according the Jacobi iterate method       %%%%

@@ -13,7 +13,7 @@ PROGRAM gnu_conv
   ChARACTER(len=10)                :: a=' ' 
   ChARACTER(len=10)                :: namepro=' ' ,val0,namepro2=' ',val1='',val='',clor_val="",cval1 ,cval2 ,cval3 
   ChARACTER(len=10), dimension(10) :: arg_mane
-  real(8)                          :: MAXpo, MAXyo, MAXsh
+  real(8)                          :: MAXpo, MAXyo, MAXsh,MAXtr, MAXlo
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ChARACTER(LEN=6)                 :: e1,e2
   ChARACTER(LEN=2)                 :: ynveloc
@@ -54,7 +54,7 @@ PROGRAM gnu_conv
  cval2    = arg_mane(3)
  cval3    = arg_mane(4)
   !WRITE(*,*)cval1,cval2,cval3
- ! WRITE(*,*) val,clor_val
+   !WRITE(*,*) val,trim(clor_val)
   IF (val == "-h" .OR. val == "")THEN 
        WRITE(*,*)'Using: dat2gnu.x [ Properties ] [hmap colors] in the  DatFile_*** folder' 
        WRITE(*,*)''
@@ -81,7 +81,7 @@ PROGRAM gnu_conv
        WRITE(*,*)' pff      => Power Flow angles      : Fast-mode       '
        WRITE(*,*)' km       => Min. thermal conductivity                '
        WRITE(*,*)' hmpoi    => 2D heat map of Poisson’s ratio          '
-       WRITE(*,*)' hmphug   => 2D heat map of Poisson’s ratio          '       
+       WRITE(*,*)' hmpugh   => 2D heat map of Poisson’s ratio          '       
        WRITE(*,*)' hmcomp   => 2D heat map of Linear compressibility   '
        WRITE(*,*)' hmshear  => 2D heat map of Shear modulus            '
        WRITE(*,*)' hmbulk   => 2D heat map of Bulk modulus             '
@@ -91,18 +91,45 @@ PROGRAM gnu_conv
        WRITE(*,*)' hmgall   => 2D heat map of Group velocity: all-mode '
        WRITE(*,*)' hmpfall  => 2D heat map of PFA: all-mode            '
        WRITE(*,*)' hmkm     => 2D heat map of Min. thermal conductivity'
-       
+WRITE(*,*)''
+       WRITE(*,"(A)")'  sppoi    => Projection onto the unit sphere of Poisson’s ratio '
+       WRITE(*,"(A)")'  sppugh   => Projection onto the unit sphere of Phug’s ratio '       
+       WRITE(*,"(A)")'  spshear  => Projection onto the unit sphere of Shear modulus '
+       WRITE(*,"(A)")'  spyou    => Projection onto the unit sphere of Young’s modulus '
+       WRITE(*,"(A)")'  spbulk   => Projection onto the unit sphere of Bulk modulus '
+       WRITE(*,"(A)")'  spcomp   => Projection onto the unit sphere of Linear compressibility '
+       WRITE(*,"(A)")'  sphard   => Projection onto the unit sphere of Hardness '       
+       WRITE(*,"(A)")'  sppall   => Projection onto the unit sphere of Phase velocities: all-mode '
+       WRITE(*,"(A)")'  spgall   => Projection onto the unit sphere of Group velocities: all-mode '
+       WRITE(*,"(A)")'  sppfall  => Projection onto the unit sphere of Power Flow angle (PFA) : all-mode '
+       WRITE(*,"(A)")'  spkm     => Projection onto the unit sphere of Min. thermal conductivity '
+WRITE(*,*)''       
+       WRITE(*,"(A)")'  spmpoi    => Equal area plane projection of Poisson’s ratio          '
+       WRITE(*,"(A)")'  spmpugh   => Equal area plane projection of Poisson’s ratio          '       
+       WRITE(*,"(A)")'  spmcomp   => Equal area plane projection of Linear compressibility   '
+       WRITE(*,"(A)")'  spmshear  => Equal area plane projection of Shear modulus            '
+       WRITE(*,"(A)")'  spmbulk   => Equal area plane projection of Bulk modulus             '
+       WRITE(*,"(A)")'  spmyoung  => Equal area plane projection of Young’s modulus          '
+       WRITE(*,"(A)")'  spmhard   => Equal area plane projection of Hardness                 '
+       WRITE(*,"(A)")'  spmpall   => Equal area plane projection of Phase velocity: all-mode '
+       WRITE(*,"(A)")'  spmgall   => Equal area plane projection of Group velocity: all-mode '
+       WRITE(*,"(A)")'  spmpfall  => Equal area plane projection of PFA: all-mode            '
+       WRITE(*,"(A)")'  spmkm     => Equal area plane projection of Min. thermal conductivity'
+              
        WRITE(*,*)' '
        WRITE(*,*)'[2D Properties]:                                      '
        WRITE(*,*)' 2dpoi     => Poisson’s ratio                         '
        WRITE(*,*)' 2dyoung   => Young’s modulus                         '
        WRITE(*,*)' 2dshear   => Shear modulus                           '
+       WRITE(*,*)' 2dtran    => Elastic Waves: Transverse               '  
+       WRITE(*,*)' 2dlong    => Elastic Waves: Longitudinal             '                   
        WRITE(*,*)' 2d        => Generate all 2d-propreites              '
        WRITE(*,*)' phmpoi    => 2D polar-heat map of Poisson’s ratio   '
        WRITE(*,*)' phmyou    => 2D polar-heat map of Young’s modulus   '
        WRITE(*,*)' phmshe    => 2D polar-heat map of Shear modulus     '    
        WRITE(*,*)' phmall    => 2D polar-heat map of all properties    '    
-
+       WRITE(*,*)' phmlong   => 2D polar-heat map of Longitudinal Wave '
+       WRITE(*,*)' phmtran   => 2D polar-heat map of Transverse Wave   '       
        WRITE(*,*)' '
        WRITE(*,*)'[hmap colors]:                                       '
        WRITE(*,*)'bbry      => black-blue-red-yellow                   '
@@ -194,36 +221,66 @@ ENDIF
     READ(22,*) MAXyo
     READ(22,*) MAXsh
     READ(22,*) MAXpo
+    IF (ynveloc=="Y")    READ(22,*) MAXtn
+    IF (ynveloc=="Y")    READ(22,*) MAXlo       
     close(22) 
-    val='2dpoi'  ; call twoDplot(val,MAXpo, MAXyo, MAXsh,cval1,cval2,cval3) 
-    val='2dyoung'; call twoDplot(val,MAXpo, MAXyo, MAXsh,cval1,cval2,cval3) 
-    val='2dshear'; call twoDplot(val,MAXpo, MAXyo, MAXsh,cval1,cval2,cval3) 
+    val='2dpoi'  ; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3) 
+    val='2dyoung'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3) 
+    val='2dshear'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3) 
+    val='2dtran'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3)   
+    val='2dlong'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3)         
   ENDIF
   IF (val=='2dpoi' .OR. val=='2dpoisson') THEN
     OPEN(22,file='.MaMiout') 
     READ(22,*) MAXyo
     READ(22,*) MAXsh
     READ(22,*) MAXpo
+if (ynveloc=="Y")    READ(22,*) MAXtn
+if (ynveloc=="Y")    READ(22,*) MAXlo    
     close(22) 
-    val='2dpoi';  call twoDplot(val,MAXpo, MAXyo, MAXsh,cval1,cval2,cval3) 
+    val='2dpoi';  call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3) 
   ENDIF
   IF (val=='2dyoung' .OR. val=='2dyoun') THEN
     OPEN(22,file='.MaMiout') 
     READ(22,*) MAXyo
     READ(22,*) MAXsh
     READ(22,*) MAXpo
+if (ynveloc=="Y")    READ(22,*) MAXtn
+if (ynveloc=="Y")    READ(22,*) MAXlo    
     close(22)   
-    val='2dyoung'; call twoDplot(val,MAXpo, MAXyo, MAXsh,cval1,cval2,cval3) 
+    val='2dyoung'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3) 
   ENDIF
   IF (val=='2dshear' .OR. val=='2dshea') THEN
     OPEN(22,file='.MaMiout') 
     READ(22,*) MAXyo
     READ(22,*) MAXsh
     READ(22,*) MAXpo
+if (ynveloc=="Y")    READ(22,*) MAXtn
+if (ynveloc=="Y")    READ(22,*) MAXlo    
     close(22) 
-    val='2dshear'; call twoDplot(val,MAXpo, MAXyo, MAXsh,cval1,cval2,cval3) 
+    val='2dshear'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3) 
   ENDIF
-
+  IF (val=='2dtran' .OR. val=='2dtra') THEN
+    OPEN(22,file='.MaMiout') 
+    READ(22,*) MAXyo
+    READ(22,*) MAXsh
+    READ(22,*) MAXpo
+if (ynveloc=="Y")    READ(22,*) MAXtn
+if (ynveloc=="Y")    READ(22,*) MAXlo    
+    close(22) 
+    val='2dtran'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo,cval1,cval2,cval3) 
+  ENDIF
+  IF (val=='2dlong' .OR. val=='2dlon') THEN
+    OPEN(22,file='.MaMiout') 
+    READ(22,*) MAXyo
+    READ(22,*) MAXsh
+    READ(22,*) MAXpo
+if (ynveloc=="Y")    READ(22,*) MAXtn
+if (ynveloc=="Y")    READ(22,*) MAXlo    
+    close(22) 
+    val='2dlong'; call twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo, cval1,cval2,cval3) 
+  ENDIF  
+  
   IF (val=='phmshear' .OR. val=='phmshe') THEN
     val='phmshe'; call twoD_phm(val,clor_val)
   ENDIF  
@@ -233,10 +290,30 @@ ENDIF
   IF (val=='phmyoung' .OR. val=='phmyou') THEN
     val='phmyon'; call twoD_phm(val,clor_val)
   ENDIF 
+  IF (val=='phmtrans' .OR. val=='phmtran') THEN
+    val='phmtran'; call twoD_phm(val,clor_val)
+  ENDIF
+  IF (val=='phmlongi' .OR. val=='phmlong') THEN
+    val='phmlong'; call twoD_phm(val,clor_val)
+  ENDIF     
    IF (val=='phmall' .OR. val=='phma') THEN
     val='phmall'; call twoD_phm(val,clor_val)
   ENDIF 
+  
+  ! write(*,*)clor_val
+   IF (val=='sppoi' .OR. val=='spmpoi' .OR. val=='sppoi' .OR.      &
+       val=='sppugh' .OR. val=='sppoi' .OR. val=='spmpugh' .OR.    &
+       val=='spshear' .OR. val=='spmshear' .OR. val=='spcomp' .OR. &
+       val=='spmcomp' .OR. val=='spyou' .OR. val=='spmyou' .OR.    & 
+       val=='spbulk' .OR. val=='spmbulk' .OR. val=='sppall' .OR.   &
+       val=='spgall' .OR. val=='sppfall' .OR. val=='spmpall' .OR.   &
+       val=='spmgall' .OR. val=='spmpfall' .OR. val=='spmkm' ) THEN
+       
+      call sp_map(val,clor_val)
+  ENDIF                          
 
+  
+ close(2)
 END PROGRAM
 !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -277,7 +354,11 @@ END PROGRAM
    VV_Sf_PF_min,&
    VV_Ss_PF_min,&
    Ha_max2,     &
-   Ha_min2, km_min,km_max
+   Ha_min2,     &
+   Ha_max1,     &
+   Ha_min1,     &
+   km_min,      &
+   km_max,val_neg
 
    if (val=='all' .OR. val=='poi' .OR. val=='comp'.OR. val=='shear' .OR.val=='sound' .OR. val=='bulk' .or. val=='young'&
                   .OR.val=='pugh' .OR. val=='pp' .OR.  val=='pf'.OR. val=='ps' .OR. val=='gp' .OR.val=='gf' &
@@ -287,7 +368,8 @@ END PROGRAM
                   .OR. val == "hmhard".OR. val == "km" .OR. val == "hmkm") THEN
                   
      OPEN(32,file='.MaMiout',status='old')
-     read(32,*) Maxyoung,Minyoung,Maxcomp,Mincomp,G_max2,G_min2,Maxbulk,Minbulk,Pratio_max,Pratio_min,maxEVaTMf,maxEVaLM,minEVaTMf,pugh_max2,pugh_min2,Ha_max2,Ha_min2
+     read(32,*) Maxyoung, Minyoung, Maxcomp, Mincomp, G_max2, G_min2, Maxbulk, Minbulk, Pratio_max, Pratio_min,&
+                maxEVaTMf, maxEVaLM, minEVaTMf, pugh_max2, pugh_min2, Ha_max2,Ha_min2, Ha_max1, Ha_min1
      !WRITE(*,*)Maxyoung,Maxcomp,G_max2,Maxbulk,Pratio_max,pugh_max2,maxEVaTMf
      close(32)
      OPEN(30,file='.MaMiout2',status='old')
@@ -314,13 +396,13 @@ END PROGRAM
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n" .or. cval2=="n" .or. cval3=="n") THEN
-     WRITE(2,'(a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "red"   lw 2 title "Negative",\'
-     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "green" lw 2 title "Min. positive",\'
-     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "blue"  lw 2 title "Max. positive"'
+     WRITE(2,'(a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "red"   lw 2 title "Negative" at 0.80,0.75,\'
+     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "green" lw 2 title "Min. positive" at 0.80,0.80,\'
+     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "blue"  lw 2 title "Max. positive" at 0.80,0.85'
      ELSE
-     WRITE(2,'(4a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "',cval1,'"   lw 2  title "Negative",\'
-     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "',cval2,'" lw 2 title "Min. positive",\'
-     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "',cval3,'"  lw 2title "Max. positive"'
+     WRITE(2,'(4a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "',cval1,'"   lw 2  title "Negative" at 0.80,0.75,\'
+     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "',cval2,'" lw 2 title "Min. positive" at 0.80,0.80,\'
+     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "',cval3,'"  lw 2title "Max. positive" at 0.80,0.85'
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -337,20 +419,20 @@ END PROGRAM
       CALL set1()
   CALL settit(val0)
    IF (cval1=="n" .or. cval2=="n" .or. cval3=="n") THEN
-     WRITE(2,'(a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "red"   lw 2 title "Negative",\'
-     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "green" lw 2 title "Min. positive",\'
-     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "blue"  lw 2 title "Max. positive"'
+     WRITE(2,'(a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "red"   lw 2 title "Negative" at 0.80,0.75,\'
+     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "green" lw 2 title "Min. positive" at 0.80,0.80,\'
+     WRITE(2,'(a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "blue"  lw 2 title "Max. positive" at 0.80,0.85'
    ELSE
-     WRITE(2,'(4a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "',cval1,'"   lw 2  title "Negative",\'
-     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "',cval2,'" lw 2 title "Min. positive",\'
-     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "',cval3,'"  lw 2title "Max. positive"'  
+     WRITE(2,'(4a)')'pl  "2dcut_poisson.dat"  u 1:4 w l lc "',cval1,'"   lw 2  title "Negative" at 0.80,0.75,\'
+     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:3 w l lc  "',cval2,'" lw 2 title "Min. positive" at 0.80,0.80,\'
+     WRITE(2,'(4a)')'    "2dcut_poisson.dat" u 1:2 w l lc  "',cval3,'"  lw 2title "Max. positive" at 0.80,0.85'  
    ENDIF     
-        WRITE(*,"(A,F4.2,A,F5.3,A)")" > Using: go to gnuplot, call 'poissons.gpi' '",Pratio_max/4,"' '",Pratio_max+0.1d0,"' (or other scale)  "
+        WRITE(*,"(A,A,F4.2,A,F5.3,A,A)")' > Using: gnuplot -p -e "',"call 'poissons.gpi' '",Pratio_max/4,"' '",Pratio_max+0.1d0,"' ",'"'
  ENDIF
 
  if (val=='hmpoi' .OR. val=='hmpoissons' ) THEN
   call threeDdmap()
-  WRITE(*,'(2a)') val,'was READ well...'
+   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='poissons_smap.gpi')
 Call copyri()
 WRITE(2,'(a)')' reset'
@@ -389,12 +471,15 @@ WRITE(2,'(a)')'set origin 0.3333,-0.03'
 WRITE(2,'(a)')'set cblabel "({/Symbol n}_{ Min-Positive}) x 10^{-2}"'
 
 WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($12*100) w  pm3d notitle'
-
-WRITE(2,'(a)')'set size 0.333,1.1'
-WRITE(2,'(a)')'set origin 0.66,-0.03'
-WRITE(2,'(a)')'set cblabel "({/Symbol n}_{ Negative}) x 10^{-2}"'
-WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):(-1*$13*100) w  pm3d notitle'
-
+call sp_neg_val(val,val_neg)
+if (val_neg < 0) then
+ WRITE(2,'(a)')'set size 0.333,1.1'
+ WRITE(2,'(a)')'set origin 0.66,-0.03'
+ WRITE(2,'(a)')'set cblabel "({/Symbol n}_{ Negative}) x 10^{-2}"'
+ WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):(-1*$13*100) w  pm3d notitle'
+ else
+ write(*,*)" >> There is no NPR! << "
+endif
 WRITE(2,'(a)')'unset multiplot'
 WRITE(2,'(a)')'unset output'
 WRITE(2,'(a)')'reset'
@@ -417,11 +502,11 @@ ENDIF
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n" .or. cval2=="n" ) THEN
-    WRITE(2,'(a)')'pl "2dcut_comp.dat" u 1:2 w l lc "green" lw 2 title "Positive",\'
-    WRITE(2,'(a)')'   "2dcut_comp.dat" u 1:3 w l lc "red"   lw 2 title "Negative"'
+    WRITE(2,'(a)')'pl "2dcut_comp.dat" u 1:2 w l lc "green" lw 2 title "Positive" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "2dcut_comp.dat" u 1:3 w l lc "red"   lw 2 title "Negative" at 0.8,0.80'
    ELSE
-    WRITE(2,'(4a)')'pl "2dcut_comp.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Positive",\'
-    WRITE(2,'(4a)')'   "2dcut_comp.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Negative"'
+    WRITE(2,'(4a)')'pl "2dcut_comp.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Positive" at 0.8,0.85,\'
+    WRITE(2,'(4a)')'   "2dcut_comp.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Negative" at 0.8,0.80'
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -435,13 +520,13 @@ ENDIF
       CALL set1()
    CALL settit(val0)  
    IF (cval1=="n" .or. cval2=="n" ) THEN
-     WRITE(2,'(a)')'pl "2dcut_comp.dat" u 1:2 w l lc "green" lw 2 title "Positive",\'
-     WRITE(2,'(a)')'   "2dcut_comp.dat" u 1:3 w l lc "red"   lw 2 title "Negative"'
+     WRITE(2,'(a)')'pl "2dcut_comp.dat" u 1:2 w l lc "green" lw 2 title "Positive" at 0.8,0.85,\'
+     WRITE(2,'(a)')'   "2dcut_comp.dat" u 1:3 w l lc "red"   lw 2 title "Negative" at 0.8,0.80'
    ELSE
-     WRITE(2,'(4a)')'pl "2dcut_comp.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Positive",\'
-     WRITE(2,'(4a)')'   "2dcut_comp.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Negative"'
+     WRITE(2,'(4a)')'pl "2dcut_comp.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Positive" at 0.8,0.85,\'
+     WRITE(2,'(4a)')'   "2dcut_comp.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Negative" at 0.8.80'
    ENDIF
-        WRITE(*,"(A,F6.2,A,F6.2,A)")" > Using: go to gnuplot, call 'compressibiliy.gpi' '",Maxcomp/4,"' '",Maxcomp+1d0,"' (or other scale)  "
+        WRITE(*,"(A,A,F6.2,A,F6.2,A,A)")' > Using: gnuplot -p -e "',"call 'compressibiliy.gpi' '",Maxcomp/4,"' '",Maxcomp+1d0,"' ",'"'
  ENDIF
   !/////////////////
  if (val=='hmcomp' .OR. val=='hmcompressibiliy' .or. val=='hmcom') THEN
@@ -506,12 +591,12 @@ ENDIF
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n" .or. cval2=="n") THEN
-    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear",\'
-    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear"'
+    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear" at 0.8,0.80'
    ! WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(4a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear",\'
-    WRITE(2,'(4a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear"'
+    WRITE(2,'(4a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(4a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear" at 0.8,0.80'
     !WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:4 w l lc "',cval2,'" lw 2'    
    ENDIF
    CALL setterm() 
@@ -526,15 +611,15 @@ ENDIF
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n" .or. cval2=="n") THEN
-    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear",\'
-    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear"'
+    WRITE(2,'(a)')'pl "2dcut_shear.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear" at 0.8,0.80'
    ! WRITE(2,'(a)')'   "2dcut_shear.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(4a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear",\'
-    WRITE(2,'(4a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear"'
+    WRITE(2,'(4a)')'pl "2dcut_shear.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(4a)')'   "2dcut_shear.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear" at 0.8,0.80'
     !WRITE(2,'(3a)')'   "2dcut_shear.dat" u 1:4 w l lc "',cval2,'" lw 2'    
    ENDIF
-        WRITE(*,"(A,F5.2,A,F6.2,A)")" > Using: go to gnuplot, call 'shear.gpi' '",(G_max2)/4d0,"' '",G_max2+1d0,"' (or other scale)  "
+        WRITE(*,"(A,A,F5.2,A,F6.2,A,A)")' > Using: gnuplot -p -e "',"call 'shear.gpi' '",(G_max2)/4d0,"' '",G_max2+1d0,"' ",'"'
  ENDIF
 !\\\\\\\\\\\\\\\\\\\\\
  if (val=='hmshear' .OR. val=='hmshe' .or. val=='hmShear') THEN
@@ -600,13 +685,13 @@ ENDIF
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n" .or. cval2=="n".or. cval3=="n") THEN
-    WRITE(2,'(a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "blue" lw 2 title "Max.",\'
-    WRITE(2,'(a)')'   "2dcut_pugh.dat" u 1:3 w l lc "green" lw 2 title "Min.",\'
-    WRITE(2,'(a)')'   "2dcut_pugh.dat" u 1:4 w l lc "red" lw 2 title "Negative"'
+    WRITE(2,'(a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "blue" lw 2 title "Max." at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "2dcut_pugh.dat" u 1:3 w l lc "green" lw 2 title "Min." at 0.8,0.80 #,\'
+    WRITE(2,'(a)')' #  "2dcut_pugh.dat" u 1:4 w l lc "red" lw 2 title "Negative" at 0.8,0.75'
    ELSE
-    WRITE(2,'(4a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Max.",\'
-    WRITE(2,'(4a)')'   "2dcut_pugh.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min.",\'
-    WRITE(2,'(4a)')'   "2dcut_pugh.dat" u 1:4 w l lc "',cval3,'" lw 2 title "Negative"'
+    WRITE(2,'(4a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Max." at 0.8,0.85,\'
+    WRITE(2,'(4a)')'   "2dcut_pugh.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min." at 0.8,0.80 #,\'
+    WRITE(2,'(4a)')' #  "2dcut_pugh.dat" u 1:4 w l lc "',cval3,'" lw 2 title "Negative" at 0.8,0.75'
    ENDIF    
    CALL setterm() 
    CALL setoutput(val0)
@@ -620,15 +705,15 @@ ENDIF
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n" .or. cval2=="n".or. cval3=="n") THEN
-    WRITE(2,'(a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "blue" lw 2 title "Max.",\'
-    WRITE(2,'(a)')'   "2dcut_pugh.dat" u 1:3 w l lc "green" lw 2 title "Min.",\'
-    WRITE(2,'(a)')'   "2dcut_pugh.dat" u 1:4 w l lc "red" lw 2 title "Negative"'
+    WRITE(2,'(a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "blue" lw 2 title "{k}_{max}" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "2dcut_pugh.dat" u 1:3 w l lc "green" lw 2 title "{k}_{min}" at 0.8,0.80 #,\'
+    WRITE(2,'(a)')'#   "2dcut_pugh.dat" u 1:4 w l lc "red" lw 2 title "Negative" at 0.8,0.75'
    ELSE
-    WRITE(2,'(3a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Max.",\'
-    WRITE(2,'(3a)')'   "2dcut_pugh.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min.",\'
-    WRITE(2,'(3a)')'   "2dcut_pugh.dat" u 1:4 w l lc "',cval3,'" lw 2 title "Negative"'
+    WRITE(2,'(3a)')'pl "2dcut_pugh.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "{k}_{max}" at 0.8,0.85,\'
+    WRITE(2,'(3a)')'   "2dcut_pugh.dat" u 1:3 w l lc "',cval2,'" lw 2 title "{k}_{min}" at 0.8,0.80 #,\'
+    WRITE(2,'(3a)')'#   "2dcut_pugh.dat" u 1:4 w l lc "',cval3,'" lw 2 title "Negative" at 0.8,0.75'
    ENDIF 
-        WRITE(*,"(A,F6.3,A,F6.3,A)")" > Using: go to gnuplot, call 'pugh.gpi' '",pugh_max2/4,"' '",pugh_max2+0.1d0,"' (or other scale)  "
+        WRITE(*,"(A,A,F6.3,A,F6.3,A,A)")' > Using: gnuplot -p -e "',"call 'pugh.gpi' '",pugh_max2/4,"' '",pugh_max2+0.1d0,"' ",'"'
  ENDIF
  !\\\\\\\\\\\\\\\\\\\\\
  if (val=='hmpugh' .OR. val=='hmpug' .or. val=='hmPugh') THEN
@@ -662,12 +747,12 @@ WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mx
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
 WRITE(2,'(a)')' set size 0.333 ,1.1'
 WRITE(2,'(a)')' set origin 0.15,-0.03'
-WRITE(2,'(a)')' set cblabel "({Pugh}_{max}) x 10^{-2}"'
+WRITE(2,'(a)')' set cblabel "({k}_{max}) x 10^{-2}"'
 WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($20*100) w  pm3d notitle'
 WRITE(2,'(a)')' set format y  "";unset ylabel'
 WRITE(2,'(a)')'set size 0.333,1.1'
 WRITE(2,'(a)')'set origin 0.5,-0.03'
-WRITE(2,'(a)')'set cblabel "({Pugh}_{min}) x 10^{-2}"'
+WRITE(2,'(a)')'set cblabel "({k}_{min}) x 10^{-2}"'
 WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($21*100) w  pm3d notitle'
  
 WRITE(2,'(a)')' unset multiplot'
@@ -715,7 +800,7 @@ ENDIF
    WRITE(2,'(a)')'pl "2dcut_sound.dat" u 1:4 w l lc "red" lw 2 ,\'
    WRITE(2,'(a)')'   "2dcut_sound.dat" u 1:3 w l lc "green" lw 2 ,\'
    WRITE(2,'(a)')'   "2dcut_sound.dat" u 1:2 w l lc "blue" lw 2'
-        WRITE(*,"(A,F5.2,A,F6.2,A)")" > Using: go to gnuplot, call 'sound.gpi' '",maxEVaTMf/4.0d0,"' '",maxEVaTMf+1d0,"' (or other scale)  "
+        WRITE(*,"(A,A,F5.2,A,F6.2,A,A)")' > Using: gnuplot -p -e "',"call 'sound.gpi' '",maxEVaTMf/4.0d0,"' '",maxEVaTMf+1d0,"' ",'"'
  ENDIF
  !///////////////////
 
@@ -736,10 +821,10 @@ ENDIF
    CALL settit(val0) 
    IF (cval1=="n" ) THEN  
     !WRITE(2,'(a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 title "Bulk modulus "'
+    WRITE(2,'(a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 title "Bulk modulus " at 0.8,0.85'
     ELSE
     ! WRITE(2,'(2a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-     WRITE(2,'(3a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 title "Bulk modulus "'  
+     WRITE(2,'(3a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 title "Bulk modulus " at 0.8,0.85'  
     ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -754,12 +839,12 @@ ENDIF
   CALL settit(val0)  
    IF (cval1=="n") THEN  
    ! WRITE(2,'(a)')'pl "2dcut_bulk.dat" u 1:2 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 title "Bulk modulus "'
+    WRITE(2,'(a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "green"lw 2 title "Bulk modulus " at 0.8,0.85'
    ELSE
-     WRITE(2,'(3a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 title "Bulk modulus "' 
+     WRITE(2,'(3a)')'pl   "2dcut_bulk.dat" u 1:3 w l lc "',cval1,'"lw 2 title "Bulk modulus " at 0.8,0.85' 
  
    ENDIF
-   WRITE(*,"(A,F7.2,A,F9.2,A)")" > Using: go to gnuplot, call 'bulk.gpi' '",Maxbulk*100d0/4,"' '",(Maxbulk*100d0)+1.d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F7.2,A,F9.2,A,A)")' > Using: gnuplot -p -e "',"call 'bulk.gpi' '",(Maxbulk)/4,"' '",(Maxbulk*1.5)+1.d0,"' ",'"'
  ENDIF
 !///////////////////
 
@@ -794,7 +879,7 @@ WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mx
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
 WRITE(2,'(a)')' set size 0.333 ,1.1'
 WRITE(2,'(a)')' set origin 0.3333,-0.03'
-WRITE(2,'(a)')' set cblabel "({B}_{Posivive/Negative})x 10^{2} (GPa)"'
+WRITE(2,'(a)')' set cblabel "(Bulk modulus)x 10^{2} (GPa)"'
 WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($16/100) w  pm3d notitle'
 WRITE(2,'(a)')' unset multiplot'
 WRITE(2,'(a)')' unset output'
@@ -807,43 +892,47 @@ ENDIF
 if (val=='hard' .OR. val=='hardness' .or. val=='Hard') THEN
   WRITE(*,'(2a)') val,'was READ well...'
 open(2,file='hardness.gpi'); val0='hard' 	
-Call copyri()
-CALL setreset()
-CALL unset1() 
-WRITE(2,'(a)')"stats '2dcut_hardness.dat' u 2 nooutput"
-WRITE(2,'(a)')'maxig=ceil(STATS_max)'
-WRITE(2,'(a)')'maxi=maxig'
-WRITE(2,'(a)')'stats "2dcut_hardness.dat" u 3 nooutput'
-WRITE(2,'(a)')'maxif=ceil(STATS_max)'
-WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
-CALL set1()
-CALL settit(val0) 
-   IF (cval1=="n") THEN  
-WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2 title "Hardness"'
-!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "blue" lw 2'
-ELSE
-WRITE(2,'(3a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Hardness"'
-!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval1,'" lw 2'
-ENDIF
-CALL setterm() 
-CALL setoutput(val0)
-CALL unset1() 
-WRITE(2,'(a)')"stats '2dcut_hardness.dat' u 2 nooutput"
-WRITE(2,'(a)')'maxig=ceil(STATS_max)'
-WRITE(2,'(a)')'maxi=maxig'
-WRITE(2,'(a)')'stats "2dcut_hardness.dat" u 2 nooutput'
-WRITE(2,'(a)')'maxif=ceil(STATS_max)'
-WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
-CALL set1()
-CALL settit(val0)  
-   IF (cval1=="n") THEN  
-WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "green" lw 2 title "Hardness"'
-!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "blue" lw 2'
-ELSE
-WRITE(2,'(3a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Hardness"'
-!WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval1,'" lw 2'
-ENDIF
-WRITE(*,"(A,F7.2,A,F8.2,A)")" > Using: go to gnuplot, call 'hardness.gpi' '",Ha_max2/2,"' '",Ha_max2+1d0,"'(or other scale)  "
+   Call copyri()
+   CALL setreset()
+   CALL unset1() 
+   WRITE(2,'(a)')"stats '2dcut_hardness.dat' u 2 nooutput"
+   WRITE(2,'(a)')'maxig=ceil(STATS_max)'
+   WRITE(2,'(a)')'maxi=maxig'
+   WRITE(2,'(a)')'stats "2dcut_hardness.dat" u 3 nooutput'
+   WRITE(2,'(a)')'maxif=ceil(STATS_max)'
+   WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
+   CALL set1()
+   CALL settit(val0) 
+   IF (cval1=="n" .or. cval2=="n") THEN
+    WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear" at 0.8,0.80'
+   ! WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:4 w l lc "red" lw 2'
+   ELSE
+    WRITE(2,'(4a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(4a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear" at 0.8,0.80'
+    !WRITE(2,'(3a)')'   "2dcut_hardness.dat" u 1:4 w l lc "',cval2,'" lw 2'    
+   ENDIF
+   CALL setterm() 
+   CALL setoutput(val0)
+   CALL unset1() 
+   WRITE(2,'(a)')"stats '2dcut_hardness.dat' u 2 nooutput"
+   WRITE(2,'(a)')'maxig=ceil(STATS_max)'
+   WRITE(2,'(a)')'maxi=maxig'
+   WRITE(2,'(a)')'stats "2dcut_hardness.dat" u 3 nooutput'
+   WRITE(2,'(a)')'maxif=ceil(STATS_max)'
+   WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
+   CALL set1()
+  CALL settit(val0)  
+   IF (cval1=="n" .or. cval2=="n") THEN
+    WRITE(2,'(a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "blue" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:3 w l lc "green" lw 2 title "Min. Shear" at 0.8,0.80'
+   ! WRITE(2,'(a)')'   "2dcut_hardness.dat" u 1:4 w l lc "red" lw 2'
+   ELSE
+    WRITE(2,'(4a)')'pl "2dcut_hardness.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Max. Shear" at 0.8,0.85,\'
+    WRITE(2,'(4a)')'   "2dcut_hardness.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Min. Shear" at 0.8,0.80'
+    !WRITE(2,'(3a)')'   "2dcut_hardness.dat" u 1:4 w l lc "',cval2,'" lw 2'    
+   ENDIF
+WRITE(*,"(A,A,F7.2,A,F8.2,A,A)")' > Using: gnuplot -p -e "',"call 'hardness.gpi' '",Ha_max2/2,"' '",Ha_max2+1d0,"'(or other scale)  "
  
 ENDIF
 !///////////////////
@@ -856,31 +945,37 @@ Call copyri()
 WRITE(2,'(a)')' reset'
 WRITE(2,'(a)')' set term pngcairo enhanced dashed font "Arial, 19" size 2300,700 nocrop lw 2'
 WRITE(2,'(a)')' set output  "hardness_smap.png"'
-WRITE(2,'(a)')' set multiplot layout 1,1'
+WRITE(2,'(a)')' set multiplot layout 1,2'
 WRITE(2,'(a)')' set format z "%11.4e"'
 WRITE(2,'(a)')' set xlabel "{/Symbol q} (Degree)"  '
 WRITE(2,'(a)')' set ylabel "{/Symbol f} (Degree)"  '
 WRITE(2,'(a)')' set view map'
 IF      (clor_val=='bbry') THEN
-WRITE(2,'(a)')' set palette rgb 7,5,15'
+ WRITE(2,'(a)')' set palette rgb 7,5,15'
 ELSE IF (clor_val=='grv') THEN
-WRITE(2,'(a)')' set palette rgb 3,11,6'
+ WRITE(2,'(a)')' set palette rgb 3,11,6'
 ELSE IF (clor_val=='bbvy') THEN
-WRITE(2,'(a)')' set palette rgb 30,31,32'
+ WRITE(2,'(a)')' set palette rgb 30,31,32'
 ELSE IF (clor_val=='bgyr') THEN
-WRITE(2,'(a)')' set palette rgb 33,13,10'
+ WRITE(2,'(a)')' set palette rgb 33,13,10'
 ELSE IF (clor_val=='bryw') THEN
-WRITE(2,'(a)')' set palette rgb 34,35,36'
+ WRITE(2,'(a)')' set palette rgb 34,35,36'
 ELSE
-WRITE(2,'(a)')' set palette rgb 30,13,10'
+  WRITE(2,'(a)')' set palette rgb 30,13,10'
 END IF
 WRITE(2,'(a)')' unset ztics'
 WRITE(2,'(a)')' set xtics format "%3.0f"; set xtics 45  in offset 0, 0.3; set mxtics 5;'
 WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
 WRITE(2,'(a)')' set size 0.333 ,1.1'
-WRITE(2,'(a)')' set origin 0.3333,-0.03'
-WRITE(2,'(a)')' set cblabel "Hardness"'
-WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($24) w  pm3d notitle'
+WRITE(2,'(a)')' set origin 0.15,-0.03'
+WRITE(2,'(a)')' set cblabel "({Hardness}_{max}) x 10^{2} (GPa)"'
+WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($24/100) w  pm3d notitle'
+WRITE(2,'(a)')' set format y  "";unset ylabel'
+WRITE(2,'(a)')'set size 0.333,1.1'
+WRITE(2,'(a)')'set origin 0.5,-0.03'
+WRITE(2,'(a)')'set cblabel "({Hardness}_{min}) x 10^{2} (GPa)"'
+WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($25/100) w  pm3d notitle'
+ 
 WRITE(2,'(a)')' unset multiplot'
 WRITE(2,'(a)')' unset output'
 WRITE(2,'(a)')' reset'
@@ -904,10 +999,10 @@ ENDIF
    CALL set1()
    CALL settit(val0)
    IF (cval1=="n" ) THEN   
-    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 title "Young modulus"'
+    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 title "Young modulus" at 0.8,0.85'
    ! WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
    ELSE
-    WRITE(2,'(3a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Young modulus"'
+    WRITE(2,'(3a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Young modulus" at 0.8,0.85'
    ! WRITE(2,'(2a)')'   "2dcut_young.dat" u 1:3 w l lc "',cval1,'" lw 2'
    ENDIF
    CALL setterm() 
@@ -922,13 +1017,13 @@ ENDIF
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n" ) THEN   
-    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 title "Young modulus"'
+    WRITE(2,'(a)')'pl "2dcut_young.dat" u 1:2 w l lc "green" lw 2 title "Young modulus" at 0.8,0.85'
     !WRITE(2,'(a)')'   "2dcut_young.dat" u 1:3 w l lc "blue" lw 2'
    ELSE
-    WRITE(2,'(3a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Young modulus"'
+    WRITE(2,'(3a)')'pl "2dcut_young.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Young modulus" at 0.8,0.85'
    ! WRITE(2,'(2a)')'   "2dcut_young.dat" u 1:3 w l lc "',cval1,'" lw 2'
    ENDIF
-   WRITE(*,"(A,F7.2,A,F8.2,A)")" > Using: go to gnuplot, call 'young.gpi' '",Maxyoung/2,"' '",Maxyoung+1d0,"'(or other scale)  "
+   WRITE(*,"(A,A,F7.2,A,F8.2,A,A)")' > Using: gnuplot -p -e "',"call 'young.gpi' '",Maxyoung/2,"' '",Maxyoung+1d0,"'(or other scale)  "
    !WRITE(*,*)Maxyoung
  ENDIF
 !///////////////////
@@ -1006,16 +1101,16 @@ WRITE(2,'(a)')'set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
 WRITE(2,'(a)')'set size 0.333 ,1.1'
 WRITE(2,'(a)')'set origin 0.003,-0.03'
 WRITE(2,'(a)')'set cblabel "V_{p}-P Mode (m/s)"'
-WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($25) w  pm3d notitle'
+WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($26) w  pm3d notitle'
 WRITE(2,'(a)')'set format y  "";unset ylabel'
 WRITE(2,'(a)')'set size 0.333,1.1'
 WRITE(2,'(a)')'set origin 0.3333,-0.03'
 WRITE(2,'(a)')'set cblabel "V_{p}-Fast Mode (m/s)"'
-WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($27) w  pm3d notitle'
+WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($28) w  pm3d notitle'
 WRITE(2,'(a)')'set size 0.333,1.1'
 WRITE(2,'(a)')'set origin 0.66,-0.03'
 WRITE(2,'(a)')'set cblabel "V_{p}-Slow Mode (m/s)"'
-WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($29) w  pm3d notitle'
+WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($30) w  pm3d notitle'
 WRITE(2,'(a)')'unset multiplot'
 WRITE(2,'(a)')'unset output'
 WRITE(2,'(a)')'reset'
@@ -1056,16 +1151,16 @@ WRITE(2,'(a)')'set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
 WRITE(2,'(a)')'set size 0.333 ,1.1'
 WRITE(2,'(a)')'set origin 0.003,-0.03'
 WRITE(2,'(a)')'set cblabel "V_{g}-P Mode (m/s)"'
-WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($26) w  pm3d notitle'
+WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($27) w  pm3d notitle'
 WRITE(2,'(a)')'set format y  "";unset ylabel'
 WRITE(2,'(a)')'set size 0.333,1.1'
 WRITE(2,'(a)')'set origin 0.3333,-0.03'
 WRITE(2,'(a)')'set cblabel "V_{g}-Fast Mode (m/s)"'
-WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($28) w  pm3d notitle'
+WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($29) w  pm3d notitle'
 WRITE(2,'(a)')'set size 0.333,1.1'
 WRITE(2,'(a)')'set origin 0.66,-0.03'
 WRITE(2,'(a)')'set cblabel "V_{g}-Slow Mode (m/s)"'
-WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($30) w  pm3d notitle'
+WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($31) w  pm3d notitle'
 WRITE(2,'(a)')'unset multiplot'
 WRITE(2,'(a)')'unset output'
 WRITE(2,'(a)')'reset'
@@ -1089,10 +1184,10 @@ ENDIF
    CALL settit(val0)
    IF (cval1=="n") THEN    
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 title "Phase velocity: P-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 title "Phase velocity: P-mode" at 0.8,0.85'
    ELSE
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Phase velocity: P-mode"'
+    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Phase velocity: P-mode" at 0.8,0.85'
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1107,12 +1202,12 @@ ENDIF
   CALL settit(val0)  
    IF (cval1=="n" ) THEN    
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 title "Phase velocity: P-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "blue" lw 2 title "Phase velocity: P-mode" at 0.8,0.85'
    ELSE
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Phase velocity: P-mode"'
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Phase velocity: P-mode" at 0.8,0.85'
    ENDIF
-   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'phase-p.gpi' '",(VVP_P_max/4d0),"' '",VVP_P_max+1d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'phase-p.gpi' '",(VVP_P_max/4d0),"' '",VVP_P_max+1d0,"' ",'"'
  ENDIF 
 !///////////////////
 
@@ -1132,10 +1227,10 @@ ENDIF
    CALL settit(val0)
    IF (cval1=="n") THEN   
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Phase velocity: Fast-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Phase velocity: Fast-mode" at 0.8,0.85'
    ELSE
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Phase velocity: Fast-mode"'
+    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Phase velocity: Fast-mode" at 0.8,0.85'
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1150,12 +1245,12 @@ ENDIF
   CALL settit(val0)  
    IF (cval1=="n" ) THEN   
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Phase velocity: Fast-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Phase velocity: Fast-mode" at 0.8,0.85'
    ELSE
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Phase velocity: Fast-mode"'
+    WRITE(2,'(2a)')'pl     "2dcut_pveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Phase velocity: Fast-mode" at 0.8,0.85'
    ENDIF
-   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'phase-fast.gpi' '",(VVP_Sf_max/4d0),"' '",VVP_Sf_max+1.d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'phase-fast.gpi' '",(VVP_Sf_max/4d0),"' '",VVP_Sf_max+1.d0,"' ",'"'
  ENDIF 
 !///////////////////
 
@@ -1175,10 +1270,10 @@ ENDIF
    CALL settit(val0) 
    IF (cval1=="n") THEN 
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 title "Phase velocity: Slow-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 title "Phase velocity: Slow-mode" at 0.8,0.85'
    ELSE
   !  WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval2,'" lw 2 title "Phase velocity: Slow-mode"'    
+    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval2,'" lw 2 title "Phase velocity: Slow-mode" at 0.8,0.85'    
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1193,12 +1288,12 @@ ENDIF
   CALL settit(val0)  
    IF (cval1=="n") THEN 
    ! WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 title "Phase velocity: Slow-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "red" lw 2 title "Phase velocity: Slow-mode" at 0.8,0.85'
    ELSE
    ! WRITE(2,'(2a)')'pl "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 ,\'
-    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Phase velocity: Slow-mode"'    
+    WRITE(2,'(3a)')'pl     "2dcut_pveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Phase velocity: Slow-mode" at 0.8,0.85'    
    ENDIF
-   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'phase-slow.gpi' '",VVP_Ss_max/4.0d0,"' '",VVP_Ss_max+1d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'phase-slow.gpi' '",VVP_Ss_max/4.0d0,"' '",VVP_Ss_max+1d0,"' ",'"'
  ENDIF 
  !///////////////////
 
@@ -1218,10 +1313,10 @@ ENDIF
    CALL settit(val0)
    IF (cval1=="n") THEN  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 title "Group velocity: P-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 title "Group velocity: P-mode" at 0.8,0.85'
    ELSE
    ! (2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "cval1" lw 2 ,\'
-    WRITE(2,'(3a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Group velocity: P-mode"'    
+    WRITE(2,'(3a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Group velocity: P-mode" at 0.8,0.85'    
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1236,12 +1331,12 @@ ENDIF
   CALL settit(val0)  
    IF (cval1=="n") THEN  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 title "Group velocity: P-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "blue" lw 2 title "Group velocity: P-mode" at 0.8,0.85'
    ELSE
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat"  u 1:2 w l lc "cval1" lw 2 ,\'
-    WRITE(2,'(3a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Group velocity: P-mode"'    
+    WRITE(2,'(3a)')'pl     "2dcut_gveloc.dat"  u 1:2 w l lc "',cval1,'" lw 2 title "Group velocity: P-mode" at 0.8,0.85'    
    ENDIF
-   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'group-p.gpi' '",VVG_P_max/4d0,"' '",VVG_P_max+1d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'group-p.gpi' '",VVG_P_max/4d0,"' '",VVG_P_max+1d0,"' ",'"'
  ENDIF 
  !///////////////////
   if (val=='GroupF'.or. val=='groupf' .or. val=='gf') THEN
@@ -1260,10 +1355,10 @@ ENDIF
    CALL settit(val0) 
    IF (cval1=="n") THEN  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 title "Group velocity: Fast-mode"'
+    WRITE(2,'(a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 title "Group velocity: Fast-mode" at 0.8,0.85'
     ELSE
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-     WRITE(2,'(3a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Group velocity: Fast-mode"'    
+     WRITE(2,'(3a)')'pl     "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Group velocity: Fast-mode" at 0.8,0.85'    
     ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1278,12 +1373,12 @@ ENDIF
   CALL settit(val0)  
    IF (cval1=="n") THEN  
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-    WRITE(2,'(a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 title "Group velocity: Fast-mode"'
+    WRITE(2,'(a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 title "Group velocity: Fast-mode" at 0.8,0.85'
     ELSE
    ! WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2 ,\'
-     WRITE(2,'(3a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Group velocity: Fast-mode"'    
+     WRITE(2,'(3a)')'pl   "2dcut_gveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Group velocity: Fast-mode" at 0.8,0.85'    
     ENDIF
-   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'group-fast.gpi' '",VVG_Sf_max/4d0,"' '",VVG_Sf_max+1d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'group-fast.gpi' '",VVG_Sf_max/4d0,"' '",VVG_Sf_max+1d0,"' ",'"'
  ENDIF 
 !///////////////////
 
@@ -1302,10 +1397,10 @@ ENDIF
    CALL set1()
    CALL settit(val0) 
    IF (cval1=="n") THEN  
-    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 title "Group velocity: Slow-mode"'
+    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 title "Group velocity: Slow-mode" at 0.8,0.85'
     !WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Group velocity: Slow-mode"'
+    WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Group velocity: Slow-mode" at 0.8,0.85'
    ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1319,12 +1414,12 @@ ENDIF
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n") THEN  
-    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 title "Group velocity: Slow-mode"'
+    WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2 title "Group velocity: Slow-mode" at 0.8,0.85'
     !WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "red" lw 2'
    ELSE
-    WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Group velocity: Slow-mode"'
+    WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Group velocity: Slow-mode" at 0.8,0.85'
    ENDIF
-   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'group-slow.gpi' '",VVG_Ss_max/4d0,"' '",VVG_Ss_max+1d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'group-slow.gpi' '",VVG_Ss_max/4d0,"' '",VVG_Ss_max+1d0,"' ",'"'
  ENDIF 
  !///////////////////
  if (val=='PFactP'.or. val=='pfoupp' .or. val=='pfp') THEN
@@ -1342,10 +1437,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)
 IF (cval1=="n") THEN   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 title "Power flow angle: P-mode"'
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 title "Power flow angle: P-mode" at 0.8,0.85'
  !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2'
 ELSE
- WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Power flow angle: P-mode"'
+ WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Power flow angle: P-mode" at 0.8,0.85'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1359,12 +1454,12 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)  
 IF (cval1=="n") THEN   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 title "Power flow angle: P-mode"'
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2 title "Power flow angle: P-mode" at 0.8,0.85'
  !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:2 w l lc "blue" lw 2'
 ELSE
- WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Power flow angle: P-mode"'
+ WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Power flow angle: P-mode" at 0.8,0.85'
 ENDIF
-WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'power-flow-p.gpi' '",1.0+(VV_P_PF_max/4d0),"' '",VV_P_PF_max+1d0,"' (or other scale)  "
+WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'power-flow-p.gpi' '",1.0+(VV_P_PF_max/4d0),"' '",VV_P_PF_max+1d0,"' ",'"'
 ENDIF 
 !///////////////////
 if (val=='PFactF'.or. val=='pfoupf' .or. val=='pff') THEN
@@ -1382,10 +1477,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0) 
 IF (cval1=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 title "Power flow angle: Fast-mode"'
+WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 title "Power flow angle: Fast-mode" at 0.8,0.85'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Power flow angle: Fast-mode"'
+WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Power flow angle: Fast-mode" at 0.8,0.85'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1399,12 +1494,12 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)  
 IF (cval1=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 title "Power flow angle: Fast-mode"'
+WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2 title "Power flow angle: Fast-mode" at 0.8,0.85'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:3 w l lc "green" lw 2'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Power flow angle: Fast-mode"'
+WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:3 w l lc "',cval1,'" lw 2 title "Power flow angle: Fast-mode" at 0.8,0.85'
 ENDIF
-WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'power-flow-fast.gpi' '",0.5+(VV_Sf_PF_max/4d0),"' '",VV_Sf_PF_max+1d0,"' (or other scale)  "
+WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'power-flow-fast.gpi' '",0.5+(VV_Sf_PF_max/4d0),"' '",VV_Sf_PF_max+1d0,"' ",'"'
 ENDIF 
 !///////////////////
 if (val=='PFactS'.or. val=='pfoups' .or. val=='pfs') THEN
@@ -1422,10 +1517,10 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0) 
 IF (cval1=="n") THEN   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 title "Power flow angle: Slow-mode"'
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 title "Power flow angle: Slow-mode" at 0.8,0.85'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2'
 ELSE
- WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Power flow angle: Slow-mode"'
+ WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Power flow angle: Slow-mode" at 0.8,0.85'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1439,12 +1534,12 @@ WRITE(2,'(a)')'if (maxif > maxig) {maxi=maxif} '
 CALL set1()
 CALL settit(val0)  
 IF (cval1=="n") THEN   
- WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 title "Power flow angle: Slow-mode"'
+ WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2 title "Power flow angle: Slow-mode" at 0.8,0.85'
 !WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:4 w l lc "red" lw 2'
 ELSE
- WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Power flow angle: Slow-mode"'
+ WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:4 w l lc "',cval1,'" lw 2 title "Power flow angle: Slow-mode" at 0.8,0.85'
 ENDIF
-WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'power-flow-slow.gpi' '",0.5+(VV_Sf_PF_max/4d0),"' '",VV_Sf_PF_max+1d0,"' (or other scale)  "
+WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'power-flow-slow.gpi' '",0.5+(VV_Sf_PF_max/4d0),"' '",VV_Sf_PF_max+1d0,"' ",'"'
 ENDIF 
 !///////////////////
  if (val=='phaseall'.or. val=='pall' .or. val=='pa') THEN
@@ -1463,13 +1558,13 @@ CALL set1()
 CALL settit(val0) 
 WRITE(2,'(a)')'set key'
 IF (cval1=="n" .or. cval3=="n" .or. cval3=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "red"   lw 2 title "P-mode",\'
-WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Fast-mode",\'
-WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "blue"  lw 2 title "Slow-mode"'
+WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "red"   lw 2 title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "blue"  lw 2 title "Slow-mode" at 0.8,0.75'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2 title "P-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Fast-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2 title "Slow-mode"'
+WRITE(2,'(3a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2 title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2 title "Slow-mode" at 0.8,0.75'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1484,15 +1579,15 @@ CALL set1()
 CALL settit(val0)
 WRITE(2,'(a)')'set key'  
 IF (cval1=="n" .or. cval3=="n" .or. cval3=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "red"   lw 2 title "P-mode",\'
-WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Fast-mode",\'
-WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "blue"  lw 2 title "Slow-mode"'
+WRITE(2,'(a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "red"   lw 2 title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "green" lw 2 title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "blue"  lw 2 title "Slow-mode" at 0.8,0.75'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2 title "P-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Fast-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2 title "Slow-mode"'
+WRITE(2,'(3a)')'pl "2dcut_pveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2 title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:3 w l lc "',cval2,'" lw 2 title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(3a)')'   "2dcut_pveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2 title "Slow-mode" at 0.8,0.75'
 ENDIF
-WRITE(*,*)" > Using: go to gnuplot, call 'phase.gpi' '10' '50'(or other scale)  "
+WRITE(*,*)' > Using: gnuplot -p -e "',"call 'phase.gpi' '10' '50' ",'"', "(or other scale)  "
 ENDIF 
  !///////////////////
 
@@ -1512,13 +1607,13 @@ CALL set1()
 CALL settit(val0) 
 WRITE(2,'(a)')'set key'
 IF (cval1=="n" .or. cval3=="n" .or. cval3=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "red"   lw 2   title "P-mode",\'
-WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2   title "Fast-mode",\'
-WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "blue"  lw 2   title "Slow-mode"'
+WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "red"   lw 2   title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2   title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "blue"  lw 2   title "Slow-mode" at 0.8,0.75'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2   title "P-mode",\'
-WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "',cval2,'" lw 2   title "Fast-mode",\'
-WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2   title "Slow-mode"'
+WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2   title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "',cval2,'" lw 2   title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2   title "Slow-mode" at 0.8,0.75'
 ENDIF
 CALL setterm() 
 CALL setoutput(val0)
@@ -1533,15 +1628,15 @@ CALL set1()
 CALL settit(val0)  
 WRITE(2,'(a)')'set key'
 IF (cval1=="n" .or. cval3=="n" .or. cval3=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "red"   lw 2   title "P-mode",\'
-WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2   title "Fast-mode",\'
-WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "blue"  lw 2   title "Slow-mode"'
+WRITE(2,'(a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "red"   lw 2   title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "green" lw 2   title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "blue"  lw 2   title "Slow-mode" at 0.8,0.75'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2   title "P-mode",\'
-WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "',cval2,'" lw 2   title "Fast-mode",\'
-WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2   title "Slow-mode"'
+WRITE(2,'(3a)')'pl "2dcut_gveloc.dat" u 1:2 w l lc "',cval1,'"   lw 2   title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:3 w l lc "',cval2,'" lw 2   title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(3a)')'   "2dcut_gveloc.dat" u 1:4 w l lc "',cval3,'"  lw 2   title "Slow-mode" at 0.8,0.75'
 ENDIF
-WRITE(*,*)" > Using: go to gnuplot, call 'group.gpi' '5' '20' (or other scale)  "
+WRITE(*,*)' > Using: gnuplot -p -e "',"call 'group.gpi' '5' '20' ",'"'
 ENDIF
 !\\\\\\\\\\\
 if (val=='hmpowerfall'.or. val=='hmpfall' .or. val=='hmpfa') THEN
@@ -1576,16 +1671,16 @@ WRITE(2,'(a)')'set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
 WRITE(2,'(a)')'set size 0.333 ,1.1'
 WRITE(2,'(a)')'set origin 0.003,-0.03'
 WRITE(2,'(a)')'set cblabel "PFA-P Mode (Degree)"'
-WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($31) w  pm3d notitle'
+WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($32) w  pm3d notitle'
 WRITE(2,'(a)')'set format y  "";unset ylabel'
 WRITE(2,'(a)')'set size 0.333,1.1'
 WRITE(2,'(a)')'set origin 0.3333,-0.03'
 WRITE(2,'(a)')'set cblabel "PFA-Fast Mode (Degree)"'
-WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($32) w  pm3d notitle'
+WRITE(2,'(a)')'sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($33) w  pm3d notitle'
 WRITE(2,'(a)')'set size 0.333,1.1'
 WRITE(2,'(a)')'set origin 0.66,-0.03'
 WRITE(2,'(a)')'set cblabel "PFA-Slow Mode (Degree)"'
-WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($33) w  pm3d notitle'
+WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($34) w  pm3d notitle'
 WRITE(2,'(a)')'unset multiplot'
 WRITE(2,'(a)')'unset output'
 WRITE(2,'(a)')'reset'
@@ -1611,13 +1706,13 @@ CALL set1()
 CALL settit(val0)
 WRITE(2,'(a)')'set key' 
 IF (cval1=="n" .or. cval3=="n" .or. cval3=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "red"   lw 2  title "P-mode",\'
-WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "green" lw 2  title "Fast-mode",\'
-WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "blue"  lw 2  title "Slow-mode"'
+WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "red"   lw 2  title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "green" lw 2  title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "blue"  lw 2  title "Slow-mode" at 0.8,0.75'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "',cval1,'"   lw 2  title "P-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "',cval2,'" lw 2  title "Fast-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "',cval3,'"  lw 2  title "Slow-mode"' 
+WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "',cval1,'"   lw 2  title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "',cval2,'" lw 2  title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "',cval3,'"  lw 2  title "Slow-mode" at 0.8,0.75' 
 ENDIF  
 CALL setterm() 
 CALL setoutput(val0)
@@ -1632,15 +1727,15 @@ CALL set1()
 CALL settit(val0) 
 WRITE(2,'(a)')'set key' 
 IF (cval1=="n" .or. cval3=="n" .or. cval3=="n") THEN   
-WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "red"   lw 2  title "P-mode",\'
-WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "green" lw 2  title "Fast-mode",\'
-WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "blue"  lw 2  title "Slow-mode"'
+WRITE(2,'(a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "red"   lw 2  title "P-mode" at 0.8,0.85 ,\'
+WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "green" lw 2  title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "blue"  lw 2  title "Slow-mode" at 0.8,0.75'
 ELSE
-WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "',cval1,'"   lw 2  title "P-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "',cval2,'" lw 2  title "Fast-mode",\'
-WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "',cval3,'"  lw 2  title "Slow-mode"' 
+WRITE(2,'(3a)')'pl "2dcut_pfaveloc.dat" u 1:($2) w l lc "',cval1,'"   lw 2  title "P-mode" at 0.8,0.85,\'
+WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($3) w l lc "',cval2,'" lw 2  title "Fast-mode" at 0.8,0.80,\'
+WRITE(2,'(3a)')'   "2dcut_pfaveloc.dat" u 1:($4) w l lc "',cval3,'"  lw 2  title "Slow-mode" at 0.8,0.75' 
 ENDIF 
-WRITE(*,*)" > Using: go to gnuplot, call 'powerfolw.gpi' '1' '5'(or other scale)  "
+WRITE(*,*)' > Using: gnuplot -p -e "',"call 'powerfolw.gpi' '1' '5'(or other scale)  "
 ENDIF
  !///////////////////
 
@@ -1676,11 +1771,11 @@ open(2,file='mthconductivity.gpi'); val0='km'
    CALL set1()
   CALL settit(val0)  
    IF (cval1=="n") THEN 
-    WRITE(2,'(a)')'pl "2dcut_km.dat" u 1:2 w l lc "violet" lw 2 title "Min. thermal conductivity"'
+    WRITE(2,'(a)')'pl "2dcut_km.dat" u 1:2 w l lc "violet" lw 2 title "Min. thermal conductivity" at 0.8,0.85'
    ELSE
-     WRITE(2,'(3a)')'pl "2dcut_km.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Min. thermal conductivity"'
+     WRITE(2,'(3a)')'pl "2dcut_km.dat" u 1:2 w l lc "',cval1,'" lw 2 title "Min. thermal conductivity" at 0.8,0.85'
    ENDIF
-   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call 'mthconductivity.gpi' '",0.5+(km_max/4d0),"' '",km_max+1.5d0,"' (or other scale)  "
+   WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call 'mthconductivity.gpi' '",0.5+(km_max/4d0),"' '",km_max+1.5d0,"' ",'"'
 ENDIF
 !\\\\\\\\\\\\\\\
  if (val=='hmkm' .OR. val=='Hmkm' .or. val=='hmKM') THEN
@@ -1715,7 +1810,7 @@ WRITE(2,'(a)')' set ytics format  "%3.0f" 45.0   in offset 0.7,0; set mytics 5;'
 WRITE(2,'(a)')' set size 0.333 ,1.1'
 WRITE(2,'(a)')' set origin 0.3333,-0.03'
 WRITE(2,'(a)')' set cblabel "k_{m} (W/K.m)"'
-WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($33) w  pm3d notitle'
+WRITE(2,'(a)')' sp [0:180][0:180][] ".SDdat" u (($1*180/3.141592654)):($2*180/3.141592654):($35) w  pm3d notitle'
 WRITE(2,'(a)')' unset multiplot'
 WRITE(2,'(a)')' unset output'
 WRITE(2,'(a)')' reset'
@@ -1730,9 +1825,9 @@ ENDIF
 
  !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
   !2D2D2D2D2D2D2D2D2D2D2D2D2D2D2D2
- SUBROUTINE twoDplot(val,MAXpo, MAXyo, MAXsh ,cval1,cval2,cval3)
+ SUBROUTINE twoDplot(val,MAXpo, MAXyo, MAXsh,MAXtr, MAXlo ,cval1,cval2,cval3)
      ChARACTER(len=10) :: val ,val0,cval1,cval2,cval3
-     real(8)           :: MAXpo, MAXyo, MAXsh 
+     real(8)           :: MAXpo, MAXyo, MAXsh , MAXtr, MAXlo
 
  if (val=='2dpoi' ) THEN
        ! WRITE(*,'(2a)') val,'was READ well...'
@@ -1743,12 +1838,12 @@ ENDIF
    CALL set1_2d()
    CALL settit(val0)
    IF (cval1=="n" .or. cval2=="n") THEN 
-    WRITE(2,'(a)')'pl "poisson_2d_sys.dat" u 1:4 w l lc "red"   lw 2 title "Negative",\'
-    WRITE(2,'(a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "green"  lw 2 title "Positive",\'
+    WRITE(2,'(a)')'pl "poisson_2d_sys.dat" u 1:4 w l lc "red"   lw 2 title "Negative" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "green"  lw 2 title "Positive" at 0.8,0.80,\'
     WRITE(2,'(a)')'   #"poisson_2d_sys.dat" u 1:2 w l lc "blue" lw 2'
    ELSE
-    WRITE(2,'(3a)')'pl "poisson_2d_sys.dat" u 1:4 w l lc "',cval1,'"   lw 2 title "Negative",\'
-    WRITE(2,'(3a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "',cval2,'"  lw 2 title "Positive",\'
+    WRITE(2,'(3a)')'pl "poisson_2d_sys.dat" u 1:4 w l lc "',cval1,'"   lw 2 title "Negative" at 0.8,0.85,\'
+    WRITE(2,'(3a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "',cval2,'"  lw 2 title "Positive" at 0.8,0.80,\'
     WRITE(2,'(3a)')'   #"poisson_2d_sys.dat" u 1:2 w l lc "',cval2,'" lw 2'   
    ENDIF
    CALL setterm() 
@@ -1757,15 +1852,16 @@ ENDIF
    CALL set1_2d()
    CALL settit(val0)  
    IF (cval1=="n" .or. cval2=="n") THEN 
-    WRITE(2,'(a)')'pl "poisson_2d_sys.dat" u 1:4 w l lc "red"   lw 2 title "Negative",\'
-    WRITE(2,'(a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "green"  lw 2 title "Positive",\'
+    WRITE(2,'(a)')'pl "poisson_2d_sys.dat" u 1:4 w l lc "red"   lw 2 title "Negative" at 0.8,0.85,\'
+    WRITE(2,'(a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "green"  lw 2 title "Positive" at 0.8,0.80,\'
     WRITE(2,'(a)')'   #"poisson_2d_sys.dat" u 1:2 w l lc "blue" lw 2'
    ELSE
     WRITE(2,'(3a)')'pl "poisson_2d_sys.dat" u 1:4 w l lc "',cval1,'"   lw 2 ,\'
-    WRITE(2,'(3a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "',cval2,'"  lw 2 title "Negative",\'
-    WRITE(2,'(3a)')'   #"poisson_2d_sys.dat" u 1:2 w l lc "',cval2,'" lw 2 title "Positive"'   
+    WRITE(2,'(3a)')'   "poisson_2d_sys.dat" u 1:3 w l lc "',cval2,'"  lw 2 title "Negative" at 0.8,0.85,\'
+    WRITE(2,'(3a)')'   #"poisson_2d_sys.dat" u 1:2 w l lc "',cval2,'" lw 2 title "Positive" at 0.8,0.80'   
    ENDIF
-        WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: go to gnuplot, call '2Dpoissons.gpi' '",MAXpo/4d0,"' '",MAXpo+0.1d0,"' (or other scale)  "
+   if (MAXpo==0.0) MAXpo=1.0
+        WRITE(*,"(A,A,F5.2,A,F5.2,A,A)")' > Using: gnuplot -p -e "',"call '2Dpoissons.gpi' '",MAXpo/4d0,"' '",MAXpo+0.1d0,"' ",'"'
  ENDIF
  
   if (val=='2dyoung') THEN
@@ -1777,9 +1873,9 @@ ENDIF
    CALL set1_2d()
    CALL settit(val0)
   IF (cval1=="n" ) THEN
-   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2 title "Young Modulus"'
+   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2 title "Young Modulus" at 0.8,0.85'
   ELSE
-      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Young Modulus"'
+      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Young Modulus" at 0.8,0.85'
   ENDIF
    CALL setterm() 
    CALL setoutput(val0)
@@ -1787,11 +1883,12 @@ ENDIF
    CALL set1_2d()
    CALL settit(val0)  
   IF (cval1=="n" ) THEN
-   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2 title "Young Modulus"'
+   WRITE(2,'(a)')'pl "young_2d_sys.dat" w l lc "blue" lw 2 title "Young Modulus" at 0.8,0.85'
   ELSE
-      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Young Modulus"'
+      WRITE(2,'(3a)')'pl "young_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Young Modulus" at 0.8,0.85'
   ENDIF
-   WRITE(*,"(A,F6.2,A,F6.2,A)")" > Using: go to gnuplot, call '2Dyoung.gpi' '",MAXyo/4d0,"' '",MAXyo+2d0,"' (or other scale)  "
+    if (MAXyo==0.0) MAXyo=1.0
+   WRITE(*,"(A,A,F6.2,A,F6.2,A,A)")' > Using: gnuplot -p -e "',"call '2Dyoung.gpi' '",MAXyo/4d0,"' '",MAXyo+2d0,"' ",'"'
  ENDIF
    if (val=='2dshear') THEN
       ! WRITE(*,'(2a)') val,'was READ well...'
@@ -1802,9 +1899,9 @@ ENDIF
       CALL set1_2d()
       CALL settit(val0)
   IF (cval1=="n" ) THEN       
-      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2 title "Shear Modulus"'   
+      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2 title "Shear Modulus" at 0.8,0.85'   
    ELSE
-      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Shear Modulus"'   
+      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Shear Modulus" at 0.8,0.85'   
    ENDIF
       CALL setterm() 
       CALL setoutput(val0)
@@ -1812,16 +1909,528 @@ ENDIF
       CALL set1_2d()
       CALL settit(val0)  
   IF (cval1=="n" ) THEN       
-      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2 title "Shear Modulus"'   
+      WRITE(2,'(a)')'pl "shear_2d_sys.dat" w l lc "blue" lw 2 title "Shear Modulus" at 0.8,0.85'   
    ELSE
-      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Shear Modulus"'   
+      WRITE(2,'(3a)')'pl "shear_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Shear Modulus" at 0.8,0.85'   
    ENDIF
-      WRITE(*,"(A,F6.2,A,F6.2,A)")" > Using: go to gnuplot, call '2Dshear.gpi' '",MAXsh/4d0,"' '",MAXsh+2d0,"' (or other scale)  "
+     if (MAXsh==0.0) MAXsh=1.0
+      WRITE(*,"(A,A,F6.2,A,F6.2,A,A)")' > Using: gnuplot -p -e "',"call '2Dshear.gpi' '",MAXsh/4d0,"' '",MAXsh+2d0,"' ",'"'
  ENDIF
  
+   if (val=='2dtran') THEN
+      ! WRITE(*,'(2a)') val,'was READ well...'
+      open(2,file='2Dtransverse.gpi'); val0='2dtr'  
+      Call copyri()
+      CALL setreset()
+      CALL unset1() 
+      CALL set1_2d()
+      CALL settit(val0)
+  IF (cval1=="n" ) THEN       
+      WRITE(2,'(a)')'pl "transverse_2d_sys.dat" w l lc "blue" lw 2 title "Transverse" at 0.8,0.85'   
+   ELSE
+      WRITE(2,'(3a)')'pl "transverse_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Transverse" at 0.8,0.85'   
+   ENDIF
+      CALL setterm() 
+      CALL setoutput(val0)
+      CALL unset1() 
+      CALL set1_2d()
+      CALL settit(val0)  
+  IF (cval1=="n" ) THEN       
+      WRITE(2,'(a)')'pl "transverse_2d_sys.dat" w l lc "blue" lw 2 title "Transverse" at 0.8,0.85'   
+   ELSE
+      WRITE(2,'(3a)')'pl "transverse_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Transverse" at 0.8,0.85'   
+   ENDIF
+      if (MAXtr==0.0) MAXtr=1.0
+      WRITE(*,"(A,A,F6.2,A,F6.2,A,A)")' > Using: gnuplot -p -e "',"call '2Dtransverse.gpi' '",MAXtr/4d0,"' '",MAXtr+2d0,"' ",'"'
+ ENDIF
+ 
+   if (val=='2dlong') THEN
+      ! WRITE(*,'(2a)') val,'was READ well...'
+      open(2,file='2Dlongitudinal.gpi'); val0='2dlo'  
+      Call copyri()
+      CALL setreset()
+      CALL unset1() 
+      CALL set1_2d()
+      CALL settit(val0)
+  IF (cval1=="n" ) THEN       
+      WRITE(2,'(a)')'pl "longitudinal_2d_sys.dat" w l lc "blue" lw 2 title "Longitudinal" at 0.8,0.85'   
+   ELSE
+      WRITE(2,'(3a)')'pl "longitudinal_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Longitudinal" at 0.8,0.85'   
+   ENDIF
+      CALL setterm() 
+      CALL setoutput(val0)
+      CALL unset1() 
+      CALL set1_2d()
+      CALL settit(val0)  
+  IF (cval1=="n" ) THEN       
+      WRITE(2,'(a)')'pl "longitudinal_2d_sys.dat" w l lc "blue" lw 2 title "Longitudinal" at 0.8,0.85'   
+   ELSE
+      WRITE(2,'(3a)')'pl "longitudinal_2d_sys.dat" w l lc "',cval1,'" lw 2 title "Longitudinal" at 0.8,0.85'   
+   ENDIF
+     if (MAXlo==0.0) MAXlo=1.0
+      WRITE(*,"(A,A,F6.2,A,F6.2,A,A)")' > Using: gnuplot -p -e "',"call '2Dlongitudinal.gpi' '",MAXlo/4d0,"' '",MAXlo+2d0,"' ",'"'
+ ENDIF
+   
  end SUBROUTINE
- !2D2DD##############################################
+!################################################################################
+SUBROUTINE sp_map(val,clor_vall)
+     ChARACTER(len=10) :: val,clor_vall
+     DOUBLE PRECISION  :: val_neg
 
+   call threeDdmap()
+!=====================================   
+  if (val=='spyou' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='young_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):7 w pm3d notitle'
+   
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Young-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot young_3dsp.gpi" 
+        
+  endif  
+!---------------------------------------------------------------------------
+  if (val=='spmyou' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='young_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):7 w pm3d notitle'
+
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Young-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot young_xysp.gpi" 
+        
+  endif     
+!---------------------------------------------------------------------------   
+  if (val=='sppoi' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='poisson_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):11 w pm3d notitle'
+
+   call spliter_sp(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):12 w pm3d notitle'
+   
+   call sp_neg_val(val,val_neg) !<=== only for "poi" and "comp" data
+   if (val_neg < 0) then
+    call spliter_sp(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):13 w pm3d notitle'
+    else
+    write(*,"(A)") " >> There is no a NPR! << "
+   endif
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Poissons-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot poisson_3dsp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+!---------------------------------------------------------------------------   
+  if (val=='sppall' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='phase_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):26 w pm3d notitle'
+
+   call spliter_sp(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):28 w pm3d notitle'
+   
+ 
+    call spliter_sp(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):30 w pm3d notitle'
+ 
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Phase_all-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot phase_3dsp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+!---------------------------------------------------------------------------   
+  if (val=='spgall' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='group_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):27 w pm3d notitle'
+
+   call spliter_sp(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):29 w pm3d notitle'
+   
+ 
+    call spliter_sp(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):31 w pm3d notitle'
+ 
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Group_all-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot group_3dsp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+!---------------------------------------------------------------------------   
+  if (val=='sppfall' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='pfa_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):32 w pm3d notitle'
+
+   call spliter_sp(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):33 w pm3d notitle'
+   
+ 
+    call spliter_sp(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):34 w pm3d notitle'
+ 
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> PFA_all-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot pfa_3dsp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+  if (val=='spmpall' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='phase_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):26 w pm3d notitle'
+
+   call spliter_sp_map(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):28 w pm3d notitle'
+   
+ 
+    call spliter_sp_map(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):30 w pm3d notitle'
+ 
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Phase_all-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot phase_xysp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+  if (val=='spmgall' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='group_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):27 w pm3d notitle'
+
+   call spliter_sp_map(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):29 w pm3d notitle'
+   
+ 
+    call spliter_sp_map(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):31 w pm3d notitle'
+ 
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Group_all-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot group_xysp.gpi" 
+        
+  endif  
+!---------------------------------------------------------------------------
+  if (val=='spmpfall' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='pfa_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):32 w pm3d notitle'
+
+   call spliter_sp_map(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):33 w pm3d notitle'
+   
+ 
+    call spliter_sp_map(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):34 w pm3d notitle'
+ 
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> PFA_all-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot pfa_xysp.gpi" 
+        
+  endif 
+!---------------------------------------------------------------------------  
+   if (val=='spmkm' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='conductivity_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):36 w pm3d notitle'
+
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Km-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot conductivity_xysp.gpi" 
+        
+  endif     
+!---------------------------------------------------------------------------   
+!=====================================   
+  if (val=='spkm' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='conductivity_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):35 w pm3d notitle'
+   
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Km-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot conductivity_3dsp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------  
+  if (val=='sppugh' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='pugh_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):20 w pm3d notitle'
+
+   call spliter_sp(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):21 w pm3d notitle'
+   
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Pugh-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot pugh_3dsp.gpi" 
+        
+  endif
+  
+!---------------------------------------------------------------------------
+  if (val=='spmpugh' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='pugh_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):20 w pm3d notitle'
+
+   call spliter_sp_map(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):21 w pm3d notitle'
+   
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Pugh-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot pugh_xysp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+  if (val=='spshear' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='shear_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):3 w pm3d notitle'
+
+   call spliter_sp(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):4 w pm3d notitle'
+   
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Shear-3dsp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot shear_3dsp.gpi" 
+        
+  endif  
+!---------------------------------------------------------------------------
+  if (val=='spmshear' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='shear_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):3 w pm3d notitle'
+
+   call spliter_sp_map(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):4 w pm3d notitle'
+   
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Shear-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot shear_xysp.gpi" 
+        
+  endif  
+!---------------------------------------------------------------------------
+  if (val=='spmpoi' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='poisson_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   call pal_color(clor_vall)
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):11 w pm3d notitle'
+
+   call spliter_sp_map(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):12 w pm3d notitle'
+   
+   call sp_neg_val(val,val_neg) !<=== only for "poi" and "comp" data
+   if (val_neg < 0) then
+    call spliter_sp_map(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):13 w pm3d notitle'
+    else
+    write(*,"(A)") " >> There is no a NPR! << "
+   endif
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Poissons-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot poisson_xysp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+  if (val=='spcomp' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='compressibiliy_3dsp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp()
+   call pal_color(clor_vall)
+   call spliter_sp(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):($8/100) w pm3d notitle'
+
+   call spliter_sp(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):($9/100) w pm3d notitle'
+   
+   call sp_neg_val(val,val_neg) !<=== only for "poi" and "comp" data
+   if (val_neg < 0) then
+    call spliter_sp(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):(-$10/100) w pm3d notitle'
+    else
+    write(*,"(A)") " >> There is no a NLC! << "
+   endif
+   WRITE(2,'(a)')' print "> Compressibiliy-3dspatial.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot compressibiliy_3dsp.gpi"      
+  endif
+!---------------------------------------------------------------------------
+    if (val=='spmcomp' ) THEN
+   WRITE(*,'(2a)') val,'was READ well...'
+   open(2,file='compressibiliy_xysp.gpi') 
+   Call copyri()  
+   call setterm_sp()
+   call setoutput_sp(val)
+   call set_3dsp_map()
+   !write(*,*)clor_val
+   call pal_color(clor_vall)
+   call spliter_sp_map(1)
+   call set_cblabel(val,1)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):($8/100) w pm3d notitle'
+
+   call spliter_sp_map(2)
+   call set_cblabel(val,2)
+   write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):($9/100) w pm3d notitle'
+   
+   call sp_neg_val(val,val_neg) !<=== only for "poi" and "comp" data
+   if (val_neg < 0) then
+    call spliter_sp_map(3)
+    call set_cblabel(val,3)
+    write(2,"(A)") 'sp ".SDdat" u (($2*180)/3.1415926535897932385):((($1*180)/3.1415926535897932385)-90):(1.0):(-$10/100) w pm3d notitle'
+    else
+    write(*,"(A)") " >> There is no a NLC! << "
+   endif
+   call endset_3dsp()
+   WRITE(2,'(a)')' print "> Compressibiliy-xysp.png was generated... "'
+   WRITE(*,"(A)")" > Using: gnuplot compressibiliy_xysp.gpi" 
+        
+  endif
+!---------------------------------------------------------------------------
+End SUBROUTINE sp_map
+
+ !2D2DD##############################################
  SUBROUTINE twoD_phm(val,clor_val)
  ChARACTER(len=10) :: val ,clor_val
  
@@ -1924,6 +2533,68 @@ if (val=='phmshe' ) THEN
   WRITE(2,'(a)')'pl  "shear_2d_sys.dat" u 1:(1.0):2 w l  pal lw 8,"shear_2d_sys.dat" u 1:(1.03):2 w l  pal lw 8'
 
   WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: gnuplot phm_2Dshear.gpi"
+ENDIF
+
+if (val=='phmtran' ) THEN
+  ! WRITE(*,'(2a)') val,'was READ well...'
+  open(2,file='phm_2Dtransverse.gpi') 
+  Call copyri()
+  call setterm_phm()
+  call setoutput(val)  
+  CALL setphm(val) 
+  CALL unset2()
+  IF      (clor_val=='bbry') THEN
+    WRITE(2,'(a)')' set palette rgb 7,5,15'
+   ELSE IF (clor_val=='grv') THEN
+    WRITE(2,'(a)')' set palette rgb 3,11,6'
+   ELSE IF (clor_val=='bbvy') THEN
+    WRITE(2,'(a)')' set palette rgb 30,31,32'
+   ELSE IF (clor_val=='bgyr') THEN
+    WRITE(2,'(a)')' set palette rgb 33,13,10'
+   ELSE IF (clor_val=='bryw') THEN
+    WRITE(2,'(a)')' set palette rgb 34,35,36'
+   ELSE
+     WRITE(2,'(a)')' set palette rgb 30,13,10'
+   END IF
+
+  WRITE(2,'(a)')'# set size   0.3333,1.0'
+  WRITE(2,'(a)')'# set origin 0.3333, 0.0'
+  WRITE(2,'(a)')'set title "Transverse Wave"'
+  WRITE(2,'(a)')'set cblabel "km/s"'
+  WRITE(2,'(a)')'pl   "transverse_2d_sys.dat" u 1:(1.0):2 w l  pal lw 8,"transverse_2d_sys.dat" u 1:(1.03):2 w l  pal lw 8'
+
+  WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: gnuplot phm_2Dtransverse.gpi"
+ENDIF
+
+if (val=='phmlong' ) THEN
+  ! WRITE(*,'(2a)') val,'was READ well...'
+  open(2,file='phm_2Dlongitudinal.gpi') 
+  Call copyri()
+  call setterm_phm()
+  call setoutput(val)  
+  CALL setphm(val) 
+  CALL unset2()
+  IF      (clor_val=='bbry') THEN
+    WRITE(2,'(a)')' set palette rgb 7,5,15'
+   ELSE IF (clor_val=='grv') THEN
+    WRITE(2,'(a)')' set palette rgb 3,11,6'
+   ELSE IF (clor_val=='bbvy') THEN
+    WRITE(2,'(a)')' set palette rgb 30,31,32'
+   ELSE IF (clor_val=='bgyr') THEN
+    WRITE(2,'(a)')' set palette rgb 33,13,10'
+   ELSE IF (clor_val=='bryw') THEN
+    WRITE(2,'(a)')' set palette rgb 34,35,36'
+   ELSE
+     WRITE(2,'(a)')' set palette rgb 30,13,10'
+   END IF
+
+  WRITE(2,'(a)')'# set size   0.3333,1.0'
+  WRITE(2,'(a)')'# set origin 0.3333, 0.0'
+  WRITE(2,'(a)')'set title "Longitudinal Wave"'
+  WRITE(2,'(a)')'set cblabel "km/s"'
+  WRITE(2,'(a)')'pl   "longitudinal_2d_sys.dat" u 1:(1.0):2 w l  pal lw 8,"longitudinal_2d_sys.dat" u 1:(1.03):2 w l  pal lw 8'
+
+  WRITE(*,"(A,F5.2,A,F5.2,A)")" > Using: gnuplot phm_2Dlongitudinal.gpi"
 ENDIF
 
 if (val=='phmall' ) THEN
