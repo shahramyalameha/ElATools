@@ -3017,8 +3017,8 @@ if (without_color.EQ."N")	CALL SYSTEM('echo " ==================================
     CALL system('clear')
     IF (YN.EQ."Y".OR. YN.EQ."y")THEN
       IF (YN.EQ."y") YN='Y'
-      CALL SYSTEM('IF [ -e PicFile  ]; THEN rm -rf  PicFile; fi')
-      CALL SYSTEM('IF [ -e DatFile  ]; THEN rm -rf  DatFile; fi')
+      CALL SYSTEM('if [ -e PicFile  ]; then rm -rf  PicFile; fi')
+      CALL SYSTEM('if [ -e DatFile  ]; then rm -rf  DatFile; fi')
 
       CALL SYSTEM('mkdir  PicFile')
       CALL SYSTEM('mkdir  DatFile')
@@ -3046,7 +3046,7 @@ if (without_color.EQ."N")	CALL SYSTEM('echo " ==================================
       CALL SLEEP (1)
       CALL SYSTEM('mv *.ps PicFile')
       CALL SYSTEM('mv Poissons_ratio.pdf shear_modulus.pdf Pugh_ratio.pdf young_modulus.pdf PicFile')
-      CALL SYSTEM('IF [ -e 2DPugh.ps ]; THEN mv 2DPugh.ps PicFile; fi') 
+      CALL SYSTEM('if [ -e 2DPugh.ps ]; then mv 2DPugh.ps PicFile; fi')
       !CALL SYSTEM('cat PicFile/2Dbox.ps            | epstopdf --filter > PicFile/2Dbox.pdf'                    )
       !CALL SYSTEM('cat PicFile/2DBulk.ps           | epstopdf --filter > PicFile/2DBulk.pdf'                    )
       !CALL SYSTEM('cat PicFile/2DCompressibiliy.ps | epstopdf --filter > PicFile/2DCompressibiliy.pdf')
@@ -3102,8 +3102,8 @@ if (without_color.EQ."N")	CALL SYSTEM('echo " ==================================
 
       IF (YN.EQ."Y".OR. YN.EQ."y")THEN
         IF (YN.EQ."y") YN='Y'
-        CALL SYSTEM('IF [ -e PicFile  ]; THEN rm -rf  PicFile; fi')
-        CALL SYSTEM('IF [ -e DatFile ]; THEN rm -rf DatFile; fi')
+        CALL SYSTEM('if [ -e PicFile  ]; then rm -rf  PicFile; fi')
+        CALL SYSTEM('if [ -e DatFile ]; then rm -rf DatFile; fi')
 
         CALL SYSTEM('mkdir  PicFile')
         CALL SYSTEM('mkdir DatFile')
